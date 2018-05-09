@@ -1,0 +1,35 @@
+{
+  "name": "lino-js",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/lino-js.cjs.js",
+  "module": "dist/lino-js.esm.js",
+  "browser": "dist/lino-js.umd.js",
+  "dependencies": {
+    "elliptic": "^6.4.0"
+  },
+  "devDependencies": {
+    "rollup": "^0.58.0",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-node-resolve": "^3.0.0"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "node test/test.js",
+    "pretest": "npm run build"
+  },
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lino-network/lino-js.git"
+  },
+  "author": "Thomas Wang <wangxgwxg@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lino-network/lino-js/issues"
+  },
+  "homepage": "https://github.com/lino-network/lino-js#readme"
+}
