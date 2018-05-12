@@ -7,9 +7,10 @@ export default [
   {
     input: 'dist/index.js',
     output: {
-      name: 'linoJs',
+      name: 'lino-js',
       file: pkg.browser,
-      format: 'umd'
+      format: 'umd',
+      exports: 'named'
     },
     plugins: [resolve(), commonjs()]
   },
