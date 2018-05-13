@@ -1,3 +1,3 @@
-export { default as Auth } from './auth';
+import LINO from './lino';
 
-export * from './util';
+export default LINO;
