@@ -1,3 +1,9 @@
+import { ITransport } from '../transport';
+
 export default class Broadcast {
-  constructor() {}
+  private _transport: ITransport;
+
+  constructor(transport: ITransport) {
+    this._transport = transport;
+  }
 }

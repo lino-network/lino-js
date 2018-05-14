@@ -6,7 +6,9 @@
   "module": "dist/lino-js.esm.js",
   "browser": "dist/lino-js.umd.js",
   "dependencies": {
-    "elliptic": "^6.4.0"
+    "axios": "^0.18.0",
+    "elliptic": "^6.4.0",
+    "es6-promise": "^4.2.4"
   },
   "devDependencies": {
     "rollup": "^0.58.2",
