@@ -1,4 +1,5 @@
 import { ITransport } from '../transport';
+import Keys from './keys';
 
 export default class Query {
   private _transport: ITransport;
@@ -8,6 +9,13 @@ export default class Query {
   }
 
   getAllValidators(): Promise<AllValidators> {
+    // query: get key(byte[]) and KVStoreKey(string), send to transport
+    const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
+    const validatorListKey = Keys.getValidatorListKey();
+    // transport: get path and key for ABCIQuery and return result
+    // get transport's node and do ABCIQuery
+    // rpc client do rpc call
+    // check resp
     return this._transport.send<AllValidators>({
       // TODO: confirm API endpoint
       url: '/allValidators'
