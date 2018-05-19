@@ -1,7 +1,7 @@
 // polyfill Promise for axios
 import Query from './query';
 import Broadcast from './broadcast';
-import { ITransport, Transport } from './transport';
+import { ITransport, Transport, ITransportOptions } from './transport';
 
 export default class LINO {
   private _options: any;
@@ -9,9 +9,9 @@ export default class LINO {
   private _query: Query;
   private _broadcast: Broadcast;
 
-  constructor(opt = {}) {
+  constructor(opt: ITransportOptions) {
     this._options = opt;
-    this._transport = new Transport();
+    this._transport = new Transport(opt);
     this._query = new Query(this._transport);
     this._broadcast = new Broadcast(this._transport);
   }
