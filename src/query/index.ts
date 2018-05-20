@@ -26,11 +26,11 @@ export default class Query {
 }
 
 // Type defination
-interface Coin {
+export interface Coin {
   amount: number;
 }
 
-interface AllValidators {
+export interface AllValidators {
   oncallValidators: string[];
   allValidators: string[];
   preBlockValidators: string[];

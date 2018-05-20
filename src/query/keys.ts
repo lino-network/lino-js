@@ -16,12 +16,10 @@ namespace Keys {
   const _KEYS: { [name: string]: ByteBuffer } = {
     // ByteBuffer: returns this if offset is omitted, else the actual number of bytes written.
     // we force it to be ByteBuffer since we don't pass in `offset`
-    ValidatorListSubstore: new ByteBuffer().WriteString(
-      'ValidatorList/ValidatorListKey'
-    ) as ByteBuffer
+    validatorListSubstore: new ByteBuffer().writeUint8(0x01) as ByteBuffer
   };
   export function getValidatorListKey() {
-    return _KEYS.ValidatorListSubstore;
+    return _KEYS.validatorListSubstore;
   }
 }
 

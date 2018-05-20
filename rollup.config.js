@@ -7,12 +7,16 @@ export default [
   {
     input: 'dist/index.js',
     output: {
-      name: 'lino-js',
+      name: 'LINO',
       file: pkg.browser,
-      format: 'umd',
-      exports: 'named'
+      format: 'umd'
     },
-    plugins: [resolve(), commonjs()]
+    plugins: [
+      resolve({
+        browser: true
+      }),
+      commonjs()
+    ]
   },
 
   // CommonJS (for Node) and ES module (for bundlers) build.

@@ -1,11 +1,9 @@
 import 'es6-promise/auto';
-import axios, { AxiosRequestConfig, AxiosPromise, AxiosResponse } from 'axios';
 import { Rpc } from './rpc';
 import * as DEBUG from 'debug';
 const debug = DEBUG('Transport');
 
 export interface ITransport {
-  send<T = any>(config: AxiosRequestConfig): Promise<T>;
   query<T = any>(key: ByteBuffer, storeName: string): Promise<T | null>;
 }
 
@@ -22,11 +20,6 @@ export class Transport implements ITransport {
   constructor(opt: ITransportOptions) {
     debug('Create transport with option: ', opt);
     this._rpc = new Rpc(opt.nodeUrl); // create with nodeUrl
-  }
-
-  // Config doc: https://github.com/axios/axios#request-config
-  send<T = any>(config: AxiosRequestConfig): Promise<T> {
-    return axios.request<T>(config).then(res => res.data);
   }
 
   query<T>(key: ByteBuffer, path: string): Promise<T | null> {
