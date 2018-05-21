@@ -1,7 +1,6 @@
-import 'es6-promise/auto';
+//@ts-ignore
+import * as ByteBuffer from 'bytebuffer';
 import { Rpc } from './rpc';
-import * as DEBUG from 'debug';
-const debug = DEBUG('Transport');
 
 export interface ITransport {
   query<T = any>(key: ByteBuffer, storeName: string): Promise<T | null>;
@@ -18,7 +17,6 @@ export class Transport implements ITransport {
   private _cdc = null;
 
   constructor(opt: ITransportOptions) {
-    debug('Create transport with option: ', opt);
     this._rpc = new Rpc(opt.nodeUrl); // create with nodeUrl
   }
 

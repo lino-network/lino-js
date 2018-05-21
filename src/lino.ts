@@ -1,4 +1,3 @@
-// polyfill Promise for axios
 import Query from './query';
 import Broadcast from './broadcast';
 import { ITransport, Transport, ITransportOptions } from './transport';

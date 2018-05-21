@@ -1,11 +1,12 @@
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import typescript from 'rollup-plugin-typescript2';
 import pkg from './package.json';
 
 export default [
   // browser-friendly UMD build
   {
-    input: 'dist/index.js',
+    input: 'src/index.ts',
     output: {
       name: 'LINO',
       file: pkg.browser,
@@ -15,7 +16,10 @@ export default [
       resolve({
         browser: true
       }),
-      commonjs()
+      commonjs(),
+      typescript({
+        tsconfig: 'tsconfig.json'
+      })
     ]
   },
 
@@ -26,11 +30,18 @@ export default [
   // an array for the `output` option, where we can specify
   // `file` and `format` for each target)
   {
-    input: 'dist/index.js',
+    input: 'src/index.ts',
     external: Object.keys(pkg.dependencies),
     output: [
       { file: pkg.main, format: 'cjs' },
       { file: pkg.module, format: 'es' }
+    ],
+    plugins: [
+      resolve(),
+      commonjs(),
+      typescript({
+        tsconfig: 'tsconfig.json'
+      })
     ]
   }
 ];

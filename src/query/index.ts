@@ -1,7 +1,5 @@
 import { ITransport } from '../transport';
 import Keys from './keys';
-import * as DEBUG from 'debug';
-const debug = DEBUG('Query');
 
 export default class Query {
   private _transport: ITransport;
@@ -15,8 +13,6 @@ export default class Query {
     const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
     const validatorListKey = Keys.getValidatorListKey();
     const path = `/${ValidatorKVStoreKey}/key`;
-    debug(`ValidatorKVStoreKey: ${ValidatorKVStoreKey}`);
-    debug(`validatorListKey: ${validatorListKey}`);
     // transport: get path and key for ABCIQuery and return result
     // get transport's node and do ABCIQuery
     // rpc client do rpc call

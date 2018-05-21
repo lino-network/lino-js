@@ -1,0 +1,1 @@
+{"code":"import LINO from './lino';\r\nexport default LINO;\r\n//# sourceMappingURL=index.js.map","map":"{\"version\":3,\"file\":\"index.js\",\"sourceRoot\":\"\",\"sources\":[\"src/index.ts\"],\"names\":[],\"mappings\":\"AAAA,OAAO,IAAI,MAAM,QAAQ,CAAC;AAE1B,eAAe,IAAI,CAAC\"}"}

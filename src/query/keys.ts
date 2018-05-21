@@ -1,4 +1,5 @@
-import * as ByteBuffer from 'bytebuffer';
+//@ts-ignore
+import ByteBuffer from 'bytebuffer';
 
 namespace Keys {
   export const KVSTOREKEYS = {

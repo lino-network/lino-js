@@ -1,5 +1,7 @@
+//@ts-ignore
+import ByteBuffer from 'bytebuffer';
+import fetch from 'cross-fetch';
 import * as JsonRpc2 from './jsonrpc2';
-const fetch = require('cross-fetch');
 
 export interface IResponseQuery {
   code: number;
@@ -44,7 +46,7 @@ export class Rpc {
       method: 'POST',
       mode: 'cors'
     })
-      .then((response: Response) => response.json())
+      .then((response: any) => response.json())
       .then(
         (
           data:
