@@ -16,6 +16,22 @@ function addSuite(envName) {
         console.log(v)
         expect(v).to.exist;
       });
+      query.getDevelopers().then(v => {
+        console.log(v)
+        expect(v).to.exist;
+      });
+      query.getDeveloper("Lino").then(v => {
+        console.log(v)
+        expect(v).to.exist;
+      });
+      query.getInfraProviders().then(v => {
+        console.log(v)
+        expect(v).to.exist;
+      });
+      query.getInfraProvider("Lino").then(v => {
+        console.log(v)
+        expect(v).to.exist;
+      });
     });
   });
 }

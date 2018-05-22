@@ -20,11 +20,12 @@ export class Transport implements ITransport {
     this._rpc = new Rpc(opt.nodeUrl); // create with nodeUrl
   }
 
-  query<T>(key: string, path: string): Promise<T | null> {
+  query<T>(key: string, storeName: string): Promise<T | null> {
     // transport: get path and key for ABCIQuery and return result
     // get transport's node and do ABCIQuery
     // rpc client do rpc call
     // check resp
+    const path = `/${storeName}/key`;
     return this._rpc.abciQuery<T>(path, key).then(result => {
       if (result.response == null) {
         throw new Error(`Empty response\n`);
