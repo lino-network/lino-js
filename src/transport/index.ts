@@ -26,14 +26,16 @@ export class Transport implements ITransport {
     // rpc client do rpc call
     // check resp
     return this._rpc.abciQuery<T>(path, key).then(result => {
-      // if (result.code !== 0) {
-      //   throw new Error(`Query failed: ${result.code}\n${result.log}`);
-      // }
-      // if (result.response === null) {
-      //   throw new Error(`Empty response\n${result.log}`);
-      // }
-      console.log(result)
-      return result.response.value as T;
+      if (result.response == null) {
+        throw new Error(`Empty response\n`);
+      }
+      if (result.response.value == null) {
+        throw new Error(`Query failed: ${result.response.code}\n${result.response.log}`);
+      }
+
+      const jsonStr = decodeURIComponent(escape(window.atob(result.response.value)))
+      const obj = JSON.parse(jsonStr)
+      return obj as T;
     });
   }
 }

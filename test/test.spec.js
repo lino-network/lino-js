@@ -9,11 +9,11 @@ function addSuite(envName) {
     it('query', async function() {
       const query = new LINO({ nodeUrl: 'http://localhost:46657/' }).query;
       query.getAllValidators().then(v => {
-        console.log(decodeURIComponent(escape(window.atob(v))))
+        console.log(v)
         expect(v).to.exist;
       });
       query.getValidator("Lino").then(v => {
-        console.log(decodeURIComponent(escape(window.atob(v))))
+        console.log(v)
         expect(v).to.exist;
       });
     });

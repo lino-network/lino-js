@@ -9,26 +9,16 @@ export default class Query {
   }
 
   getAllValidators(): Promise<AllValidators | null> {
-    // query: get key(byte[] AKA ByteBuffer) and KVStoreKey(string), send to transport
     const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
     const validatorListKey = Keys.getValidatorListKey();
     const path = `/${ValidatorKVStoreKey}/key`;
-    // transport: get path and key for ABCIQuery and return result
-    // get transport's node and do ABCIQuery
-    // rpc client do rpc call
-    // check resp
     return this._transport.query<AllValidators>(validatorListKey, path);
   }
 
   getValidator(username: string): Promise<Validator | null> {
-    // query: get key(byte[] AKA ByteBuffer) and KVStoreKey(string), send to transport
     const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
     const validatorKey = Keys.getValidatorKey(username);
     const path = `/${ValidatorKVStoreKey}/key`;
-    // transport: get path and key for ABCIQuery and return result
-    // get transport's node and do ABCIQuery
-    // rpc client do rpc call
-    // check resp
     return this._transport.query<Validator>(validatorKey, path);
   }
 }
