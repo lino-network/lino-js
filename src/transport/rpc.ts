@@ -3,6 +3,10 @@ import ByteBuffer from 'bytebuffer';
 import fetch from 'cross-fetch';
 import * as JsonRpc2 from './jsonrpc2';
 
+export interface IResultABCIQuery {
+  response: IResponseQuery;
+}
+
 export interface IResponseQuery {
   code: number;
   log: string;
@@ -28,9 +32,9 @@ export class Rpc {
 
   abciQuery<T>(
     path: string,
-    key: ByteBuffer,
+    key: string,
     opts = DefaultABCIQueryOptions
-  ): Promise<IResponseQuery> {
+  ): Promise<IResultABCIQuery> {
     return fetch(this._nodeUrl, {
       headers: { 'Content-Type': 'text/json' },
       body: JSON.stringify({
@@ -40,7 +44,7 @@ export class Rpc {
         params: {
           ...opts,
           path,
-          data: key.toArrayBuffer()
+          data: key
         }
       }),
       method: 'POST',
@@ -50,11 +54,11 @@ export class Rpc {
       .then(
         (
           data:
-            | JsonRpc2.JsonRpcSuccess<IResponseQuery>
-            | JsonRpc2.JsonRpcFailure<IResponseQuery>
+            | JsonRpc2.JsonRpcSuccess<IResultABCIQuery>
+            | JsonRpc2.JsonRpcFailure<IResultABCIQuery>
         ) => {
           if ('result' in data) {
-            return data.result as IResponseQuery;
+            return data.result as IResultABCIQuery;
           } else {
             throw data.error;
           }

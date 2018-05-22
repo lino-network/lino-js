@@ -19,6 +19,18 @@ export default class Query {
     // check resp
     return this._transport.query<AllValidators>(validatorListKey, path);
   }
+
+  getValidator(username: string): Promise<Validator | null> {
+    // query: get key(byte[] AKA ByteBuffer) and KVStoreKey(string), send to transport
+    const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
+    const validatorKey = Keys.getValidatorKey(username);
+    const path = `/${ValidatorKVStoreKey}/key`;
+    // transport: get path and key for ABCIQuery and return result
+    // get transport's node and do ABCIQuery
+    // rpc client do rpc call
+    // check resp
+    return this._transport.query<Validator>(validatorKey, path);
+  }
 }
 
 // Type defination
@@ -32,4 +44,19 @@ export interface AllValidators {
   preBlockValidators: string[];
   lowestPower: Coin;
   lowestValidator: string;
+}
+
+export interface  ABCIValidator {
+	PubKey: string;
+	Power:  number;
+}
+
+
+export interface  Validator {
+	abci: ABCIValidator;
+	Username:       string;
+	Deposit:        Coin;
+	AbsentCommit:   number;
+	ProducedBlocks: number;
+	Link:           string;
 }

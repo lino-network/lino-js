@@ -2,14 +2,18 @@ function addSuite(envName) {
   describe('lino', function() {
     it('remote nodeUrl works', async function() {
       const result = await fetch(
-        'http://54.89.98.186:46657/block?height=1487'
+        'http://localhost:46657/block?height=1'
       ).then(resp => resp.json());
       expect(result).to.exist;
     });
     it('query', async function() {
-      const query = new LINO({ nodeUrl: 'http://54.89.98.186:46657/' }).query;
+      const query = new LINO({ nodeUrl: 'http://localhost:46657/' }).query;
       query.getAllValidators().then(v => {
-        console.log(v);
+        console.log(decodeURIComponent(escape(window.atob(v))))
+        expect(v).to.exist;
+      });
+      query.getValidator("Lino").then(v => {
+        console.log(decodeURIComponent(escape(window.atob(v))))
         expect(v).to.exist;
       });
     });
