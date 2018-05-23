@@ -1,24 +1,31 @@
-import * as elliptic from 'elliptic';
+import { Coin } from '../query';
+
+//import * as elliptic from 'elliptic';
 
 // TODO: for int64, maybe we should do extra check in proper place, or use string
-export interface Fee {
-  amount: number[];
-  gas: number;
+export interface StdFee {
+  Amount: any;
+  Gas: number;
 }
 
-export interface Signature {
-  pub_key: any;
-  signature: any;
+export interface StdSignature {
+  pub_key: IPubKey;
+  signature: ISignature;
   sequence: number;
 }
 
-export interface Transaction {
-  msg: any;
-  fee: Fee;
-  signatures: Signature[];
+export interface StdMsg {
+  type: string;
+  value: string;
 }
 
-export interface SignMsg {
+export interface StdTx {
+  msg: StdMsg;
+  fee: StdFee;
+  signatures: StdSignature[];
+}
+
+export interface StdSignMsg {
   chain_id: string;
   sequences: number[];
   fee_bytes: string;
@@ -26,34 +33,55 @@ export interface SignMsg {
   alt_bytes?: string;
 }
 
+export interface IPubKey {
+  type: string;
+  value: string;
+}
+
+export interface ISignature {
+  type: string;
+  value: string;
+}
+
 // return a new zero fee object
-export const getZeroFee: () => Fee = () => ({
-  amount: [],
-  gas: 0
+export const getZeroFee: () => StdFee = () => ({
+  Amount: null,
+  Gas: 0
 });
 
 export function encodeTx(
   msg: any,
-  pubKey: any,
-  sig: any,
+  pubKey: string,
+  sig: string,
   seq: number
-): Transaction {
-  const stdSig: Signature = {
-    pub_key: pubKey,
-    signature: sig,
+): string {
+  const stdMsg: StdMsg = {
+    type: '9E6F93EDF45140',
+    value: msg
+  };
+
+  const stdSig: StdSignature = {
+    pub_key: <IPubKey>{ type: 'AC26791624DE60', value: pubKey },
+    signature: <ISignature>{ type: '6BF5903DA1DB28', value: sig },
     sequence: seq
   };
-  const stdTx: Transaction = {
-    msg: msg,
+
+  const stdTx: StdTx = {
+    msg: stdMsg,
     signatures: [stdSig],
     fee: getZeroFee()
   };
-  return stdTx;
+
+  return btoa(JSON.stringify(stdTx));
 }
 
-export function encodeSignMsg(msg: any, chainId: string, seq: number): SignMsg {
+export function encodeSignMsg(
+  msg: any,
+  chainId: string,
+  seq: number
+): StdSignMsg {
   const fee = getZeroFee();
-  const stdSignMsg: SignMsg = {
+  const stdSignMsg: StdSignMsg = {
     chain_id: chainId,
     sequences: [seq],
     fee_bytes: JSON.stringify(fee),

@@ -1,8 +1,7 @@
 //@ts-ignore
 import * as ByteBuffer from 'bytebuffer';
-import { Rpc } from './rpc';
-import { ResultBroadcastTxCommit } from '../broadcast/broadcast';
-import { encodeSignMsg } from './utils';
+import { Rpc, ResultBroadcastTxCommit } from './rpc';
+import { encodeSignMsg, encodeTx } from './utils';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T | null>;
@@ -33,7 +32,7 @@ export class Transport implements ITransport {
     // rpc client do rpc call
     // check resp
     const path = `/${storeName}/key`;
-    return this._rpc.abciQuery<T>(path, key).then(result => {
+    return this._rpc.abciQuery(path, key).then(result => {
       if (result.response == null) {
         throw new Error(`Empty response\n`);
       }
@@ -43,9 +42,7 @@ export class Transport implements ITransport {
         );
       }
 
-      const jsonStr = decodeURIComponent(
-        escape(window.atob(result.response.value))
-      );
+      const jsonStr = atob(result.response.value);
       const obj = JSON.parse(jsonStr);
       return obj as T;
     });
@@ -53,7 +50,7 @@ export class Transport implements ITransport {
 
   // Does the private key decoding from hex, sign message,
   // build transaction to broadcast
-  broadcast(
+  signBuildBroadcast(
     msg: any,
     privKeyHex: string,
     seq: number
@@ -64,6 +61,16 @@ export class Transport implements ITransport {
     const signMsg = encodeSignMsg(msg, this._chainId, seq);
     // sign to get signature
     // build tx
+    var res = <ResultBroadcastTxCommit>{};
+    const tx = encodeTx(
+      msg,
+      '7Qo5AtmHEOufOenbfKlaMFEA9AHSXI4wwOSZEqVWjP0=',
+      'UxcSvGiVvNk4fG3aCSdX7v+xrQ3PZtDv9ohDVeRJCcBnyIyRw1I1jsIgVboJDWSP5cF21e1RQpDLEr+veftcDQ==',
+      0
+    );
     // return broadcast
+    return this._rpc.broadcastTxCommit(tx).then(result => {
+      return res;
+    });
   }
 }

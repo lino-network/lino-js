@@ -25,10 +25,17 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, privKeyHex);
   }
 
+  voterDeposit(username: string, deposit: string, privKeyHex: string) {
+    const msg: VoterDepositMsg = {
+      username,
+      deposit
+    };
+    return this._broadcastTransaction(msg, privKeyHex);
+  }
+
   private _broadcastTransaction(msg: any, privKeyHex: string) {
     // SignBuildBroadcast
-    const res = this._transport.signBuildBroadcast(msg, privKeyHex, 0);
-    return 0;
+    return this._transport.signBuildBroadcast(msg, privKeyHex, 0);
   }
 }
 
@@ -38,4 +45,9 @@ export interface TransferMsg {
   receiver_addr: string;
   amount: string;
   memo: string;
+}
+
+export interface VoterDepositMsg {
+  username: string;
+  deposit: string;
 }

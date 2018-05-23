@@ -2,6 +2,7 @@
 import ByteBuffer from 'bytebuffer';
 import fetch from 'cross-fetch';
 import * as JsonRpc2 from './jsonrpc2';
+import { StdTx } from './utils';
 
 export interface IResultABCIQuery {
   response: IResponseQuery;
@@ -18,6 +19,13 @@ export interface IResponseQuery {
   height: number;
 }
 
+export interface ResultBroadcastTxCommit {
+  check_tx: any;
+  deliver_tx: any;
+  hash: any;
+  height: number;
+}
+
 const DefaultABCIQueryOptions = {
   height: 0,
   trusted: false
@@ -30,7 +38,7 @@ export class Rpc {
     this._nodeUrl = nodeUrl;
   }
 
-  abciQuery<T>(
+  abciQuery(
     path: string,
     key: string,
     opts = DefaultABCIQueryOptions
@@ -59,6 +67,36 @@ export class Rpc {
         ) => {
           if ('result' in data) {
             return data.result as IResultABCIQuery;
+          } else {
+            throw data.error;
+          }
+        }
+      );
+  }
+
+  broadcastTxCommit(tx: string): Promise<ResultBroadcastTxCommit> {
+    return fetch(this._nodeUrl, {
+      headers: { 'Content-Type': 'text/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'jsonrpc-client',
+        method: 'broadcast_tx_commit',
+        params: {
+          tx: tx
+        }
+      }),
+      method: 'POST',
+      mode: 'cors'
+    })
+      .then((response: any) => response.json())
+      .then(
+        (
+          data:
+            | JsonRpc2.JsonRpcSuccess<ResultBroadcastTxCommit>
+            | JsonRpc2.JsonRpcFailure<ResultBroadcastTxCommit>
+        ) => {
+          if ('result' in data) {
+            return data.result as ResultBroadcastTxCommit;
           } else {
             throw data.error;
           }
