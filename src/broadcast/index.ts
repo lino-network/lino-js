@@ -21,7 +21,11 @@ export default class Broadcast {
       new_master_public_key: masterPubKeyHex,
       new_transaction_public_key: transactionPubKeyHex
     };
-    return this._broadcastTransaction(msg, masterPrivKeyHex);
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.RegisterMsgType,
+      masterPrivKeyHex
+    );
   }
 
   transfer(
@@ -39,7 +43,11 @@ export default class Broadcast {
       amount,
       memo
     };
-    return this._broadcastTransaction(msg, privKeyHex);
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.TransferMsgType,
+      privKeyHex
+    );
   }
 
   follow(follower: string, followee: string, privKeyHex: string) {
@@ -47,7 +55,7 @@ export default class Broadcast {
       follower,
       followee
     };
-    return this._broadcastTransaction(msg, privKeyHex);
+    return this._broadcastTransaction(msg, _MSGTYPE.FollowMsgType, privKeyHex);
   }
 
   unfollow(follower: string, followee: string, privKeyHex: string) {
@@ -55,14 +63,18 @@ export default class Broadcast {
       follower,
       followee
     };
-    return this._broadcastTransaction(msg, privKeyHex);
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.UnfollowMsgType,
+      privKeyHex
+    );
   }
 
   claim(username: string, privKeyHex: string) {
     const msg: ClaimMsg = {
       username
     };
-    return this._broadcastTransaction(msg, privKeyHex);
+    return this._broadcastTransaction(msg, _MSGTYPE.ClaimMsgType, privKeyHex);
   }
 
   savingToChecking(username: string, amount: string, privKeyHex: string) {
@@ -70,7 +82,11 @@ export default class Broadcast {
       username,
       amount
     };
-    return this._broadcastTransaction(msg, privKeyHex);
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.SavingToCheckingMsgType,
+      privKeyHex
+    );
   }
 
   checkingToSaving(username: string, amount: string, privKeyHex: string) {
@@ -78,7 +94,11 @@ export default class Broadcast {
       username,
       amount
     };
-    return this._broadcastTransaction(msg, privKeyHex);
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.CheckingToSavingMsgType,
+      privKeyHex
+    );
   }
 
   // validator related
@@ -88,7 +108,11 @@ export default class Broadcast {
       deposit,
       validator_public_key: privKeyHex
     };
-    return this._broadcastTransaction(msg, privKeyHex);
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ValidatorDepositMsgType,
+      privKeyHex
+    );
   }
 
   validatorWithdraw(username: string, amount: string, privKeyHex: string) {
@@ -96,14 +120,22 @@ export default class Broadcast {
       username,
       amount
     };
-    return this._broadcastTransaction(msg, privKeyHex);
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ValidatorWithdrawMsgType,
+      privKeyHex
+    );
   }
 
   ValidatorRevoke(username: string, privKeyHex: string) {
     const msg: ValidatorRevokeMsg = {
       username
     };
-    return this._broadcastTransaction(msg, privKeyHex);
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ValidatorRevokeMsgType,
+      privKeyHex
+    );
   }
 
   // vote related
@@ -112,12 +144,16 @@ export default class Broadcast {
       username,
       deposit
     };
-    return this._broadcastTransaction(msg, privKeyHex);
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.VoterDepositMsgType,
+      privKeyHex
+    );
   }
 
-  private _broadcastTransaction(msg: any, privKeyHex: string) {
+  private _broadcastTransaction(msg: any, msgType: string, privKeyHex: string) {
     // SignBuildBroadcast
-    return this._transport.signBuildBroadcast(msg, privKeyHex, 0);
+    return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, 0);
   }
 }
 
@@ -188,3 +224,20 @@ export interface VoterDepositMsg {
   username: string;
   deposit: string;
 }
+
+const _MSGTYPE = {
+  RegisterMsgType: '9E6F93EDF45140',
+  TransferMsgType: '9E6F93EDF45140',
+  FollowMsgType: '9E6F93EDF45140',
+  UnfollowMsgType: '9E6F93EDF45140',
+  ClaimMsgType: '9E6F93EDF45140',
+  RecoverMsgType: '9E6F93EDF45140',
+  SavingToCheckingMsgType: '9E6F93EDF45140',
+  CheckingToSavingMsgType: '9E6F93EDF45140',
+
+  ValidatorDepositMsgType: '9E6F93EDF45140',
+  ValidatorWithdrawMsgType: '9E6F93EDF45140',
+  ValidatorRevokeMsgType: '9E6F93EDF45140',
+
+  VoterDepositMsgType: '9E6F93EDF45140'
+};

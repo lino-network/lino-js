@@ -7,6 +7,7 @@ export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T | null>;
   signBuildBroadcast(
     msg: any,
+    msgType: string,
     privKeyHex: string,
     seq: number
   ): Promise<ResultBroadcastTxCommit>;
@@ -52,6 +53,7 @@ export class Transport implements ITransport {
   // build transaction to broadcast
   signBuildBroadcast(
     msg: any,
+    msgType: string,
     privKeyHex: string,
     seq: number
   ): Promise<ResultBroadcastTxCommit> {
@@ -63,6 +65,7 @@ export class Transport implements ITransport {
     // build tx
     const tx = encodeTx(
       msg,
+      msgType,
       '7Qo5AtmHEOufOenbfKlaMFEA9AHSXI4wwOSZEqVWjP0=',
       'UxcSvGiVvNk4fG3aCSdX7v+xrQ3PZtDv9ohDVeRJCcBnyIyRw1I1jsIgVboJDWSP5cF21e1RQpDLEr+veftcDQ==',
       0

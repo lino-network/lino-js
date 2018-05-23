@@ -51,12 +51,13 @@ export const getZeroFee: () => StdFee = () => ({
 
 export function encodeTx(
   msg: any,
+  msgType: string,
   pubKey: string,
   sig: string,
   seq: number
 ): string {
   const stdMsg: StdMsg = {
-    type: '9E6F93EDF45140',
+    type: msgType,
     value: msg
   };
 
