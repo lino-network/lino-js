@@ -61,7 +61,6 @@ export class Transport implements ITransport {
     const signMsg = encodeSignMsg(msg, this._chainId, seq);
     // sign to get signature
     // build tx
-    var res = <ResultBroadcastTxCommit>{};
     const tx = encodeTx(
       msg,
       '7Qo5AtmHEOufOenbfKlaMFEA9AHSXI4wwOSZEqVWjP0=',
@@ -70,7 +69,7 @@ export class Transport implements ITransport {
     );
     // return broadcast
     return this._rpc.broadcastTxCommit(tx).then(result => {
-      return res;
+      return result;
     });
   }
 }
