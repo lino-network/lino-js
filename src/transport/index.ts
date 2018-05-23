@@ -2,6 +2,7 @@
 import * as ByteBuffer from 'bytebuffer';
 import { Rpc } from './rpc';
 import { ResultBroadcastTxCommit } from '../broadcast/broadcast';
+import { encodeSignMsg } from './utils';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T | null>;
@@ -50,9 +51,19 @@ export class Transport implements ITransport {
     });
   }
 
-  signBuildBroadcast(
+  // Does the private key decoding from hex, sign message,
+  // build transaction to broadcast
+  broadcast(
     msg: any,
     privKeyHex: string,
     seq: number
-  ): Promise<ResultBroadcastTxCommit> {}
+  ): Promise<ResultBroadcastTxCommit> {
+    // private key from hex
+
+    // signmsg
+    const signMsg = encodeSignMsg(msg, this._chainId, seq);
+    // sign to get signature
+    // build tx
+    // return broadcast
+  }
 }

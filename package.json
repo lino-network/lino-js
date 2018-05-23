@@ -2,6 +2,7 @@
   "name": "lino-js",
   "version": "1.0.0",
   "description": "",
+  "typings": "lino.d.ts",
   "main": "dist/lino-js.cjs.js",
   "module": "dist/lino-js.esm.js",
   "browser": "dist/lino-js.umd.js",
@@ -41,7 +42,10 @@
     "pretest": "npm run build"
   },
   "lint-staged": {
-    "*.{js,md},{src,test}/**/*.{ts,js,json,html,md}": ["prettier --write", "git add"]
+    "*.{js,md},{src,test}/**/*.{ts,js,json,html,md}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "prettier": {
     "tabWidth": 2,
