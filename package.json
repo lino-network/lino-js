@@ -22,6 +22,7 @@
     "http-server": "^0.11.1",
     "mocha": "^5.2.0",
     "mochawesome": "^3.0.2",
+    "prettier": "^1.12.1",
     "rollup": "^0.59.1",
     "rollup-plugin-commonjs": "^9.1.3",
     "rollup-plugin-node-resolve": "^3.3.0",
@@ -32,15 +33,24 @@
     "build": "npm run bundle",
     "bundle": "rollup -c",
     "dev": "rollup -c -w",
+    "prettier": "prettier --write '{src,test}/**/*.ts'",
     "test": "mocha",
     "test:browser": "open test/browser/test.html",
     "pretest": "npm run build"
+  },
+  "prettier": {
+    "tabWidth": 2,
+    "singleQuote": true,
+    "parser": "typescript"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lino-network/lino-js.git"
   },
-  "author": "Thomas Wang <wangxgwxg@gmail.com>",
+  "maintainers": [
+    {"name": "Thomas Wang", "email": "wangxgwxg@gmail.com", "url": "https://github.com/xg-wang"},
+    {"name": "Zhimao Liu", "email": "zhimao_liu@icloud.com", "url": "https://github.com/ZhimaoL"}
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/lino-network/lino-js/issues"

@@ -11,129 +11,220 @@ export default class Query {
   // validator related query
   getAllValidators(): Promise<AllValidators | null> {
     const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
-    return this._transport.query<AllValidators>(Keys.getValidatorListKey(), ValidatorKVStoreKey);
+    return this._transport.query<AllValidators>(
+      Keys.getValidatorListKey(),
+      ValidatorKVStoreKey
+    );
   }
 
   getValidator(username: string): Promise<Validator | null> {
     const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
-    return this._transport.query<Validator>(Keys.getValidatorKey(username), ValidatorKVStoreKey);
+    return this._transport.query<Validator>(
+      Keys.getValidatorKey(username),
+      ValidatorKVStoreKey
+    );
   }
 
   // account related query
   getAccountMeta(username: string): Promise<AccountMeta | null> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<AccountMeta>(Keys.getAccountMetaKey(username), AccountKVStoreKey);
+    return this._transport.query<AccountMeta>(
+      Keys.getAccountMetaKey(username),
+      AccountKVStoreKey
+    );
   }
 
   getAccountBank(address: string): Promise<AccountBank | null> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<AccountBank>(Keys.getAccountBankKey(address), AccountKVStoreKey);
+    return this._transport.query<AccountBank>(
+      Keys.getAccountBankKey(address),
+      AccountKVStoreKey
+    );
   }
 
   getAccountInfo(username: string): Promise<AccountInfo | null> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<AccountInfo>(Keys.getAccountInfoKey(username), AccountKVStoreKey);
+    return this._transport.query<AccountInfo>(
+      Keys.getAccountInfoKey(username),
+      AccountKVStoreKey
+    );
   }
 
   getGrantList(username: string): Promise<GrantKeyList | null> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<GrantKeyList>(Keys.getGrantKeyListKey(username), AccountKVStoreKey);
+    return this._transport.query<GrantKeyList>(
+      Keys.getGrantKeyListKey(username),
+      AccountKVStoreKey
+    );
   }
 
   getReward(username: string): Promise<Reward | null> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<Reward>(Keys.getRewardKey(username), AccountKVStoreKey);
+    return this._transport.query<Reward>(
+      Keys.getRewardKey(username),
+      AccountKVStoreKey
+    );
   }
 
   getRelationship(me: string, other: string): Promise<Relationship | null> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<Relationship>(Keys.getRelationshipKey(me, other), AccountKVStoreKey);
+    return this._transport.query<Relationship>(
+      Keys.getRelationshipKey(me, other),
+      AccountKVStoreKey
+    );
   }
 
-  getFollowerMeta(me: string, myFollower: string): Promise<FollowerMeta | null> {
+  getFollowerMeta(
+    me: string,
+    myFollower: string
+  ): Promise<FollowerMeta | null> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<FollowerMeta>(Keys.getFollowerKey(me, myFollower), AccountKVStoreKey);
+    return this._transport.query<FollowerMeta>(
+      Keys.getFollowerKey(me, myFollower),
+      AccountKVStoreKey
+    );
   }
 
-  getFollowingMeta(me: string, myFollowing: string): Promise<FollowingMeta | null> {
+  getFollowingMeta(
+    me: string,
+    myFollowing: string
+  ): Promise<FollowingMeta | null> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<FollowingMeta>(Keys.getFollowingKey(me, myFollowing), AccountKVStoreKey);
+    return this._transport.query<FollowingMeta>(
+      Keys.getFollowingKey(me, myFollowing),
+      AccountKVStoreKey
+    );
   }
 
   // post related query
-  getPostComment(author: string, postID: string, commentPostKey: string): Promise<Comment | null> {
+  getPostComment(
+    author: string,
+    postID: string,
+    commentPostKey: string
+  ): Promise<Comment | null> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<Comment>(Keys.getPostCommentKey(PostKey, commentPostKey), PostKVStoreKey);
+    return this._transport.query<Comment>(
+      Keys.getPostCommentKey(PostKey, commentPostKey),
+      PostKVStoreKey
+    );
   }
 
-  getPostView(author: string, postID: string, viewUser: string): Promise<View | null> {
+  getPostView(
+    author: string,
+    postID: string,
+    viewUser: string
+  ): Promise<View | null> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<View>(Keys.getPostViewKey(PostKey, viewUser), PostKVStoreKey);
+    return this._transport.query<View>(
+      Keys.getPostViewKey(PostKey, viewUser),
+      PostKVStoreKey
+    );
   }
 
-  getPostDonation(author: string, postID: string, donateUser: string): Promise<Donation | null> {
+  getPostDonation(
+    author: string,
+    postID: string,
+    donateUser: string
+  ): Promise<Donation | null> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<Donation>(Keys.getPostDonationKey(PostKey, donateUser), PostKVStoreKey);
+    return this._transport.query<Donation>(
+      Keys.getPostDonationKey(PostKey, donateUser),
+      PostKVStoreKey
+    );
   }
 
-  getPostReportOrUpvote(author: string, postID: string, user: string): Promise<ReportOrUpvote | null> {
+  getPostReportOrUpvote(
+    author: string,
+    postID: string,
+    user: string
+  ): Promise<ReportOrUpvote | null> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<ReportOrUpvote>(Keys.getPostCommentKey(PostKey, user), PostKVStoreKey);
+    return this._transport.query<ReportOrUpvote>(
+      Keys.getPostCommentKey(PostKey, user),
+      PostKVStoreKey
+    );
   }
 
   getPostInfo(author: string, postID: string): Promise<PostInfo | null> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<PostInfo>(Keys.getPostInfoKey(PostKey), PostKVStoreKey);
+    return this._transport.query<PostInfo>(
+      Keys.getPostInfoKey(PostKey),
+      PostKVStoreKey
+    );
   }
 
   getPostMeta(author: string, postID: string): Promise<PostMeta | null> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<PostMeta>(Keys.getPostMetaKey(PostKey), PostKVStoreKey);
+    return this._transport.query<PostMeta>(
+      Keys.getPostMetaKey(PostKey),
+      PostKVStoreKey
+    );
   }
 
   // vote related query
   getDelegation(voter: string, delegator: string): Promise<Delegation | null> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-    return this._transport.query<Delegation>(Keys.getDelegationKey(voter, delegator), VoteKVStoreKey);
+    return this._transport.query<Delegation>(
+      Keys.getDelegationKey(voter, delegator),
+      VoteKVStoreKey
+    );
   }
 
   getVoter(voterName: string): Promise<Voter | null> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-    return this._transport.query<Voter>(Keys.getVoterKey(voterName), VoteKVStoreKey);
+    return this._transport.query<Voter>(
+      Keys.getVoterKey(voterName),
+      VoteKVStoreKey
+    );
   }
 
   // developer related query
   getDeveloper(developerName: string): Promise<Developer | null> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
-    return this._transport.query<Developer>(Keys.getDeveloperKey(developerName), DeveloperKVStoreKey);
+    return this._transport.query<Developer>(
+      Keys.getDeveloperKey(developerName),
+      DeveloperKVStoreKey
+    );
   }
 
   getDevelopers(): Promise<DeveloperList | null> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
-    return this._transport.query<DeveloperList>(Keys.getDeveloperListKey(), DeveloperKVStoreKey);
+    return this._transport.query<DeveloperList>(
+      Keys.getDeveloperListKey(),
+      DeveloperKVStoreKey
+    );
   }
 
   // infra related query
   getInfraProvider(providerName: string): Promise<InfraProvider | null> {
     const InfraKVStoreKey = Keys.KVSTOREKEYS.InfraKVStoreKey;
-    return this._transport.query<InfraProvider>(Keys.getInfraProviderKey(providerName), InfraKVStoreKey);
+    return this._transport.query<InfraProvider>(
+      Keys.getInfraProviderKey(providerName),
+      InfraKVStoreKey
+    );
   }
 
   getInfraProviders(): Promise<InfraProviderList | null> {
     const InfraKVStoreKey = Keys.KVSTOREKEYS.InfraKVStoreKey;
-    return this._transport.query<InfraProviderList>(Keys.getInfraProviderListKey(), InfraKVStoreKey);
+    return this._transport.query<InfraProviderList>(
+      Keys.getInfraProviderListKey(),
+      InfraKVStoreKey
+    );
   }
 
   // proposal related query
   getProposalList(): Promise<ProposalList | null> {
     const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
-    return this._transport.query<ProposalList>(Keys.getProposalListKey(), ProposalKVStoreKey);
+    return this._transport.query<ProposalList>(
+      Keys.getProposalListKey(),
+      ProposalKVStoreKey
+    );
   }
 }
 
@@ -165,7 +256,6 @@ export interface ABCIValidator {
   PubKey: string;
   Power: number;
 }
-
 
 export interface Validator {
   abci: ABCIValidator;

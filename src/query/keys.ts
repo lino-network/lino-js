@@ -15,52 +15,51 @@ namespace Keys {
     ProposalKVStoreKey: 'proposal'
   };
   const _KEYS = {
-    validatorListSubstore: "01",
-    validatorSubstore: "00",
+    validatorListSubstore: '01',
+    validatorSubstore: '00',
 
-    delegatorSubstore: "00",
-    voterSubstore: "01",
-    voteSubstore: "02",
-    referenceListSubStore: "03",
+    delegatorSubstore: '00',
+    voterSubstore: '01',
+    voteSubstore: '02',
+    referenceListSubStore: '03',
 
-    proposalSubstore: "00",
-    proposalListSubStore: "01",
+    proposalSubstore: '00',
+    proposalListSubStore: '01',
 
-    developerSubstore: "00",
-    developerListSubstore: "01",
+    developerSubstore: '00',
+    developerListSubstore: '01',
 
-    infraProviderSubstore: "00",
-    infraProviderListSubstore: "01",
+    infraProviderSubstore: '00',
+    infraProviderListSubstore: '01',
 
-    accountInfoSubstore: "00",
-    accountBankSubstore: "01",
-    accountMetaSubstore: "02",
-    accountFollowerSubstore: "03",
-    accountFollowingSubstore: "04",
-    accountRewardSubstore: "05",
-    accountPendingStakeQueueSubstore: "06",
-    accountRelationshipSubstore: "07",
-    accountGrantListSubstore: "08",
+    accountInfoSubstore: '00',
+    accountBankSubstore: '01',
+    accountMetaSubstore: '02',
+    accountFollowerSubstore: '03',
+    accountFollowingSubstore: '04',
+    accountRewardSubstore: '05',
+    accountPendingStakeQueueSubstore: '06',
+    accountRelationshipSubstore: '07',
+    accountGrantListSubstore: '08',
 
-    postInfoSubStore: "00",
-    postMetaSubStore: "01",
-    postLikeSubStore: "02",
-    postReportOrUpvoteSubStore: "03",
-    postCommentSubStore: "04",
-    postViewsSubStore: "05",
-    postDonationsSubStore: "06",
+    postInfoSubStore: '00',
+    postMetaSubStore: '01',
+    postLikeSubStore: '02',
+    postReportOrUpvoteSubStore: '03',
+    postCommentSubStore: '04',
+    postViewsSubStore: '05',
+    postDonationsSubStore: '06',
 
-    allocationParamSubStore: "00",
-    infraInternalAllocationParamSubStore: "01",
-    evaluateOfContentValueParamSubStore: "02",
-    developerParamSubStore: "03",
-    voteParamSubStore: "04",
-    proposalParamSubStore: "05",
-    validatorParamSubStore: "06",
-    coinDayParamSubStore: "07",
-    bandwidthParamSubStore: "08",
-    accountParamSubstore: "09",
-
+    allocationParamSubStore: '00',
+    infraInternalAllocationParamSubStore: '01',
+    evaluateOfContentValueParamSubStore: '02',
+    developerParamSubStore: '03',
+    voteParamSubStore: '04',
+    proposalParamSubStore: '05',
+    validatorParamSubStore: '06',
+    coinDayParamSubStore: '07',
+    bandwidthParamSubStore: '08',
+    accountParamSubstore: '09'
   };
 
   // validator related
@@ -76,7 +75,7 @@ namespace Keys {
   // vote related
   export function getVotePrefix(id: string): string {
     const idHex = ByteBuffer.fromUTF8(id).toHex();
-    const sepHex = ByteBuffer.fromUTF8("/").toHex();
+    const sepHex = ByteBuffer.fromUTF8('/').toHex();
     return _KEYS.voteSubstore.concat(idHex).concat(sepHex);
   }
 
@@ -87,7 +86,7 @@ namespace Keys {
 
   export function getDelegatorPrefix(me: string): string {
     const meHex = ByteBuffer.fromUTF8(me).toHex();
-    const sepHex = ByteBuffer.fromUTF8("/").toHex();
+    const sepHex = ByteBuffer.fromUTF8('/').toHex();
     return _KEYS.delegatorSubstore.concat(meHex).concat(sepHex);
   }
 
@@ -123,153 +122,160 @@ namespace Keys {
 
   // account related
   export function getAccountInfoKey(accKey: string): string {
-    return ""
+    return '';
   }
 
   export function getAccountBankKey(address: string): string {
-    return ""
+    return '';
   }
 
   export function getAccountMetaKey(accKey: string): string {
-    return ""
+    return '';
   }
 
   export function getGrantKeyListKey(address: string): string {
-    return ""
+    return '';
   }
 
   export function getRewardKey(accKey: string): string {
-    return ""
+    return '';
   }
 
   export function getRelationshipPrefix(me: string): string {
-    return ""
+    return '';
   }
 
   export function getRelationshipKey(me: string, other: string): string {
-    return ""
+    return '';
   }
 
   export function getFollowerPrefix(me: string): string {
-    return ""
+    return '';
   }
 
   export function getFollowingPrefix(accKey: string): string {
-    return ""
+    return '';
   }
 
   export function getFollowerKey(me: string, myFollower: string): string {
-    return ""
+    return '';
   }
 
   export function getFollowingKey(me: string, myFollowing: string): string {
-    return ""
+    return '';
   }
 
   // post related
   export function getPostInfoKey(postKey: string): string {
-    return ""
+    return '';
   }
 
   export function getPostKey(author: string, postID: string): string {
-    return ""
+    return '';
   }
 
   export function getPostMetaKey(postKey: string): string {
-    return ""
+    return '';
   }
 
   export function getPostLikePrefix(postKey: string): string {
-    return ""
+    return '';
   }
 
   export function getPostLikeKey(postKey: string, likeUser: string): string {
-    return ""
+    return '';
   }
 
   export function getPostReportOrUpvotePrefix(postKey: string): string {
-    return ""
+    return '';
   }
 
-  export function getPostReportOrUpvoteKey(postKey: string, user: string): string {
-    return ""
+  export function getPostReportOrUpvoteKey(
+    postKey: string,
+    user: string
+  ): string {
+    return '';
   }
 
   export function getPostViewPrefix(postKey: string): string {
-    return ""
+    return '';
   }
 
   export function getPostViewKey(postKey: string, viewUser: string): string {
-    return ""
+    return '';
   }
 
   export function getPostCommentPrefix(postKey: string): string {
-    return ""
+    return '';
   }
 
-  export function getPostCommentKey(postKey: string, commentPostKey: string): string {
-    return ""
+  export function getPostCommentKey(
+    postKey: string,
+    commentPostKey: string
+  ): string {
+    return '';
   }
 
   export function getPostDonationPrefix(postKey: string): string {
-    return ""
+    return '';
   }
 
-  export function getPostDonationKey(postKey: string, donateUser: string): string {
-    return ""
+  export function getPostDonationKey(
+    postKey: string,
+    donateUser: string
+  ): string {
+    return '';
   }
 
   // proposal related
   export function getProposalKey(proposalID: string): string {
-    return ""
+    return '';
   }
 
   export function getProposalListKey(): string {
-    return ""
+    return '';
   }
 
   // param related
   export function getEvaluateOfContentValueParamKey(): string {
-    return ""
+    return '';
   }
 
   export function getGlobalAllocationParamKey(): string {
-    return ""
+    return '';
   }
 
   export function getInfraInternalAllocationParamKey(): string {
-    return ""
+    return '';
   }
 
   export function getDeveloperParamKey(): string {
-    return ""
+    return '';
   }
 
   export function getVoteParamKey(): string {
-    return ""
+    return '';
   }
 
   export function getValidatorParamKey(): string {
-    return ""
+    return '';
   }
 
   export function getProposalParamKey(): string {
-    return ""
+    return '';
   }
 
   export function getCoinDayParamKey(): string {
-    return ""
+    return '';
   }
 
   export function getBandwidthParamKey(): string {
-    return ""
+    return '';
   }
 
   export function getAccountParamKey(): string {
-    return ""
+    return '';
   }
-
-
 }
 
 export default Keys;

@@ -31,11 +31,15 @@ export class Transport implements ITransport {
         throw new Error(`Empty response\n`);
       }
       if (result.response.value == null) {
-        throw new Error(`Query failed: ${result.response.code}\n${result.response.log}`);
+        throw new Error(
+          `Query failed: ${result.response.code}\n${result.response.log}`
+        );
       }
 
-      const jsonStr = decodeURIComponent(escape(window.atob(result.response.value)))
-      const obj = JSON.parse(jsonStr)
+      const jsonStr = decodeURIComponent(
+        escape(window.atob(result.response.value))
+      );
+      const obj = JSON.parse(jsonStr);
       return obj as T;
     });
   }
