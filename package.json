@@ -20,6 +20,8 @@
     "chai": "^4.1.2",
     "concurrently": "^3.5.1",
     "http-server": "^0.11.1",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.1.2",
     "mocha": "^5.2.0",
     "mochawesome": "^3.0.2",
     "prettier": "^1.12.1",
@@ -33,10 +35,13 @@
     "build": "npm run bundle",
     "bundle": "rollup -c",
     "dev": "rollup -c -w",
-    "prettier": "prettier --write '{src,test}/**/*.ts'",
+    "precommit": "lint-staged",
     "test": "mocha",
     "test:browser": "open test/browser/test.html",
     "pretest": "npm run build"
+  },
+  "lint-staged": {
+    "*.{js,md},{src,test}/**/*.{ts,js,json,html,md}": ["prettier --write", "git add"]
   },
   "prettier": {
     "tabWidth": 2,
@@ -48,8 +53,16 @@
     "url": "git+https://github.com/lino-network/lino-js.git"
   },
   "maintainers": [
-    {"name": "Thomas Wang", "email": "wangxgwxg@gmail.com", "url": "https://github.com/xg-wang"},
-    {"name": "Zhimao Liu", "email": "zhimao_liu@icloud.com", "url": "https://github.com/ZhimaoL"}
+    {
+      "name": "Thomas Wang",
+      "email": "wangxgwxg@gmail.com",
+      "url": "https://github.com/xg-wang"
+    },
+    {
+      "name": "Zhimao Liu",
+      "email": "zhimao_liu@icloud.com",
+      "url": "https://github.com/ZhimaoL"
+    }
   ],
   "license": "MIT",
   "bugs": {
