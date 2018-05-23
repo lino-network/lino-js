@@ -1,9 +1,15 @@
 //@ts-ignore
 import * as ByteBuffer from 'bytebuffer';
 import { Rpc } from './rpc';
+import { ResultBroadcastTxCommit } from '../broadcast/broadcast';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T | null>;
+  signBuildBroadcast(
+    msg: any,
+    privKeyHex: string,
+    seq: number
+  ): Promise<ResultBroadcastTxCommit>;
 }
 
 export interface ITransportOptions {
@@ -43,4 +49,10 @@ export class Transport implements ITransport {
       return obj as T;
     });
   }
+
+  signBuildBroadcast(
+    msg: any,
+    privKeyHex: string,
+    seq: number
+  ): Promise<ResultBroadcastTxCommit> {}
 }
