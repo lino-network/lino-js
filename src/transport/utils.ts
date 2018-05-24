@@ -1,6 +1,5 @@
+import elliptic from 'elliptic';
 import { Coin } from '../query';
-
-//import * as elliptic from 'elliptic';
 
 // TODO: for int64, maybe we should do extra check in proper place, or use string
 export interface StdFee {
@@ -62,8 +61,8 @@ export function encodeTx(
   };
 
   const stdSig: StdSignature = {
-    pub_key: <IPubKey>{ type: 'AC26791624DE60', value: pubKey },
-    signature: <ISignature>{ type: '6BF5903DA1DB28', value: sig },
+    pub_key: { type: 'AC26791624DE60', value: pubKey },
+    signature: { type: '6BF5903DA1DB28', value: sig },
     sequence: seq
   };
 
@@ -92,6 +91,6 @@ export function encodeSignMsg(
 }
 
 export function getPrivKeyFromHex(privHex: string): any {
-  // const ec = new EdDSA('ed25519');
+  var ec = new elliptic.ec('secp256k1');
   return;
 }

@@ -617,9 +617,9 @@ elegant-spinner@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/elegant-spinner/-/elegant-spinner-1.0.1.tgz#db043521c95d7e303fd8f345bedc3349cfb0729e"
 
-elliptic@^6.4.0:
+"elliptic@https://github.com/xg-wang/elliptic":
   version "6.4.0"
-  resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.4.0.tgz#cac9af8762c85836187003c8dfe193e5e2eae5df"
+  resolved "https://github.com/xg-wang/elliptic#d477b311b852116a99388446e9b4e80de956b587"
   dependencies:
     bn.js "^4.4.0"
     brorand "^1.0.1"

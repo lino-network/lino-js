@@ -1,7 +1,7 @@
 //@ts-ignore
 import * as ByteBuffer from 'bytebuffer';
 import { Rpc, ResultBroadcastTxCommit } from './rpc';
-import { encodeSignMsg, encodeTx } from './utils';
+import { encodeSignMsg, encodeTx, getPrivKeyFromHex } from './utils';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T | null>;
@@ -58,6 +58,7 @@ export class Transport implements ITransport {
     seq: number
   ): Promise<ResultBroadcastTxCommit> {
     // private key from hex
+    getPrivKeyFromHex(privKeyHex);
 
     // signmsg
     const signMsg = encodeSignMsg(msg, this._chainId, seq);

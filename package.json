@@ -11,7 +11,7 @@
     "bytebuffer": "^5.0.1",
     "cross-fetch": "^2.2.0",
     "debug": "^3.1.0",
-    "elliptic": "^6.4.0",
+    "elliptic": "https://github.com/xg-wang/elliptic",
     "es6-promise": "^4.2.4",
     "long": "^4.0.0"
   },
