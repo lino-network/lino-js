@@ -1,5 +1,6 @@
 import { Coin } from '../query';
 import shajs from 'sha.js';
+import ByteBuffer from 'bytebuffer';
 
 // TODO: for int64, maybe we should do extra check in proper place, or use string
 export interface StdFee {
@@ -51,8 +52,8 @@ export const getZeroFee: () => StdFee = () => ({
 export function encodeTx(
   msg: any,
   msgType: string,
-  pubKey: string,
-  sig: string,
+  pubKeyHex: string,
+  sigDERHex: string,
   seq: number
 ): string {
   const stdMsg: StdMsg = {
@@ -63,9 +64,12 @@ export function encodeTx(
   const stdSig: StdSignature = {
     pub_key: {
       type: 'F8CCEAEB5AE980',
-      value: 'AsUp4QNAe0vOuJNa5ZFuTi6bC5vz0ZmKk2yKADWmjEXD'
+      value: ByteBuffer.fromHex(pubKeyHex).toString('base64')
     },
-    signature: { type: '6D1EA416E1FEE8', value: sig },
+    signature: {
+      type: '6D1EA416E1FEE8',
+      value: ByteBuffer.fromHex(sigDERHex).toString('base64')
+    },
     sequence: seq
   };
 
@@ -75,7 +79,6 @@ export function encodeTx(
     fee: getZeroFee()
   };
   const jsonStr = JSON.stringify(stdTx);
-  console.log(jsonStr);
   return btoa(jsonStr);
 }
 
@@ -90,16 +93,8 @@ export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
   };
 
   const jsonStr = JSON.stringify(stdSignMsg);
-  console.log(jsonStr);
-
-  console.log('here');
   const signMsgHash = shajs('sha256')
     .update(jsonStr)
     .digest();
-  console.log(
-    shajs('sha256')
-      .update(jsonStr)
-      .digest()
-  );
   return signMsgHash;
 }

@@ -2,6 +2,8 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import typescript from 'rollup-plugin-typescript2';
 import pkg from './package.json';
+import builtins from 'rollup-plugin-node-builtins';
+import globals from 'rollup-plugin-node-globals';
 
 export default [
   // browser-friendly UMD build
@@ -13,10 +15,12 @@ export default [
       format: 'umd'
     },
     plugins: [
+      builtins(),
+      globals(),
+      commonjs(),
       resolve({
         browser: true
       }),
-      commonjs(),
       typescript({
         tsconfig: 'tsconfig.json'
       })
@@ -33,8 +37,14 @@ export default [
     input: 'src/index.ts',
     external: Object.keys(pkg.dependencies),
     output: [
-      { file: pkg.main, format: 'cjs' },
-      { file: pkg.module, format: 'es' }
+      {
+        file: pkg.main,
+        format: 'cjs'
+      },
+      {
+        file: pkg.module,
+        format: 'es'
+      }
     ],
     plugins: [
       resolve(),

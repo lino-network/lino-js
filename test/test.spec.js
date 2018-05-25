@@ -42,13 +42,8 @@ function addSuite(envName) {
       });
 
       const broadcast = lino.broadcast;
-      // broadcast.transfer("Lino", "12", "1234", "100000", "memo", "priv").then(v => {
-      //   console.log(v)
-      //   expect(v).to.exist;
-      // });
-      lino.genPrivKeyHex();
       const testPrivHex =
-        'bcdfa6724b79e3a45433ceeedabacff552007227f0f435bd2f1821fd10b56e5e';
+        '4c6139712289408fc6d580c076ead93d763b7605e110edd55326874238839d17';
       broadcast.voterDeposit('Lino', '123456', testPrivHex).then(v => {
         console.log(v);
         expect(v).to.exist;

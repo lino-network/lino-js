@@ -1,7 +1,7 @@
 import Query from './query';
 import Broadcast from './broadcast';
 import { ITransport, Transport, ITransportOptions } from './transport';
-//import elliptic from 'elliptic';
+import elliptic from 'elliptic';
 
 export default class LINO {
   private _options: any;
@@ -15,7 +15,7 @@ export default class LINO {
     this._transport = new Transport(opt);
     this._query = new Query(this._transport);
     this._broadcast = new Broadcast(this._transport);
-    //this._ec = new elliptic.ec('secp256k1');
+    this._ec = new elliptic.ec('secp256k1');
   }
 
   get query(): Query {
@@ -27,11 +27,6 @@ export default class LINO {
   }
 
   genPrivKeyHex() {
-    ///return this._ec.genKeyPair().getPrivate('hex');
-    // var priv = kp.getPrivate('hex');
-    // var pub = kp.getPublic('hex')
-    // console.log(priv);
-    // console.log(pub);
-    //return priv;
+    return this._ec.genKeyPair().getPrivate('hex');
   }
 }
