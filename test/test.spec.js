@@ -37,14 +37,19 @@ function addSuite(envName) {
     });
 
     it('broadcast', async function() {
-      const broadcast = new LINO({
+      const lino = new LINO({
         nodeUrl: 'http://localhost:46657/'
-      }).broadcast;
+      });
+
+      const broadcast = lino.broadcast;
       // broadcast.transfer("Lino", "12", "1234", "100000", "memo", "priv").then(v => {
       //   console.log(v)
       //   expect(v).to.exist;
       // });
-      broadcast.voterDeposit('Lino', '').then(v => {
+      lino.genPrivKeyHex();
+      const testPrivHex =
+        'bcdfa6724b79e3a45433ceeedabacff552007227f0f435bd2f1821fd10b56e5e';
+      broadcast.voterDeposit('Lino', '123456', testPrivHex).then(v => {
         console.log(v);
         expect(v).to.exist;
       });
