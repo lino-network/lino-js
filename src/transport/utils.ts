@@ -1,9 +1,9 @@
-import elliptic from 'elliptic';
 import { Coin } from '../query';
+import shajs from 'sha.js';
 
 // TODO: for int64, maybe we should do extra check in proper place, or use string
 export interface StdFee {
-  Amount: any;
+  Amount: number[];
   Gas: number;
 }
 
@@ -29,7 +29,7 @@ export interface StdSignMsg {
   sequences: number[];
   fee_bytes: string;
   msg_bytes: string;
-  alt_bytes?: string;
+  alt_bytes: any;
 }
 
 export interface IPubKey {
@@ -44,7 +44,7 @@ export interface ISignature {
 
 // return a new zero fee object
 export const getZeroFee: () => StdFee = () => ({
-  Amount: null,
+  Amount: [],
   Gas: 0
 });
 
@@ -61,8 +61,11 @@ export function encodeTx(
   };
 
   const stdSig: StdSignature = {
-    pub_key: { type: 'AC26791624DE60', value: pubKey },
-    signature: { type: '6BF5903DA1DB28', value: sig },
+    pub_key: {
+      type: 'F8CCEAEB5AE980',
+      value: 'AsUp4QNAe0vOuJNa5ZFuTi6bC5vz0ZmKk2yKADWmjEXD'
+    },
+    signature: { type: '6D1EA416E1FEE8', value: sig },
     sequence: seq
   };
 
@@ -71,26 +74,32 @@ export function encodeTx(
     signatures: [stdSig],
     fee: getZeroFee()
   };
-
-  return btoa(JSON.stringify(stdTx));
+  const jsonStr = JSON.stringify(stdTx);
+  console.log(jsonStr);
+  return btoa(jsonStr);
 }
 
-export function encodeSignMsg(
-  msg: any,
-  chainId: string,
-  seq: number
-): StdSignMsg {
+export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
   const fee = getZeroFee();
   const stdSignMsg: StdSignMsg = {
     chain_id: chainId,
     sequences: [seq],
-    fee_bytes: JSON.stringify(fee),
-    msg_bytes: JSON.stringify(msg)
+    fee_bytes: btoa(JSON.stringify(fee)),
+    msg_bytes: btoa(JSON.stringify(msg)),
+    alt_bytes: null
   };
-  return stdSignMsg;
-}
 
-export function getPrivKeyFromHex(privHex: string): any {
-  var ec = new elliptic.ec('secp256k1');
-  return;
+  const jsonStr = JSON.stringify(stdSignMsg);
+  console.log(jsonStr);
+
+  console.log('here');
+  const signMsgHash = shajs('sha256')
+    .update(jsonStr)
+    .digest();
+  console.log(
+    shajs('sha256')
+      .update(jsonStr)
+      .digest()
+  );
+  return signMsgHash;
 }

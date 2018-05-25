@@ -1,7 +1,10 @@
 //@ts-ignore
 import * as ByteBuffer from 'bytebuffer';
 import { Rpc, ResultBroadcastTxCommit } from './rpc';
-import { encodeSignMsg, encodeTx, getPrivKeyFromHex } from './utils';
+import { encodeSignMsg, encodeTx } from './utils';
+//////import elliptic from 'elliptic';
+import * as bitcoin from 'bitcoinjs-lib';
+//import { encode } from 'bitcoinjs-lib/encode';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T | null>;
@@ -19,7 +22,7 @@ export interface ITransportOptions {
 
 export class Transport implements ITransport {
   // This will be hard coded later
-  private _chainId = 'test-chain-jrTild';
+  private _chainId = 'test-chain-ro8JnL';
   private _rpc: Rpc;
   private _cdc = null;
 
@@ -58,17 +61,24 @@ export class Transport implements ITransport {
     seq: number
   ): Promise<ResultBroadcastTxCommit> {
     // private key from hex
-    getPrivKeyFromHex(privKeyHex);
-
+    var key = bitcoin.ECPair.fromWIF(privKeyHex);
+    //var key = ec.keyFromPrivate(privKeyHex, 'hex');
     // signmsg
-    const signMsg = encodeSignMsg(msg, this._chainId, seq);
+    const signMsgHash = encodeSignMsg(msg, this._chainId, seq);
     // sign to get signature
+    const sig = key.sign(signMsgHash);
+    //const sigDER = sig.toDER('hex');
+    console.log('sig is ');
+    console.log(sig);
+    //console.log(sig.toDER('hex').length);
     // build tx
     const tx = encodeTx(
       msg,
       msgType,
-      '7Qo5AtmHEOufOenbfKlaMFEA9AHSXI4wwOSZEqVWjP0=',
-      'UxcSvGiVvNk4fG3aCSdX7v+xrQ3PZtDv9ohDVeRJCcBnyIyRw1I1jsIgVboJDWSP5cF21e1RQpDLEr+veftcDQ==',
+      //btoa(key.getPublic('hex')),
+      '123',
+      //btoa(sigDER),
+      '123',
       0
     );
     // return broadcast
