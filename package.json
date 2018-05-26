@@ -45,15 +45,14 @@
     "pretest": "npm run build"
   },
   "lint-staged": {
-    "*.{js,md},{src,test}/**/*.{ts,js,json,html,md}": [
+    "*.{js,json,md},{src,test}/**/*.{ts,js,json,html,md}": [
       "prettier --write",
       "git add"
     ]
   },
   "prettier": {
     "tabWidth": 2,
-    "singleQuote": true,
-    "parser": "typescript"
+    "singleQuote": true
   },
   "repository": {
     "type": "git",
