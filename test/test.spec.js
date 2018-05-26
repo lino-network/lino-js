@@ -1,14 +1,16 @@
+const NODE_URL = 'http://34.235.130.1:46657/';
+
 function addSuite(envName) {
   describe('lino', function() {
     it('remote nodeUrl works', async function() {
-      const result = await fetch(
-        'http://34.235.130.1:46657/block?height=1'
-      ).then(resp => resp.json());
+      const result = await fetch(`${NODE_URL}block?height=1`).then(resp =>
+        resp.json()
+      );
       expect(result).to.exist;
     });
     it('query', async function() {
       const query = new LINO({
-        nodeUrl: 'http://34.235.130.1:46657/'
+        nodeUrl: NODE_URL
       }).query;
       query.getAllValidators().then(v => {
         console.log(v);
@@ -38,7 +40,7 @@ function addSuite(envName) {
 
     it('broadcast', async function() {
       const lino = new LINO({
-        nodeUrl: 'http://34.235.130.1:46657/'
+        nodeUrl: NODE_URL
       });
 
       const broadcast = lino.broadcast;
