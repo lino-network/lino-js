@@ -380,7 +380,7 @@ export default class Broadcast {
 
   private _broadcastTransaction(msg: any, msgType: string, privKeyHex: string) {
     // SignBuildBroadcast
-    return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, 0);
+    return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, 1);
   }
 }
 

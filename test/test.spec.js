@@ -1,14 +1,14 @@
 function addSuite(envName) {
   describe('lino', function() {
     it('remote nodeUrl works', async function() {
-      const result = await fetch('http://localhost:46657/block?height=1').then(
-        resp => resp.json()
-      );
+      const result = await fetch(
+        'http://34.235.130.1:46657/block?height=1'
+      ).then(resp => resp.json());
       expect(result).to.exist;
     });
     it('query', async function() {
       const query = new LINO({
-        nodeUrl: 'http://localhost:46657/'
+        nodeUrl: 'http://34.235.130.1:46657/'
       }).query;
       query.getAllValidators().then(v => {
         console.log(v);
@@ -38,12 +38,12 @@ function addSuite(envName) {
 
     it('broadcast', async function() {
       const lino = new LINO({
-        nodeUrl: 'http://localhost:46657/'
+        nodeUrl: 'http://34.235.130.1:46657/'
       });
 
       const broadcast = lino.broadcast;
       const testPrivHex =
-        '8b3d5b28a45586eb3c498e953ecdea3a8590ee56a0b4dbbae52601ec069d81cf';
+        'ef105137f5ce2c6a6d4faf0840b22692e1c42bbdb779960f72983ae09b4de22a';
       broadcast.voterDeposit('Lino', '123456', testPrivHex).then(v => {
         console.log(v);
         expect(v).to.exist;
