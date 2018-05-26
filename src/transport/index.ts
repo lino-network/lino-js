@@ -1,5 +1,4 @@
-//@ts-ignore
-import * as ByteBuffer from 'bytebuffer';
+import ByteBuffer from 'bytebuffer';
 import { Rpc, ResultBroadcastTxCommit } from './rpc';
 import { encodeSignMsg, encodeTx } from './utils';
 import elliptic from 'elliptic';
@@ -44,7 +43,7 @@ export class Transport implements ITransport {
         );
       }
 
-      const jsonStr = atob(result.response.value);
+      const jsonStr = ByteBuffer.atob(result.response.value);
       const obj = JSON.parse(jsonStr);
       return obj as T;
     });

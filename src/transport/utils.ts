@@ -79,7 +79,7 @@ export function encodeTx(
     fee: getZeroFee()
   };
   const jsonStr = JSON.stringify(stdTx);
-  return btoa(jsonStr);
+  return ByteBuffer.btoa(jsonStr);
 }
 
 export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
@@ -87,8 +87,8 @@ export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
   const stdSignMsg: StdSignMsg = {
     chain_id: chainId,
     sequences: [seq],
-    fee_bytes: btoa(JSON.stringify(fee)),
-    msg_bytes: btoa(JSON.stringify(msg)),
+    fee_bytes: ByteBuffer.btoa(JSON.stringify(fee)),
+    msg_bytes: ByteBuffer.btoa(JSON.stringify(msg)),
     alt_bytes: null
   };
 
