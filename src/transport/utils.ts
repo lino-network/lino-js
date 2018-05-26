@@ -63,11 +63,11 @@ export function encodeTx(
 
   const stdSig: StdSignature = {
     pub_key: {
-      type: 'F8CCEAEB5AE980',
+      type: _TYPE.PubKeySecp256k1,
       value: ByteBuffer.fromHex(pubKeyHex).toString('base64')
     },
     signature: {
-      type: '6D1EA416E1FEE8',
+      type: _TYPE.SignatureKeySecp256k1,
       value: ByteBuffer.fromHex(sigDERHex).toString('base64')
     },
     sequence: seq
@@ -98,3 +98,14 @@ export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
     .digest();
   return signMsgHash;
 }
+
+const _TYPE = {
+  PubKeyEd25519: 'AC26791624DE60',
+  PubKeySecp256k1: 'F8CCEAEB5AE980',
+
+  PrivKeyEd25519: '954568A3288910',
+  PrivKeySecp256k1: '019E82E1B0F798',
+
+  SignatureKeyEd25519: '6BF5903DA1DB28',
+  SignatureKeySecp256k1: '6D1EA416E1FEE8'
+};

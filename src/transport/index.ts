@@ -20,7 +20,7 @@ export interface ITransportOptions {
 
 export class Transport implements ITransport {
   // This will be hard coded later
-  private _chainId = 'test-chain-Q1oFRz';
+  private _chainId = 'test-chain-Hpu9SU';
   private _rpc: Rpc;
   private _cdc = null;
 

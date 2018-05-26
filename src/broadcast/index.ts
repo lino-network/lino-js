@@ -77,30 +77,6 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ClaimMsgType, privKeyHex);
   }
 
-  savingToChecking(username: string, amount: string, privKeyHex: string) {
-    const msg: SavingToCheckingMsg = {
-      username,
-      amount
-    };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.SavingToCheckingMsgType,
-      privKeyHex
-    );
-  }
-
-  checkingToSaving(username: string, amount: string, privKeyHex: string) {
-    const msg: CheckingToSavingMsg = {
-      username,
-      amount
-    };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.CheckingToSavingMsgType,
-      privKeyHex
-    );
-  }
-
   // post related
   like(
     username: string,
@@ -404,7 +380,7 @@ export default class Broadcast {
 
   private _broadcastTransaction(msg: any, msgType: string, privKeyHex: string) {
     // SignBuildBroadcast
-    return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, 3);
+    return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, 0);
   }
 }
 
@@ -442,16 +418,6 @@ export interface RecoverMsg {
   username: string;
   new_post_public_key: string;
   new_transaction_public_key: string;
-}
-
-export interface SavingToCheckingMsg {
-  username: string;
-  amount: string;
-}
-
-export interface CheckingToSavingMsg {
-  username: string;
-  amount: string;
 }
 
 // post related messages
@@ -599,38 +565,36 @@ export interface ProviderReportMsg {
 }
 
 const _MSGTYPE = {
-  RegisterMsgType: '9E6F93EDF45140',
-  TransferMsgType: '9E6F93EDF45140',
-  FollowMsgType: '9E6F93EDF45140',
-  UnfollowMsgType: '9E6F93EDF45140',
-  ClaimMsgType: '9E6F93EDF45140',
-  RecoverMsgType: '9E6F93EDF45140',
-  SavingToCheckingMsgType: '9E6F93EDF45140',
-  CheckingToSavingMsgType: '9E6F93EDF45140',
+  RegisterMsgType: '87780FA5DE6848',
+  TransferMsgType: '27F576CAFBB260',
+  FollowMsgType: 'A3CE0B6106CDB0',
+  UnfollowMsgType: '84F010638F0200',
+  ClaimMsgType: 'DD1B3C312CF7D8',
+  RecoverMsgType: 'EC3915F542E0F8',
 
-  CreatePostMsgType: '9E6F93EDF45140',
-  LikeMsgType: '9E6F93EDF45140',
-  DonateMsgType: '9E6F93EDF45140',
-  ReportOrUpvoteMsgType: '9E6F93EDF45140',
-  DeletePostMsgType: '9E6F93EDF45140',
-  ViewMsgType: '9E6F93EDF45140',
-  UpdatePostMsgType: '9E6F93EDF45140',
+  CreatePostMsgType: '72231043BC1800',
+  LikeMsgType: 'CAB2644828BCC0',
+  DonateMsgType: '9B3E2278234D08',
+  ReportOrUpvoteMsgType: '768472FB2FC620',
+  DeletePostMsgType: '3479D4D590AC68',
+  ViewMsgType: '2BCB43CBC8F6B0',
+  UpdatePostMsgType: 'CD493C6F19B7B0',
 
-  ValidatorDepositMsgType: '9E6F93EDF45140',
-  ValidatorWithdrawMsgType: '9E6F93EDF45140',
-  ValidatorRevokeMsgType: '9E6F93EDF45140',
+  ValidatorDepositMsgType: '917127FC7429D8',
+  ValidatorWithdrawMsgType: '32E51EDD228920',
+  ValidatorRevokeMsgType: '0E2B2E4A3441E0',
 
-  VoteMsgType: '9E6F93EDF45140',
+  VoteMsgType: 'AB274474A6AA80',
   VoterDepositMsgType: '9E6F93EDF45140',
-  VoterWithdrawMsgType: '9E6F93EDF45140',
-  VoterRevokeMsgType: '9E6F93EDF45140',
-  DelegateMsgType: '9E6F93EDF45140',
-  DelegatorWithdrawMsgType: '9E6F93EDF45140',
-  RevokeDelegationMsgType: '9E6F93EDF45140',
+  VoterWithdrawMsgType: '68E1FB898955A0',
+  VoterRevokeMsgType: 'D8C93E26BD1E58',
+  DelegateMsgType: '6F216E33C5CF98',
+  DelegatorWithdrawMsgType: 'A77E9D3A6EA3D8',
+  RevokeDelegationMsgType: 'C4D544FE5C83B0',
 
-  DeveloperRegisterMsgType: '9E6F93EDF45140',
-  DeveloperRevokeMsgType: '9E6F93EDF45140',
-  GrantDeveloperMsgType: '9E6F93EDF45140',
+  DeveloperRegisterMsgType: '4A2EC4E5253D78',
+  DeveloperRevokeMsgType: '94C5F456C3BAF8',
+  GrantDeveloperMsgType: '1CF286AA038278',
 
-  ProviderReportMsgType: '9E6F93EDF45140'
+  ProviderReportMsgType: '108D925A05BE70'
 };
