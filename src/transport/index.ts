@@ -1,7 +1,7 @@
 import ByteBuffer from 'bytebuffer';
 import { Rpc, ResultBroadcastTxCommit } from './rpc';
 import { encodeSignMsg, encodeTx } from './utils';
-import elliptic from 'elliptic';
+import { ec as EC } from 'elliptic';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T | null>;
@@ -44,8 +44,7 @@ export class Transport implements ITransport {
       }
 
       const jsonStr = ByteBuffer.atob(result.response.value);
-      const obj = JSON.parse(jsonStr);
-      return obj as T;
+      return JSON.parse(jsonStr) as T;
     });
   }
 
@@ -58,7 +57,7 @@ export class Transport implements ITransport {
     seq: number
   ): Promise<ResultBroadcastTxCommit> {
     // private key from hex
-    var ec = new elliptic.ec('secp256k1');
+    var ec = new EC('secp256k1');
     var key = ec.keyFromPrivate(privKeyHex, 'hex');
     // signmsg
     const signMsgHash = encodeSignMsg(msg, this._chainId, seq);

@@ -10,14 +10,18 @@ export default [
   {
     input: 'src/index.ts',
     output: {
-      name: 'LINO',
+      name: 'lino',
       file: pkg.browser,
       format: 'umd'
     },
     plugins: [
       builtins(),
       globals(),
-      commonjs(),
+      commonjs({
+        namedExports: {
+          'node_modules/elliptic/lib/elliptic.js': ['ec']
+        }
+      }),
       resolve({
         browser: true
       }),

@@ -1,3 +1,4 @@
-import LINO from './lino';
+import { LINO } from './lino';
+import * as UTILS from './util';
 
-export default LINO;
+export { LINO, UTILS };
