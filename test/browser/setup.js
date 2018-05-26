@@ -4,6 +4,9 @@ mocha.setup('bdd');
 // Add chai's expect to the global scope
 window.expect = chai.expect;
 
+window.LINO = lino.LINO;
+window.UTILS = lino.UTILS;
+
 // // Enable fake server
 // before(function() {
 //   this.server = sinon.createFakeServer({ autoRespond: true });

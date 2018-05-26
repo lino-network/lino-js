@@ -40,12 +40,13 @@
     "bundle": "rollup -c",
     "dev": "rollup -c -w",
     "precommit": "lint-staged",
-    "test": "mocha",
+    "test": "npm run test:node",
+    "test:node": "mocha test/node",
     "test:browser": "open test/browser/test.html",
     "pretest": "npm run build"
   },
   "lint-staged": {
-    "*.{js,json,md},{src,test}/**/*.{ts,js,json,html,md}": [
+    "*.{js,json,md},{src,test}/**/*.{ts,js,json,md}": [
       "prettier --write",
       "git add"
     ]

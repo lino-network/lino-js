@@ -2,7 +2,6 @@ const NODE_URL = 'http://34.235.130.1:46657/';
 
 function addSuite(envName) {
   describe('LINO', function() {
-    const LINO = lino.LINO;
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp =>
         resp.json()
@@ -55,7 +54,6 @@ function addSuite(envName) {
   });
 
   describe('UTILS', function() {
-    const UTILS = lino.UTILS;
     it('generate private key', function() {
       expect(UTILS.genPrivKeyHex()).to.exist;
     });
