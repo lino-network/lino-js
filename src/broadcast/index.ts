@@ -1,4 +1,5 @@
 import { ITransport } from '../transport';
+import { ResultBroadcastTxCommit } from '../transport/rpc';
 
 export default class Broadcast {
   private _transport: ITransport;
@@ -378,7 +379,11 @@ export default class Broadcast {
     );
   }
 
-  private _broadcastTransaction(msg: any, msgType: string, privKeyHex: string) {
+  private _broadcastTransaction(
+    msg: any,
+    msgType: string,
+    privKeyHex: string
+  ): Promise<ResultBroadcastTxCommit> {
     // SignBuildBroadcast
     return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, 1);
   }

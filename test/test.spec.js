@@ -10,6 +10,7 @@ function addSuite(envName) {
     });
     it('query', async function() {
       const query = new LINO({
+        // chainId: 'test-chain-FdqWc7',
         nodeUrl: NODE_URL
       }).query;
       query.getAllValidators().then(v => {
