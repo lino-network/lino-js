@@ -4,6 +4,7 @@ import typescript from 'rollup-plugin-typescript2';
 import pkg from './package.json';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
+import json from 'rollup-plugin-json';
 
 export default [
   // browser-friendly UMD build
@@ -18,6 +19,7 @@ export default [
     plugins: [
       builtins(),
       globals(),
+      json(),
       commonjs({
         namedExports: {
           'node_modules/elliptic/lib/elliptic.js': ['ec']
