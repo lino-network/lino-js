@@ -46,7 +46,7 @@ function addSuite(envName) {
 
       const broadcast = lino.broadcast;
       const testPrivHex =
-        'ef105137f5ce2c6a6d4faf0840b22692e1c42bbdb779960f72983ae09b4de22a';
+        'E1B0F79A20EF105137F5CE2C6A6D4FAF0840B22692E1C42BBDB779960F72983AE09B4DE22A';
       broadcast.voterDeposit('Lino', '123456', testPrivHex).then(v => {
         console.log(v);
         expect(v).to.exist;

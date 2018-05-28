@@ -1,6 +1,6 @@
 import ByteBuffer from 'bytebuffer';
 import { Rpc, ResultBroadcastTxCommit } from './rpc';
-import { encodeSignMsg, encodeTx } from './utils';
+import { encodeSignMsg, encodeTx, decodePrivKey } from './utils';
 import { ec as EC } from 'elliptic';
 
 export interface ITransport {
@@ -60,7 +60,7 @@ export class Transport implements ITransport {
   ): Promise<ResultBroadcastTxCommit> {
     // private key from hex
     var ec = new EC('secp256k1');
-    var key = ec.keyFromPrivate(privKeyHex, 'hex');
+    var key = ec.keyFromPrivate(decodePrivKey(privKeyHex), 'hex');
     // signmsg
     const signMsgHash = encodeSignMsg(msg, this._chainId, seq);
     // sign to get signature

@@ -99,6 +99,26 @@ export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
   return signMsgHash;
 }
 
+export function decodePrivKey(privKeyHex: string): string {
+  if (privKeyHex.startsWith(_PREFIX.PrefixPrivKeyEd25519)) {
+    return privKeyHex.slice(_PREFIX.PrefixPrivKeyEd25519.length);
+  } else if (privKeyHex.startsWith(_PREFIX.PrefixPrivKeySecp256k1)) {
+    return privKeyHex.slice(_PREFIX.PrefixPrivKeySecp256k1.length);
+  }
+
+  throw new Error(`Decode priv key failed: ${privKeyHex}\n`);
+}
+
+export function decodePubKey(pubKeyHex: string): string {
+  if (pubKeyHex.startsWith(_PREFIX.PrefixPubKeyEd25519)) {
+    return pubKeyHex.slice(_PREFIX.PrefixPubKeyEd25519.length);
+  } else if (pubKeyHex.startsWith(_PREFIX.PrefixPubKeySecp256k1)) {
+    return pubKeyHex.slice(_PREFIX.PrefixPubKeySecp256k1.length);
+  }
+
+  throw new Error(`Decode pub key failed: ${pubKeyHex}\n`);
+}
+
 const _TYPE = {
   PubKeyEd25519: 'AC26791624DE60',
   PubKeySecp256k1: 'F8CCEAEB5AE980',
@@ -108,4 +128,12 @@ const _TYPE = {
 
   SignatureKeyEd25519: '6BF5903DA1DB28',
   SignatureKeySecp256k1: '6D1EA416E1FEE8'
+};
+
+const _PREFIX = {
+  PrefixPubKeyEd25519: '1624DE6220',
+  PrefixPubKeySecp256k1: 'EB5AE98221',
+
+  PrefixPrivKeyEd25519: 'A328891240',
+  PrefixPrivKeySecp256k1: 'E1B0F79A20'
 };
