@@ -1,5 +1,6 @@
 import { ITransport } from '../transport';
 import Keys from './keys';
+import { ResultBlock } from '../transport/rpc';
 
 export default class Query {
   private _transport: ITransport;
@@ -226,6 +227,11 @@ export default class Query {
       ProposalKVStoreKey
     );
   }
+
+  // block related
+  getBlock(height: number): Promise<ResultBlock | null> {
+    return this._transport.block(height);
+  }
 }
 
 // Type defination
@@ -440,3 +446,6 @@ export interface ProposalInfo {
   DisagreeVotes: Coin;
   Result: number;
 }
+
+// block related
+export interface Block {}

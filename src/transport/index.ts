@@ -1,10 +1,11 @@
 import ByteBuffer from 'bytebuffer';
-import { Rpc, ResultBroadcastTxCommit } from './rpc';
+import { Rpc, ResultBroadcastTxCommit, ResultBlock } from './rpc';
 import { encodeSignMsg, encodeTx, decodePrivKey } from './utils';
 import { ec as EC } from 'elliptic';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T | null>;
+  block(height: number): Promise<ResultBlock | null>;
   signBuildBroadcast(
     msg: any,
     msgType: string,
@@ -47,6 +48,12 @@ export class Transport implements ITransport {
 
       const jsonStr = ByteBuffer.atob(result.response.value);
       return JSON.parse(jsonStr) as T;
+    });
+  }
+
+  block(height: number): Promise<ResultBlock | null> {
+    return this._rpc.block(height).then(result => {
+      return result;
     });
   }
 

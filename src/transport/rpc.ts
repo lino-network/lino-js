@@ -26,6 +26,8 @@ export interface ResultBroadcastTxCommit {
   height: number;
 }
 
+export interface ResultBlock {}
+
 const DefaultABCIQueryOptions = {
   height: 0,
   trusted: false
@@ -97,6 +99,37 @@ export class Rpc {
         ) => {
           if ('result' in data) {
             return data.result as ResultBroadcastTxCommit;
+          } else {
+            throw data.error;
+          }
+        }
+      );
+  }
+
+  block(height: number): Promise<ResultBlock> {
+    return fetch(this._nodeUrl, {
+      headers: { 'Content-Type': 'text/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'jsonrpc-client',
+        method: 'block',
+        params: {
+          height: height
+        }
+      }),
+      method: 'POST',
+      mode: 'cors'
+    })
+      .then((response: any) => response.json())
+      .then(
+        (
+          data:
+            | JsonRpc2.JsonRpcSuccess<ResultBlock>
+            | JsonRpc2.JsonRpcFailure<ResultBlock>
+        ) => {
+          console.log(data);
+          if ('result' in data) {
+            return data.result as IResultABCIQuery;
           } else {
             throw data.error;
           }

@@ -37,6 +37,10 @@ function addSuite(envName) {
         console.log(v);
         expect(v).to.exist;
       });
+      query.getBlock(1000000000).then(v => {
+        console.log(v);
+        expect(v).to.exist;
+      });
     });
 
     it('broadcast', async function() {
