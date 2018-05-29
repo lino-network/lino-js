@@ -1,6 +1,8 @@
 import { ITransport } from '../transport';
 import { ResultBroadcastTxCommit } from '../transport/rpc';
 
+const InvalidSeqErrCode = 3;
+
 export default class Broadcast {
   private _transport: ITransport;
 
@@ -384,8 +386,41 @@ export default class Broadcast {
     msgType: string,
     privKeyHex: string
   ): Promise<ResultBroadcastTxCommit> {
-    // SignBuildBroadcast
-    return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, 6);
+    const reg = /expected (\d+)/;
+    return this._transport
+      .signBuildBroadcast(msg, msgType, privKeyHex, 6)
+      .then(result => {
+        if (result.check_tx.code === InvalidSeqErrCode) {
+          const match = reg.exec(result.check_tx.log);
+          if (!match) throw new Error('Wrong seq number');
+          const newSeq = parseInt(match[0].substring(9), 10);
+          return this._transport.signBuildBroadcast(
+            msg,
+            msgType,
+            privKeyHex,
+            newSeq
+          );
+        } else {
+          return result;
+        }
+      })
+      .then(result => {
+        if (result.check_tx.code !== 0) {
+          throw new Error(
+            `CHeckTx failed! Code: %{result.check_tx.code}\n${
+              result.check_tx.log
+            }`
+          );
+        }
+        if (result.deliver_tx.code !== 0) {
+          throw new Error(
+            `DeliverTx failed! Code: %{result.deliver_tx.code}\n${
+              result.deliver_tx.log
+            }`
+          );
+        }
+        return result;
+      });
   }
 }
 
