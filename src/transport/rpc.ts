@@ -26,7 +26,20 @@ export interface ResultBroadcastTxCommit {
   height: number;
 }
 
-export interface ResultBlock {}
+export interface ResultBlock {
+  block: Block;
+  block_meta: BlockMeta;
+}
+
+export interface Block {
+  data: Data;
+}
+
+export interface BlockMeta {}
+
+export interface Data {
+  txs: string[];
+}
 
 const DefaultABCIQueryOptions = {
   height: 0,
@@ -127,9 +140,8 @@ export class Rpc {
             | JsonRpc2.JsonRpcSuccess<ResultBlock>
             | JsonRpc2.JsonRpcFailure<ResultBlock>
         ) => {
-          console.log(data);
           if ('result' in data) {
-            return data.result as IResultABCIQuery;
+            return data.result as ResultBlock;
           } else {
             throw data.error;
           }

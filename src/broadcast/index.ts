@@ -385,7 +385,7 @@ export default class Broadcast {
     privKeyHex: string
   ): Promise<ResultBroadcastTxCommit> {
     // SignBuildBroadcast
-    return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, 5);
+    return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, 6);
   }
 }
 

@@ -1,6 +1,8 @@
 import { ITransport } from '../transport';
+import { StdTx } from '../transport/utils';
 import Keys from './keys';
 import { ResultBlock } from '../transport/rpc';
+import ByteBuffer from 'bytebuffer';
 
 export default class Query {
   private _transport: ITransport;
@@ -232,6 +234,21 @@ export default class Query {
   getBlock(height: number): Promise<ResultBlock | null> {
     return this._transport.block(height);
   }
+
+  getTxsInBlock(height: number): Promise<StdTx[] | null> {
+    return this._transport.block(height).then(v => {
+      if (v != null) {
+        var txs = new Array<StdTx>();
+        for (let tx of v.block.data.txs) {
+          const jsonStr = ByteBuffer.atob(tx);
+          txs.push(JSON.parse(jsonStr));
+        }
+        return txs;
+      } else {
+        return null;
+      }
+    });
+  }
 }
 
 // Type defination
@@ -446,6 +463,3 @@ export interface ProposalInfo {
   DisagreeVotes: Coin;
   Result: number;
 }
-
-// block related
-export interface Block {}

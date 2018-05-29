@@ -53,7 +53,7 @@ export class Transport implements ITransport {
 
   block(height: number): Promise<ResultBlock | null> {
     return this._rpc.block(height).then(result => {
-      return result;
+      return result as ResultBlock;
     });
   }
 
@@ -83,7 +83,7 @@ export class Transport implements ITransport {
     );
     // return broadcast
     return this._rpc.broadcastTxCommit(tx).then(result => {
-      return result;
+      return result as ResultBroadcastTxCommit;
     });
   }
 }

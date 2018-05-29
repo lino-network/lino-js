@@ -37,7 +37,11 @@ function addSuite(envName) {
         console.log(v);
         expect(v).to.exist;
       });
-      query.getBlock(1000000000).then(v => {
+      query.getBlock(237210).then(v => {
+        console.log(v);
+        expect(v).to.exist;
+      });
+      query.getTxsInBlock(237210).then(v => {
         console.log(v);
         expect(v).to.exist;
       });
