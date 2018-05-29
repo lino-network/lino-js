@@ -1,4 +1,4 @@
-import { Coin } from '../query';
+import { Coin } from '../util/index';
 import shajs from 'sha.js';
 import ByteBuffer from 'bytebuffer';
 

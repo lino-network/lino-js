@@ -3,6 +3,8 @@ import { StdTx } from '../transport/utils';
 import Keys from './keys';
 import { ResultBlock } from '../transport/rpc';
 import ByteBuffer from 'bytebuffer';
+import { Coin, Rat, IDToURLMapping } from '../util/index';
+import { UTILS } from '..';
 
 export default class Query {
   private _transport: ITransport;
@@ -249,21 +251,6 @@ export default class Query {
       }
     });
   }
-}
-
-// Type defination
-export interface Coin {
-  amount: number;
-}
-
-export interface Rat {
-  Num: number;
-  Denom: number;
-}
-
-export interface IDToURLMapping {
-  Identifier: string;
-  URL: string;
 }
 
 // validator related struct
