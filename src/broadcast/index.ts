@@ -388,7 +388,7 @@ export default class Broadcast {
   ): Promise<ResultBroadcastTxCommit> {
     const reg = /expected (\d+)/;
     return this._transport
-      .signBuildBroadcast(msg, msgType, privKeyHex, 6)
+      .signBuildBroadcast(msg, msgType, privKeyHex, 0)
       .then(result => {
         if (result.check_tx.code === InvalidSeqErrCode) {
           const match = reg.exec(result.check_tx.log);
@@ -405,16 +405,16 @@ export default class Broadcast {
         }
       })
       .then(result => {
-        if (result.check_tx.code !== 0) {
+        if (result.check_tx.code != null) {
           throw new Error(
-            `CHeckTx failed! Code: %{result.check_tx.code}\n${
+            `CheckTx failed! Code: ${result.check_tx.code}\n ${
               result.check_tx.log
             }`
           );
         }
-        if (result.deliver_tx.code !== 0) {
+        if (result.deliver_tx.code != null) {
           throw new Error(
-            `DeliverTx failed! Code: %{result.deliver_tx.code}\n${
+            `DeliverTx failed! Code: ${result.deliver_tx.code}\n${
               result.deliver_tx.log
             }`
           );
