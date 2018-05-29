@@ -45,6 +45,14 @@ function addSuite(envName) {
         console.log(v);
         expect(v).to.exist;
       });
+      query.getGlobalAllocationParam().then(v => {
+        console.log(v);
+        expect(v).to.exist;
+      });
+      query.getValidatorParam().then(v => {
+        console.log(v);
+        expect(v).to.exist;
+      });
     });
 
     it('broadcast', async function() {
