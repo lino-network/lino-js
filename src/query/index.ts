@@ -3,7 +3,7 @@ import { StdTx } from '../transport/utils';
 import Keys from './keys';
 import { ResultBlock } from '../transport/rpc';
 import ByteBuffer from 'bytebuffer';
-import { Coin, Rat, IDToURLMapping } from '../util/index';
+import * as Types from '../util/index';
 import { UTILS } from '..';
 
 export default class Query {
@@ -232,6 +232,87 @@ export default class Query {
     );
   }
 
+  // param related query
+  getEvaluateOfContentValueParam(): Promise<Types.EvaluateOfContentValueParam | null> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.EvaluateOfContentValueParam>(
+      Keys.getEvaluateOfContentValueParamKey(),
+      ParamKVStoreKey
+    );
+  }
+
+  getGlobalAllocationParam(): Promise<Types.GlobalAllocationParam | null> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.GlobalAllocationParam>(
+      Keys.getGlobalAllocationParamKey(),
+      ParamKVStoreKey
+    );
+  }
+
+  getInfraInternalAllocationParam(): Promise<Types.InfraInternalAllocationParam | null> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.InfraInternalAllocationParam>(
+      Keys.getInfraInternalAllocationParamKey(),
+      ParamKVStoreKey
+    );
+  }
+
+  getDeveloperParam(): Promise<Types.DeveloperParam | null> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.DeveloperParam>(
+      Keys.getDeveloperParamKey(),
+      ParamKVStoreKey
+    );
+  }
+
+  getVoteParam(): Promise<Types.VoteParam | null> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.VoteParam>(
+      Keys.getVoteParamKey(),
+      ParamKVStoreKey
+    );
+  }
+
+  getProposalParam(): Promise<Types.ProposalParam | null> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.ProposalParam>(
+      Keys.getProposalParamKey(),
+      ParamKVStoreKey
+    );
+  }
+
+  getValidatorParam(): Promise<Types.ValidatorParam | null> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.ValidatorParam>(
+      Keys.getValidatorParamKey(),
+      ParamKVStoreKey
+    );
+  }
+
+  getCoinDayParam(): Promise<Types.CoinDayParam | null> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.CoinDayParam>(
+      Keys.getCoinDayParamKey(),
+      ParamKVStoreKey
+    );
+  }
+
+  getBandwidthParam(): Promise<Types.BandwidthParam | null> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.BandwidthParam>(
+      Keys.getBandwidthParamKey(),
+      ParamKVStoreKey
+    );
+  }
+
+  getAccountParam(): Promise<Types.AccountParam | null> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.AccountParam>(
+      Keys.getAccountParamKey(),
+      ParamKVStoreKey
+    );
+  }
+
   // block related
   getBlock(height: number): Promise<ResultBlock | null> {
     return this._transport.block(height);
@@ -258,7 +339,7 @@ export interface AllValidators {
   oncallValidators: string[];
   allValidators: string[];
   preBlockValidators: string[];
-  lowestPower: Coin;
+  lowestPower: Types.Coin;
   lowestValidator: string;
 }
 
@@ -270,7 +351,7 @@ export interface ABCIValidator {
 export interface Validator {
   abci: ABCIValidator;
   Username: string;
-  Deposit: Coin;
+  Deposit: Types.Coin;
   AbsentCommit: number;
   ProducedBlocks: number;
   Link: string;
@@ -279,8 +360,8 @@ export interface Validator {
 // vote related struct
 export interface Voter {
   Username: string;
-  Deposit: Coin;
-  DelegatedPower: Coin;
+  Deposit: Types.Coin;
+  DelegatedPower: Types.Coin;
 }
 
 export interface Vote {
@@ -290,7 +371,7 @@ export interface Vote {
 
 export interface Delegation {
   Delegator: string;
-  Amount: Coin;
+  Amount: Types.Coin;
 }
 
 // post related
@@ -313,13 +394,13 @@ export interface Like {
 }
 
 export interface Donation {
-  Amount: Coin;
+  Amount: Types.Coin;
   Created: number;
 }
 
 export interface ReportOrUpvote {
   Username: string;
-  Stake: Coin;
+  Stake: Types.Coin;
   Created: number;
   IsReport: boolean;
 }
@@ -333,7 +414,7 @@ export interface PostInfo {
   ParentPostID: string;
   SourceAuthor: string;
   SourcePostID: string;
-  Links: IDToURLMapping[];
+  Links: Types.IDToURLMapping[];
 }
 
 export interface PostMeta {
@@ -345,18 +426,18 @@ export interface PostMeta {
   TotalDonateCount: number;
   TotalLikeWeight: number;
   TotalDislikeWeight: number;
-  TotalReportStake: Coin;
-  TotalUpvoteStake: Coin;
-  TotalReward: Coin;
-  PenaltyScore: Rat;
-  RedistributionSplitRate: Rat;
+  TotalReportStake: Types.Coin;
+  TotalUpvoteStake: Types.Coin;
+  TotalReward: Types.Coin;
+  PenaltyScore: Types.Rat;
+  RedistributionSplitRate: Types.Rat;
 }
 
 // developer related
 export interface Developer {
   Username: string;
-  Deposit: Coin;
-  AppConsumption: Coin;
+  Deposit: Types.Coin;
+  AppConsumption: Types.Coin;
 }
 
 export interface DeveloperList {
@@ -378,7 +459,7 @@ export interface InfraProviderList {
 export interface AccountMeta {
   Sequence: number;
   LastActivity: number;
-  TransactionCapacity: Coin;
+  TransactionCapacity: Types.Coin;
 }
 
 export interface AccountInfo {
@@ -392,15 +473,15 @@ export interface AccountInfo {
 
 export interface AccountBank {
   Address: string;
-  Saving: Coin;
-  Checking: Coin;
+  Saving: Types.Coin;
+  Checking: Types.Coin;
   Username: string;
-  Stake: Coin;
+  Stake: Types.Coin;
   FrozenMoneyList: FrozenMoney[];
 }
 
 export interface FrozenMoney {
-  Amount: Coin;
+  Amount: Types.Coin;
   StartAt: number;
   Times: number;
   Interval: number;
@@ -417,10 +498,10 @@ export interface GrantPubKey {
 }
 
 export interface Reward {
-  OriginalIncome: Coin;
-  FrictionIncome: Coin;
-  ActualReward: Coin;
-  UnclaimReward: Coin;
+  OriginalIncome: Types.Coin;
+  FrictionIncome: Types.Coin;
+  ActualReward: Types.Coin;
+  UnclaimReward: Types.Coin;
 }
 
 export interface Relationship {
@@ -446,7 +527,7 @@ export interface ProposalList {
 export interface ProposalInfo {
   Creator: string;
   ProposalID: string;
-  AgreeVotes: Coin;
-  DisagreeVotes: Coin;
+  AgreeVotes: Types.Coin;
+  DisagreeVotes: Types.Coin;
   Result: number;
 }
