@@ -357,130 +357,129 @@ export default class Query {
 
 // validator related struct
 export interface AllValidators {
-  oncallValidators: string[];
-  allValidators: string[];
-  preBlockValidators: string[];
-  lowestPower: Types.Coin;
-  lowestValidator: string;
+  oncall_validators: string[];
+  all_validators: string[];
+  pre_block_validators: string[];
+  lowest_power: Types.Coin;
+  lowest_validator: string;
 }
 
 export interface ABCIValidator {
-  PubKey: string;
-  Power: number;
+  pub_key: string;
+  power: number;
 }
 
 export interface Validator {
   abci: ABCIValidator;
-  Username: string;
-  Deposit: Types.Coin;
-  AbsentCommit: number;
-  ProducedBlocks: number;
-  Link: string;
+  username: string;
+  deposit: Types.Coin;
+  absent_commit: number;
+  produced_blocks: number;
+  link: string;
 }
 
 // vote related struct
 export interface Voter {
-  Username: string;
-  Deposit: Types.Coin;
-  DelegatedPower: Types.Coin;
+  username: string;
+  deposit: Types.Coin;
+  delegated_power: Types.Coin;
 }
 
 export interface Vote {
-  Voter: string;
-  Result: boolean;
+  voter: string;
+  result: boolean;
 }
 
 export interface Delegation {
-  Delegator: string;
-  Amount: Types.Coin;
+  delegator: string;
+  amount: Types.Coin;
 }
 
 // post related
 export interface Comment {
-  Author: string;
-  PostID: string;
-  Created: number;
+  author: string;
+  post_key: string;
+  created: number;
 }
 
 export interface View {
-  Username: string;
-  Created: number;
-  Times: number;
+  username: string;
+  created: number;
+  times: number;
 }
 
 export interface Like {
-  Username: string;
-  Weight: number;
-  Created: number;
+  username: string;
+  weight: number;
+  created: number;
 }
 
 export interface Donation {
-  Amount: Types.Coin;
-  Created: number;
+  amount: Types.Coin;
+  created: number;
 }
 
 export interface ReportOrUpvote {
-  Username: string;
-  Stake: Types.Coin;
-  Created: number;
-  IsReport: boolean;
+  username: string;
+  stake: Types.Coin;
+  created: number;
+  is_report: boolean;
 }
 
 export interface PostInfo {
-  PostID: string;
-  Title: string;
-  Content: string;
-  Author: string;
-  ParentAuthor: string;
-  ParentPostID: string;
-  SourceAuthor: string;
-  SourcePostID: string;
-  Links: Types.IDToURLMapping[];
+  post_id: string;
+  title: string;
+  content: string;
+  author: string;
+  parent_author: string;
+  parent_postID: string;
+  source_author: string;
+  source_postID: string;
+  links: Types.IDToURLMapping[];
 }
 
 export interface PostMeta {
-  Created: number;
-  LastUpdate: number;
-  LastActivity: number;
-  AllowReplies: boolean;
-  TotalLikeCount: number;
-  TotalDonateCount: number;
-  TotalLikeWeight: number;
-  TotalDislikeWeight: number;
-  TotalReportStake: Types.Coin;
-  TotalUpvoteStake: Types.Coin;
-  TotalReward: Types.Coin;
-  PenaltyScore: Types.Rat;
-  RedistributionSplitRate: Types.Rat;
+  created: number;
+  last_update: number;
+  last_activity: number;
+  allow_replies: boolean;
+  total_like_count: number;
+  total_donate_count: number;
+  total_like_weight: number;
+  total_dislike_weight: number;
+  total_report_stake: Types.Coin;
+  total_upvote_stake: Types.Coin;
+  reward: Types.Coin;
+  is_deleted: boolean;
+  redistribution_split_rate: Types.Rat;
 }
 
 // developer related
 export interface Developer {
-  Username: string;
-  Deposit: Types.Coin;
-  AppConsumption: Types.Coin;
+  username: string;
+  deposit: Types.Coin;
+  app_consumption: Types.Coin;
 }
 
 export interface DeveloperList {
-  AllDevelopers: string[];
+  all_developers: string[];
 }
 
 // infra provider related
-
 export interface InfraProvider {
-  Username: string;
-  Usage: number;
+  username: string;
+  usage: number;
 }
 
 export interface InfraProviderList {
-  AllInfraProviders: string[];
+  all_infra_providers: string[];
 }
 
 // account related
 export interface AccountMeta {
-  Sequence: number;
-  LastActivity: number;
-  TransactionCapacity: Types.Coin;
+  sequence: number;
+  last_activity: number;
+  transaction_capacity: Types.Coin;
 }
 
 export interface AccountInfo {
@@ -493,62 +492,62 @@ export interface AccountInfo {
 }
 
 export interface AccountBank {
-  Address: string;
-  Saving: Types.Coin;
-  Checking: Types.Coin;
-  Username: string;
-  Stake: Types.Coin;
-  FrozenMoneyList: FrozenMoney[];
+  address: string;
+  saving: Types.Coin;
+  checking: Types.Coin;
+  username: string;
+  stake: Types.Coin;
+  frozen_money_list: FrozenMoney[];
 }
 
 export interface FrozenMoney {
-  Amount: Types.Coin;
-  StartAt: number;
-  Times: number;
-  Interval: number;
+  amount: Types.Coin;
+  start_at: number;
+  times: number;
+  interval: number;
 }
 
 export interface GrantKeyList {
-  GrantPubKeyList: GrantPubKey[];
+  grant_public_key_list: GrantPubKey[];
 }
 
 export interface GrantPubKey {
-  Username: string;
-  PubKey: Types.Key;
-  Expire: number;
+  username: string;
+  public_key: Types.Key;
+  expire: number;
 }
 
 export interface Reward {
-  OriginalIncome: Types.Coin;
-  FrictionIncome: Types.Coin;
-  ActualReward: Types.Coin;
-  UnclaimReward: Types.Coin;
+  original_income: Types.Coin;
+  friction_income: Types.Coin;
+  actual_reward: Types.Coin;
+  unclaim_reward: Types.Coin;
 }
 
 export interface Relationship {
-  DonationTimes: number;
+  donation_times: number;
 }
 
 export interface FollowerMeta {
-  CreatedAt: number;
-  FollowerName: string;
+  created_at: number;
+  follower_name: string;
 }
 
 export interface FollowingMeta {
-  CreatedAt: number;
-  FollowingName: string;
+  created_at: number;
+  following_name: string;
 }
 
 // proposal related
 export interface ProposalList {
-  OngoingProposal: string[];
-  PastProposal: string[];
+  ongoing_proposal: string[];
+  past_proposal: string[];
 }
 
 export interface ProposalInfo {
-  Creator: string;
-  ProposalID: string;
-  AgreeVotes: Types.Coin;
-  DisagreeVotes: Types.Coin;
-  Result: number;
+  creator: string;
+  proposal_id: string;
+  agree_vote: Types.Coin;
+  disagree_vote: Types.Coin;
+  result: number;
 }

@@ -4,8 +4,8 @@ export interface Coin {
 }
 
 export interface Rat {
-  Num: number;
-  Denom: number;
+  num: number;
+  denom: number;
 }
 
 export interface Key {
@@ -14,8 +14,8 @@ export interface Key {
 }
 
 export interface IDToURLMapping {
-  Identifier: string;
-  URL: string;
+  identifier: string;
+  url: string;
 }
 
 export interface EvaluateOfContentValueParam {
