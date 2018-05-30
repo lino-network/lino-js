@@ -3,7 +3,7 @@ import { StdTx, encodePrivKey, encodePubKey } from '../transport/utils';
 import Keys from './keys';
 import { ResultBlock } from '../transport/rpc';
 import ByteBuffer from 'bytebuffer';
-import * as Types from '../util/index';
+import * as Types from '../common';
 import * as Util from '../util/index';
 
 export default class Query {

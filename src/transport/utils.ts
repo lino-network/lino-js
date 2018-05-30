@@ -1,4 +1,4 @@
-import { Coin } from '../util/index';
+import { Coin } from '../common';
 import shajs from 'sha.js';
 import ByteBuffer from 'bytebuffer';
 

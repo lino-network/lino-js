@@ -68,6 +68,9 @@ function addSuite(envName) {
         UTILS.pubKeyFromPrivate(testPrivHex)
       );
       expect(match).to.equal(true);
+
+      const res = UTILS.isValidUsername('-register');
+      expect(res).to.equal(false);
     });
 
     it('broadcast', async function() {
