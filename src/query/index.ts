@@ -4,7 +4,7 @@ import Keys from './keys';
 import { ResultBlock } from '../transport/rpc';
 import ByteBuffer from 'bytebuffer';
 import * as Types from '../util/index';
-import { UTILS } from '..';
+import * as Util from '../util/index';
 
 export default class Query {
   private _transport: ITransport;
@@ -29,8 +29,8 @@ export default class Query {
       ).toString('hex');
 
       return (
-        UTILS.isKeyMatch(privKeyHex, encodePubKey(rawMasterPubKey)) ||
-        UTILS.isKeyMatch(privKeyHex, encodePubKey(rawTxPubKey))
+        Util.isKeyMatch(privKeyHex, encodePubKey(rawMasterPubKey)) ||
+        Util.isKeyMatch(privKeyHex, encodePubKey(rawTxPubKey))
       );
     });
   }
