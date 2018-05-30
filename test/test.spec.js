@@ -1,4 +1,6 @@
 const NODE_URL = 'http://34.235.130.1:46657/';
+const testPrivHex =
+  'E1B0F79A20EF105137F5CE2C6A6D4FAF0840B22692E1C42BBDB779960F72983AE09B4DE22A';
 
 function addSuite(envName) {
   describe('LINO', function() {
@@ -53,6 +55,22 @@ function addSuite(envName) {
         console.log(v);
         expect(v).to.exist;
       });
+      query.getAccountInfo('Lino').then(v => {
+        console.log(v);
+        expect(v).to.exist;
+      });
+      query.isUsernameMatchPrivKey('Lino', testPrivHex).then(v => {
+        console.log(v);
+        expect(v).to.exist;
+      });
+      const match = UTILS.isKeyMatch(
+        testPrivHex,
+        UTILS.pubKeyFromPrivate(testPrivHex)
+      );
+      expect(match).to.equal(true);
+
+      const res = UTILS.isValidUsername('-register');
+      expect(res).to.equal(false);
     });
 
     it('broadcast', async function() {

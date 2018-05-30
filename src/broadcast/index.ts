@@ -405,14 +405,14 @@ export default class Broadcast {
         }
       })
       .then(result => {
-        if (result.check_tx.code != null) {
+        if (result.check_tx.code !== undefined) {
           throw new Error(
             `CheckTx failed! Code: ${result.check_tx.code}\n ${
               result.check_tx.log
             }`
           );
         }
-        if (result.deliver_tx.code != null) {
+        if (result.deliver_tx.code !== undefined) {
           throw new Error(
             `DeliverTx failed! Code: ${result.deliver_tx.code}\n${
               result.deliver_tx.log

@@ -1,4 +1,4 @@
-import { Coin } from '../util/index';
+import { Coin } from '../common';
 import shajs from 'sha.js';
 import ByteBuffer from 'bytebuffer';
 
@@ -100,6 +100,7 @@ export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
 }
 
 export function decodePrivKey(privKeyHex: string): string {
+  privKeyHex = privKeyHex.toUpperCase();
   if (privKeyHex.startsWith(_PREFIX.PrefixPrivKeyEd25519)) {
     return privKeyHex.slice(_PREFIX.PrefixPrivKeyEd25519.length);
   } else if (privKeyHex.startsWith(_PREFIX.PrefixPrivKeySecp256k1)) {
@@ -110,6 +111,7 @@ export function decodePrivKey(privKeyHex: string): string {
 }
 
 export function decodePubKey(pubKeyHex: string): string {
+  pubKeyHex = pubKeyHex.toUpperCase();
   if (pubKeyHex.startsWith(_PREFIX.PrefixPubKeyEd25519)) {
     return pubKeyHex.slice(_PREFIX.PrefixPubKeyEd25519.length);
   } else if (pubKeyHex.startsWith(_PREFIX.PrefixPubKeySecp256k1)) {
@@ -117,6 +119,15 @@ export function decodePubKey(pubKeyHex: string): string {
   }
 
   throw new Error(`Decode pub key failed: ${pubKeyHex}\n`);
+}
+
+// only support secp256k1 for now
+export function encodePrivKey(privKeyHex: string): string {
+  return _PREFIX.PrefixPrivKeySecp256k1.concat(privKeyHex).toUpperCase();
+}
+
+export function encodePubKey(pubKeyHex: string): string {
+  return _PREFIX.PrefixPubKeySecp256k1.concat(pubKeyHex).toUpperCase();
 }
 
 const _TYPE = {
