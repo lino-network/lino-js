@@ -1,5 +1,5 @@
 import { ITransport } from '../transport';
-import { StdTx } from '../transport/utils';
+import { StdTx, encodePrivKey, encodePubKey } from '../transport/utils';
 import Keys from './keys';
 import { ResultBlock } from '../transport/rpc';
 import ByteBuffer from 'bytebuffer';
@@ -13,6 +13,27 @@ export default class Query {
     this._transport = transport;
   }
 
+  isUsernameMatchPrivKey(
+    username: string,
+    privKeyHex: string
+  ): Promise<boolean | null> {
+    return this.getAccountInfo(username).then(result => {
+      if (result == null) {
+        return false;
+      }
+      const rawMasterPubKey = ByteBuffer.fromBase64(
+        result.master_key.value
+      ).toString('hex');
+      const rawTxPubKey = ByteBuffer.fromBase64(
+        result.transaction_key.value
+      ).toString('hex');
+
+      return (
+        UTILS.isKeyMatch(privKeyHex, encodePubKey(rawMasterPubKey)) ||
+        UTILS.isKeyMatch(privKeyHex, encodePubKey(rawTxPubKey))
+      );
+    });
+  }
   // validator related query
   getAllValidators(): Promise<AllValidators | null> {
     const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
@@ -463,12 +484,12 @@ export interface AccountMeta {
 }
 
 export interface AccountInfo {
-  Username: string;
-  Created: number;
-  //MasterKey:      crypto.PubKey;
-  //TransactionKey: crypto.PubKey;
-  //PostKey:        crypto.PubKey;
-  Address: string;
+  username: string;
+  created_at: number;
+  master_key: Types.Key;
+  transaction_key: Types.Key;
+  post_key: Types.Key;
+  address: string;
 }
 
 export interface AccountBank {
@@ -493,7 +514,7 @@ export interface GrantKeyList {
 
 export interface GrantPubKey {
   Username: string;
-  //PubKey:   crypto.PubKey;
+  PubKey: Types.Key;
   Expire: number;
 }
 
