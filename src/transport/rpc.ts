@@ -2,7 +2,6 @@
 import ByteBuffer from 'bytebuffer';
 import fetch from 'cross-fetch';
 import * as JsonRpc2 from './jsonrpc2';
-import { StdTx } from './utils';
 
 export interface IResultABCIQuery {
   response: IResponseQuery;

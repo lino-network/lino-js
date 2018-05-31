@@ -4,7 +4,7 @@ import {
   decodePubKey,
   encodePubKey,
   encodePrivKey
-} from '../transport/utils';
+} from '../transport/encoder';
 
 export function genPrivKeyHex(): string {
   const ec = new EC('secp256k1');

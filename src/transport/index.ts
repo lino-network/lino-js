@@ -1,6 +1,6 @@
 import ByteBuffer from 'bytebuffer';
 import { Rpc, ResultBroadcastTxCommit, ResultBlock } from './rpc';
-import { encodeSignMsg, encodeTx, decodePrivKey } from './utils';
+import { encodeSignMsg, encodeTx, decodePrivKey } from './encoder';
 import { ec as EC } from 'elliptic';
 
 export interface ITransport {

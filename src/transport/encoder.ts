@@ -9,8 +9,8 @@ export interface StdFee {
 }
 
 export interface StdSignature {
-  pub_key: IPubKey;
-  signature: ISignature;
+  pub_key: InternalPubKey;
+  signature: InternalPrivKey;
   sequence: number;
 }
 
@@ -33,12 +33,17 @@ export interface StdSignMsg {
   alt_bytes: any;
 }
 
-export interface IPubKey {
+export interface InternalPubKey {
   type: string;
   value: string;
 }
 
-export interface ISignature {
+export interface InternalSignature {
+  type: string;
+  value: string;
+}
+
+export interface InternalPrivKey {
   type: string;
   value: string;
 }
@@ -52,8 +57,8 @@ export const getZeroFee: () => StdFee = () => ({
 export function encodeTx(
   msg: any,
   msgType: string,
-  pubKeyHex: string,
-  sigDERHex: string,
+  rawPubKey: string,
+  rawSigDER: string,
   seq: number
 ): string {
   const stdMsg: StdMsg = {
@@ -62,14 +67,8 @@ export function encodeTx(
   };
 
   const stdSig: StdSignature = {
-    pub_key: {
-      type: _TYPE.PubKeySecp256k1,
-      value: ByteBuffer.fromHex(pubKeyHex).toString('base64')
-    },
-    signature: {
-      type: _TYPE.SignatureKeySecp256k1,
-      value: ByteBuffer.fromHex(sigDERHex).toString('base64')
-    },
+    pub_key: convertToInternalPubKey(rawPubKey),
+    signature: convertToInternalSig(rawSigDER),
     sequence: seq
   };
 
@@ -99,11 +98,10 @@ export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
   return signMsgHash;
 }
 
+//decode std key to raw key, only support secp256k1 for now
 export function decodePrivKey(privKeyHex: string): string {
   privKeyHex = privKeyHex.toUpperCase();
-  if (privKeyHex.startsWith(_PREFIX.PrefixPrivKeyEd25519)) {
-    return privKeyHex.slice(_PREFIX.PrefixPrivKeyEd25519.length);
-  } else if (privKeyHex.startsWith(_PREFIX.PrefixPrivKeySecp256k1)) {
+  if (privKeyHex.startsWith(_PREFIX.PrefixPrivKeySecp256k1)) {
     return privKeyHex.slice(_PREFIX.PrefixPrivKeySecp256k1.length);
   }
 
@@ -112,22 +110,58 @@ export function decodePrivKey(privKeyHex: string): string {
 
 export function decodePubKey(pubKeyHex: string): string {
   pubKeyHex = pubKeyHex.toUpperCase();
-  if (pubKeyHex.startsWith(_PREFIX.PrefixPubKeyEd25519)) {
-    return pubKeyHex.slice(_PREFIX.PrefixPubKeyEd25519.length);
-  } else if (pubKeyHex.startsWith(_PREFIX.PrefixPubKeySecp256k1)) {
+  if (pubKeyHex.startsWith(_PREFIX.PrefixPubKeySecp256k1)) {
     return pubKeyHex.slice(_PREFIX.PrefixPubKeySecp256k1.length);
   }
 
   throw new Error(`Decode pub key failed: ${pubKeyHex}\n`);
 }
 
-// only support secp256k1 for now
+//eoncde raw key to std key, only support secp256k1 for now
 export function encodePrivKey(privKeyHex: string): string {
   return _PREFIX.PrefixPrivKeySecp256k1.concat(privKeyHex).toUpperCase();
 }
 
 export function encodePubKey(pubKeyHex: string): string {
   return _PREFIX.PrefixPubKeySecp256k1.concat(pubKeyHex).toUpperCase();
+}
+
+// convert raw priv key to internal priv key format
+export function convertToInternalPrivKey(rawPrivKey: string): InternalPrivKey {
+  const res: InternalPrivKey = {
+    type: _TYPE.PrivKeySecp256k1,
+    value: ByteBuffer.fromHex(rawPrivKey).toString('base64')
+  };
+  return res;
+}
+// convert raw pub key to internal pub key format
+export function convertToInternalPubKey(rawPubKey: string): InternalPubKey {
+  const res: InternalPubKey = {
+    type: _TYPE.PubKeySecp256k1,
+    value: ByteBuffer.fromHex(rawPubKey).toString('base64')
+  };
+  return res;
+}
+// convert raw sig to internal sig format
+export function convertToInternalSig(rawSig: string): InternalSignature {
+  const res: InternalSignature = {
+    type: _TYPE.SignatureKeySecp256k1,
+    value: ByteBuffer.fromHex(rawSig).toString('base64')
+  };
+  return res;
+}
+
+// convert internal priv key to raw priv key
+export function convertToRawPrivKey(internalPrivKey: InternalPrivKey): string {
+  return internalPrivKey.value;
+}
+// convert internal pub key to raw pub key
+export function convertToRawPubKey(internalPubKey: InternalPubKey): string {
+  return internalPubKey.value;
+}
+// convert internal sig to raw sig
+export function convertToRawSig(internalSignature: InternalSignature): string {
+  return internalSignature.value;
 }
 
 const _TYPE = {

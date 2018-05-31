@@ -59,7 +59,7 @@ function addSuite(envName) {
         console.log(v);
         expect(v).to.exist;
       });
-      query.isUsernameMatchPrivKey('Lino', testPrivHex).then(v => {
+      query.doesUsernameMatchPrivKey('Lino', testPrivHex).then(v => {
         console.log(v);
         expect(v).to.exist;
       });

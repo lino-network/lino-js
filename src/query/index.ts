@@ -1,5 +1,5 @@
 import { ITransport } from '../transport';
-import { StdTx, encodePrivKey, encodePubKey } from '../transport/utils';
+import { StdTx, encodePubKey } from '../transport/encoder';
 import Keys from './keys';
 import { ResultBlock } from '../transport/rpc';
 import ByteBuffer from 'bytebuffer';
@@ -13,7 +13,7 @@ export default class Query {
     this._transport = transport;
   }
 
-  isUsernameMatchPrivKey(
+  doesUsernameMatchPrivKey(
     username: string,
     privKeyHex: string
   ): Promise<boolean | null> {
@@ -28,10 +28,7 @@ export default class Query {
         result.transaction_key.value
       ).toString('hex');
 
-      return (
-        Util.isKeyMatch(privKeyHex, encodePubKey(rawMasterPubKey)) ||
-        Util.isKeyMatch(privKeyHex, encodePubKey(rawTxPubKey))
-      );
+      return Util.isKeyMatch(privKeyHex, encodePubKey(rawMasterPubKey));
     });
   }
   // validator related query
@@ -488,14 +485,10 @@ export interface AccountInfo {
   master_key: Types.Key;
   transaction_key: Types.Key;
   post_key: Types.Key;
-  address: string;
 }
 
 export interface AccountBank {
-  address: string;
   saving: Types.Coin;
-  checking: Types.Coin;
-  username: string;
   stake: Types.Coin;
   frozen_money_list: FrozenMoney[];
 }
@@ -514,7 +507,7 @@ export interface GrantKeyList {
 export interface GrantPubKey {
   username: string;
   public_key: Types.Key;
-  expire: number;
+  expires_at: number;
 }
 
 export interface Reward {
