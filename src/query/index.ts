@@ -1,5 +1,10 @@
 import { ITransport } from '../transport';
-import { StdTx, encodePubKey } from '../transport/encoder';
+import {
+  StdTx,
+  encodePubKey,
+  InternalPubKey,
+  convertToRawPubKey
+} from '../transport/encoder';
 import Keys from './keys';
 import { ResultBlock } from '../transport/rpc';
 import ByteBuffer from 'bytebuffer';
@@ -17,18 +22,11 @@ export default class Query {
     username: string,
     privKeyHex: string
   ): Promise<boolean | null> {
-    return this.getAccountInfo(username).then(result => {
-      if (result == null) {
+    return this.getAccountInfo(username).then(info => {
+      if (info == null) {
         return false;
       }
-      const rawMasterPubKey = ByteBuffer.fromBase64(
-        result.master_key.value
-      ).toString('hex');
-      const rawTxPubKey = ByteBuffer.fromBase64(
-        result.transaction_key.value
-      ).toString('hex');
-
-      return Util.isKeyMatch(privKeyHex, encodePubKey(rawMasterPubKey));
+      return Util.isKeyMatch(privKeyHex, info.master_key);
     });
   }
   // validator related query
@@ -67,10 +65,27 @@ export default class Query {
 
   getAccountInfo(username: string): Promise<AccountInfo | null> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<AccountInfo>(
-      Keys.getAccountInfoKey(username),
-      AccountKVStoreKey
-    );
+    return this._transport
+      .query<AccountInfoInternal>(
+        Keys.getAccountInfoKey(username),
+        AccountKVStoreKey
+      )
+      .then(info => {
+        if (info == null) {
+          return null;
+        }
+
+        const res: AccountInfo = {
+          username: info.username,
+          created_at: info.created_at,
+          master_key: encodePubKey(convertToRawPubKey(info.master_key)),
+          transaction_key: encodePubKey(
+            convertToRawPubKey(info.transaction_key)
+          ),
+          post_key: encodePubKey(convertToRawPubKey(info.post_key))
+        };
+        return res;
+      });
   }
 
   getGrantList(username: string): Promise<GrantKeyList | null> {
@@ -482,9 +497,9 @@ export interface AccountMeta {
 export interface AccountInfo {
   username: string;
   created_at: number;
-  master_key: Types.Key;
-  transaction_key: Types.Key;
-  post_key: Types.Key;
+  master_key: string;
+  transaction_key: string;
+  post_key: string;
 }
 
 export interface AccountBank {
@@ -506,7 +521,7 @@ export interface GrantKeyList {
 
 export interface GrantPubKey {
   username: string;
-  public_key: Types.Key;
+  public_key: string;
   expires_at: number;
 }
 
@@ -543,4 +558,23 @@ export interface ProposalInfo {
   agree_vote: Types.Coin;
   disagree_vote: Types.Coin;
   result: number;
+}
+
+// internal used
+interface GrantKeyListInternal {
+  grant_public_key_list: GrantPubKeyInternal[];
+}
+
+interface GrantPubKeyInternal {
+  username: string;
+  public_key: InternalPubKey;
+  expires_at: number;
+}
+
+interface AccountInfoInternal {
+  username: string;
+  created_at: number;
+  master_key: InternalPubKey;
+  transaction_key: InternalPubKey;
+  post_key: InternalPubKey;
 }

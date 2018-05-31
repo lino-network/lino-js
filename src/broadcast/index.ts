@@ -620,9 +620,9 @@ export interface RegisterMsg {
   referrer: string;
   register_fee: string;
   new_username: string;
-  new_master_public_key: Types.Key;
-  new_post_public_key: Types.Key;
-  new_transaction_public_key: Types.Key;
+  new_master_public_key: string;
+  new_post_public_key: string;
+  new_transaction_public_key: string;
 }
 
 export interface TransferMsg {

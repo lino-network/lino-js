@@ -8,11 +8,6 @@ export interface Rat {
   denom: number;
 }
 
-export interface Key {
-  type: string;
-  value: string;
-}
-
 export interface IDToURLMapping {
   identifier: string;
   url: string;

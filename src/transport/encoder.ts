@@ -153,15 +153,15 @@ export function convertToInternalSig(rawSig: string): InternalSignature {
 
 // convert internal priv key to raw priv key
 export function convertToRawPrivKey(internalPrivKey: InternalPrivKey): string {
-  return internalPrivKey.value;
+  return ByteBuffer.fromBase64(internalPrivKey.value).toString('hex');
 }
 // convert internal pub key to raw pub key
 export function convertToRawPubKey(internalPubKey: InternalPubKey): string {
-  return internalPubKey.value;
+  return ByteBuffer.fromBase64(internalPubKey.value).toString('hex');
 }
 // convert internal sig to raw sig
 export function convertToRawSig(internalSignature: InternalSignature): string {
-  return internalSignature.value;
+  return ByteBuffer.fromBase64(internalSignature.value).toString('hex');
 }
 
 const _TYPE = {
