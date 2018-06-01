@@ -195,12 +195,14 @@ export default class Broadcast {
     username: string,
     deposit: string,
     validator_public_key: string,
+    link: string,
     privKeyHex: string
   ) {
     const msg: ValidatorDepositMsg = {
-      username,
-      deposit,
-      validator_public_key
+      username: username,
+      deposit: deposit,
+      validator_public_key: decodePubKey(validator_public_key),
+      link: link
     };
     return this._broadcastTransaction(
       msg,
@@ -725,6 +727,7 @@ export interface ValidatorDepositMsg {
   username: string;
   deposit: string;
   validator_public_key: string;
+  link: string;
 }
 
 export interface ValidatorWithdrawMsg {

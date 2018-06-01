@@ -1,8 +1,8 @@
 const NODE_URL = 'http://34.235.130.1:46657/';
 const testTxPrivHex =
   'E1B0F79A2045793AD58ADA5872FC679754F43570BA0802520D3794508FBBDFA65694742601';
-const testMasterPrivHex =
-  'E1B0F79A2045793AD58ADA5872FC679754F43570BA0802520D3794508FBBDFA65694742601';
+const testValidatorPubHex =
+  '1624DE6220e008041ccafcc76788099b990531697ff4bf8eb2d1fabe204ee5fe0fc2c7c3f6';
 
 function addSuite(envName) {
   describe('LINO', function() {
@@ -73,11 +73,6 @@ function addSuite(envName) {
       });
 
       const broadcast = lino.broadcast;
-      // broadcast.voterDeposit('Lino', '12345678', testTxPrivHex).then(v => {
-      //   console.log(v);
-      //   expect(v).to.exist;
-      // });
-
       const masterPrivKey = UTILS.genPrivKeyHex();
       const txPrivKey = UTILS.genPrivKeyHex();
       const postPrivKey = UTILS.genPrivKeyHex();
@@ -90,7 +85,7 @@ function addSuite(envName) {
         .register(
           'Lino',
           '200',
-          'zhimaoliu2',
+          'zhimaoliu3',
           masterPubKey,
           postPubKey,
           txPubKey,
@@ -100,13 +95,6 @@ function addSuite(envName) {
           console.log(v);
           expect(v).to.exist;
         });
-
-      // broadcast
-      //   .validatorDeposit('Lino', '123456', postPubKey, testPrivHex)
-      //   .then(v => {
-      //     console.log(v);
-      //     expect(v).to.exist;
-      //   });
     });
   });
 
