@@ -371,7 +371,7 @@ export default class Query {
 
   getTxsInBlock(height: number): Promise<StdTx[] | null> {
     return this._transport.block(height).then(v => {
-      if (v != null) {
+      if (v !== null && v.block.data.txs !== null) {
         var txs = new Array<StdTx>();
         for (let tx of v.block.data.txs) {
           const jsonStr = ByteBuffer.atob(tx);
