@@ -2,11 +2,11 @@
   "name": "lino-js",
   "version": "1.0.0",
   "description": "",
-  "typings": "dist/lino-js.d.ts",
-  "main": "dist/lino-js.cjs.js",
-  "module": "dist/lino-js.esm.js",
-  "browser": "dist/lino-js.umd.js",
-  "files": ["dist"],
+  "typings": "lib/index.d.ts",
+  "main": "lib/lino-js.cjs.js",
+  "module": "lib/lino-js.esm.js",
+  "browser": "lib/lino-js.umd.js",
+  "files": ["lib"],
   "dependencies": {
     "buffer": "^5.1.0",
     "bytebuffer": "^5.0.1",
@@ -38,7 +38,7 @@
     "typescript": "^2.8.3"
   },
   "scripts": {
-    "build": "npm run bundle; cp src/lino-js.d.ts dist",
+    "build": "npm run bundle",
     "bundle": "rollup -c",
     "dev": "rollup -c -w",
     "precommit": "lint-staged",
