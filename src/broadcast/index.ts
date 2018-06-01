@@ -1,5 +1,7 @@
 import { ITransport } from '../transport';
 import { ResultBroadcastTxCommit } from '../transport/rpc';
+import * as Types from '../common';
+import { decodePubKey } from '../transport/encoder';
 
 const InvalidSeqErrCode = 3;
 
@@ -10,24 +12,28 @@ export default class Broadcast {
     this._transport = transport;
   }
 
-  // account related
+  //account related
   register(
+    referrer: string,
+    register_fee: string,
     username: string,
     masterPubKeyHex: string,
     postPubKeyHex: string,
     transactionPubKeyHex: string,
-    masterPrivKeyHex: string
+    referrerPrivKeyHex: string
   ) {
     const msg: RegisterMsg = {
-      new_user: username,
-      new_post_public_key: postPubKeyHex,
-      new_master_public_key: masterPubKeyHex,
-      new_transaction_public_key: transactionPubKeyHex
+      referrer: referrer,
+      register_fee: register_fee,
+      new_username: username,
+      new_master_public_key: decodePubKey(masterPubKeyHex),
+      new_post_public_key: decodePubKey(postPubKeyHex),
+      new_transaction_public_key: decodePubKey(transactionPubKeyHex)
     };
     return this._broadcastTransaction(
       msg,
       _MSGTYPE.RegisterMsgType,
-      masterPrivKeyHex
+      referrerPrivKeyHex
     );
   }
 
@@ -185,11 +191,16 @@ export default class Broadcast {
   }
 
   // validator related
-  validatorDeposit(username: string, deposit: string, privKeyHex: string) {
+  validatorDeposit(
+    username: string,
+    deposit: string,
+    validator_public_key: string,
+    privKeyHex: string
+  ) {
     const msg: ValidatorDepositMsg = {
       username,
       deposit,
-      validator_public_key: privKeyHex
+      validator_public_key
     };
     return this._broadcastTransaction(
       msg,
@@ -322,6 +333,7 @@ export default class Broadcast {
     );
   }
 
+  // developer related
   developerRegister(username: string, deposit: string, privKeyHex: string) {
     const msg: DeveloperRegisterMsg = {
       username,
@@ -368,6 +380,7 @@ export default class Broadcast {
     );
   }
 
+  // infra related
   providerReport(username: string, usage: number, privKeyHex: string) {
     const msg: ProviderReportMsg = {
       username,
@@ -381,7 +394,190 @@ export default class Broadcast {
     );
   }
 
-  private _broadcastTransaction(
+  // proposal related
+  changeGlobalAllocationParam(
+    creator: string,
+    parameter: Types.GlobalAllocationParam,
+    privKeyHex: string
+  ) {
+    const msg: ChangeGlobalAllocationParamMsg = {
+      creator,
+      parameter
+    };
+
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ChangeGlobalAllocationParamMsgType,
+      privKeyHex
+    );
+  }
+
+  changeEvaluateOfContentValueParam(
+    creator: string,
+    parameter: Types.EvaluateOfContentValueParam,
+    privKeyHex: string
+  ) {
+    const msg: ChangeEvaluateOfContentValueParamMsg = {
+      creator,
+      parameter
+    };
+
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ChangeEvaluateOfContentValueParamMsgType,
+      privKeyHex
+    );
+  }
+
+  changeInfraInternalAllocationParam(
+    creator: string,
+    parameter: Types.InfraInternalAllocationParam,
+    privKeyHex: string
+  ) {
+    const msg: ChangeInfraInternalAllocationParamMsg = {
+      creator,
+      parameter
+    };
+
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ChangeInfraInternalAllocationParamMsgType,
+      privKeyHex
+    );
+  }
+
+  changeVoteParam(
+    creator: string,
+    parameter: Types.VoteParam,
+    privKeyHex: string
+  ) {
+    const msg: ChangeVoteParamMsg = {
+      creator,
+      parameter
+    };
+
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ChangeVoteParamMsgType,
+      privKeyHex
+    );
+  }
+
+  changeProposalParam(
+    creator: string,
+    parameter: Types.ProposalParam,
+    privKeyHex: string
+  ) {
+    const msg: ChangeProposalParamMsg = {
+      creator,
+      parameter
+    };
+
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ChangeProposalParamMsgType,
+      privKeyHex
+    );
+  }
+
+  changeDeveloperParam(
+    creator: string,
+    parameter: Types.DeveloperParam,
+    privKeyHex: string
+  ) {
+    const msg: ChangeDeveloperParamMsg = {
+      creator,
+      parameter
+    };
+
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ChangeDeveloperParamMsgType,
+      privKeyHex
+    );
+  }
+
+  changeValidatorParam(
+    creator: string,
+    parameter: Types.ValidatorParam,
+    privKeyHex: string
+  ) {
+    const msg: ChangeValidatorParamMsg = {
+      creator,
+      parameter
+    };
+
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ChangeValidatorParamMsgType,
+      privKeyHex
+    );
+  }
+
+  changeCoinDayParam(
+    creator: string,
+    parameter: Types.CoinDayParam,
+    privKeyHex: string
+  ) {
+    const msg: ChangeCoinDayParamMsg = {
+      creator,
+      parameter
+    };
+
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ChangeCoinDayParamMsgType,
+      privKeyHex
+    );
+  }
+
+  changeBandwidthParam(
+    creator: string,
+    parameter: Types.BandwidthParam,
+    privKeyHex: string
+  ) {
+    const msg: ChangeBandwidthParamMsg = {
+      creator,
+      parameter
+    };
+
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ChangeBandwidthParamMsgType,
+      privKeyHex
+    );
+  }
+
+  changeAccountParam(
+    creator: string,
+    parameter: Types.AccountParam,
+    privKeyHex: string
+  ) {
+    const msg: ChangeAccountParamMsg = {
+      creator,
+      parameter
+    };
+
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.ChangeAccountParamMsgType,
+      privKeyHex
+    );
+  }
+
+  deletePostContent(creator: string, permLink: string, privKeyHex: string) {
+    const msg: DeletePostContentMsg = {
+      creator,
+      permLink
+    };
+
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.DeletePostContentMsgType,
+      privKeyHex
+    );
+  }
+  _broadcastTransaction(
     msg: any,
     msgType: string,
     privKeyHex: string
@@ -426,7 +622,9 @@ export default class Broadcast {
 
 // Account related messages
 export interface RegisterMsg {
-  new_user: string;
+  referrer: string;
+  register_fee: string;
+  new_username: string;
   new_master_public_key: string;
   new_post_public_key: string;
   new_transaction_public_key: string;
@@ -604,6 +802,62 @@ export interface ProviderReportMsg {
   usage: number;
 }
 
+// proposal related messages
+export interface DeletePostContentMsg {
+  creator: string;
+  permLink: string;
+}
+
+export interface ChangeGlobalAllocationParamMsg {
+  creator: string;
+  parameter: Types.GlobalAllocationParam;
+}
+
+export interface ChangeEvaluateOfContentValueParamMsg {
+  creator: string;
+  parameter: Types.EvaluateOfContentValueParam;
+}
+
+export interface ChangeInfraInternalAllocationParamMsg {
+  creator: string;
+  parameter: Types.InfraInternalAllocationParam;
+}
+
+export interface ChangeVoteParamMsg {
+  creator: string;
+  parameter: Types.VoteParam;
+}
+
+export interface ChangeProposalParamMsg {
+  creator: string;
+  parameter: Types.ProposalParam;
+}
+
+export interface ChangeDeveloperParamMsg {
+  creator: string;
+  parameter: Types.DeveloperParam;
+}
+
+export interface ChangeValidatorParamMsg {
+  creator: string;
+  parameter: Types.ValidatorParam;
+}
+
+export interface ChangeCoinDayParamMsg {
+  creator: string;
+  parameter: Types.CoinDayParam;
+}
+
+export interface ChangeBandwidthParamMsg {
+  creator: string;
+  parameter: Types.BandwidthParam;
+}
+
+export interface ChangeAccountParamMsg {
+  creator: string;
+  parameter: Types.AccountParam;
+}
+
 const _MSGTYPE = {
   RegisterMsgType: '87780FA5DE6848',
   TransferMsgType: '27F576CAFBB260',
@@ -636,5 +890,17 @@ const _MSGTYPE = {
   DeveloperRevokeMsgType: '94C5F456C3BAF8',
   GrantDeveloperMsgType: '1CF286AA038278',
 
-  ProviderReportMsgType: '108D925A05BE70'
+  ProviderReportMsgType: '108D925A05BE70',
+
+  DeletePostContentMsgType: '7E63F5F154D2C8',
+  ChangeGlobalAllocationParamMsgType: 'A9F46C097B5F50',
+  ChangeEvaluateOfContentValueParamMsgType: '8A59091B1DCEF0',
+  ChangeInfraInternalAllocationParamMsgType: 'D7296C8C03B1C8',
+  ChangeVoteParamMsgType: 'DE608FB7F2ACF8',
+  ChangeProposalParamMsgType: '4293B70D3658F0',
+  ChangeDeveloperParamMsgType: 'E9222357A97CE0',
+  ChangeValidatorParamMsgType: '2E975DC3A10710',
+  ChangeCoinDayParamMsgType: 'FDFDD1B911C0F0',
+  ChangeBandwidthParamMsgType: '6425F4408B8C48',
+  ChangeAccountParamMsgType: '1FED1384B17F40'
 };
