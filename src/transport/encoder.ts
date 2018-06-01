@@ -79,7 +79,6 @@ export function encodeTx(
     fee: getZeroFee()
   };
 
-  console.log('tx', stdTx);
   const jsonStr = JSON.stringify(stdTx);
   return ByteBuffer.btoa(jsonStr);
 }

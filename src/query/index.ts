@@ -55,10 +55,10 @@ export default class Query {
     );
   }
 
-  getAccountBank(address: string): Promise<AccountBank | null> {
+  getAccountBank(username: string): Promise<AccountBank | null> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.query<AccountBank>(
-      Keys.getAccountBankKey(address),
+      Keys.getAccountBankKey(username),
       AccountKVStoreKey
     );
   }
