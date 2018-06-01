@@ -1,6 +1,7 @@
 import { ITransport } from '../transport';
 import { ResultBroadcastTxCommit } from '../transport/rpc';
 import * as Types from '../common';
+import { decodePubKey } from '../transport/encoder';
 
 const InvalidSeqErrCode = 3;
 
@@ -12,30 +13,29 @@ export default class Broadcast {
   }
 
   //account related
-  // register(
-  //   referrer: string,
-  //   register_fee: string,
-  //   username: string,
-  //   masterPubKeyHex: string,
-  //   postPubKeyHex: string,
-  //   transactionPubKeyHex: string,
-  //   referrerPrivKeyHex: string
-  // ) {
-
-  //   const msg: RegisterMsg = {
-  //     referrer: referrer,
-  //     register_fee: register_fee,
-  //     new_username: username,
-  //     new_post_public_key: Types.Key{ type: _KEYTYPE. postPubKeyHex},
-  //     new_master_public_key: masterPubKeyHex,
-  //     new_transaction_public_key: transactionPubKeyHex
-  //   };
-  //   return this._broadcastTransaction(
-  //     msg,
-  //     _MSGTYPE.RegisterMsgType,
-  //     referrerPrivKeyHex
-  //   );
-  // }
+  register(
+    referrer: string,
+    register_fee: string,
+    username: string,
+    masterPubKeyHex: string,
+    postPubKeyHex: string,
+    transactionPubKeyHex: string,
+    referrerPrivKeyHex: string
+  ) {
+    const msg: RegisterMsg = {
+      referrer: referrer,
+      register_fee: register_fee,
+      new_username: username,
+      new_master_public_key: decodePubKey(masterPubKeyHex),
+      new_post_public_key: decodePubKey(postPubKeyHex),
+      new_transaction_public_key: decodePubKey(transactionPubKeyHex)
+    };
+    return this._broadcastTransaction(
+      msg,
+      _MSGTYPE.RegisterMsgType,
+      referrerPrivKeyHex
+    );
+  }
 
   transfer(
     sender: string,
@@ -191,11 +191,16 @@ export default class Broadcast {
   }
 
   // validator related
-  validatorDeposit(username: string, deposit: string, privKeyHex: string) {
+  validatorDeposit(
+    username: string,
+    deposit: string,
+    validator_public_key: string,
+    privKeyHex: string
+  ) {
     const msg: ValidatorDepositMsg = {
       username,
       deposit,
-      validator_public_key: privKeyHex
+      validator_public_key
     };
     return this._broadcastTransaction(
       msg,
@@ -852,17 +857,6 @@ export interface ChangeAccountParamMsg {
   creator: string;
   parameter: Types.AccountParam;
 }
-
-const _KEYTYPE = {
-  PubKeyEd25519: 'AC26791624DE60',
-  PubKeySecp256k1: 'F8CCEAEB5AE980',
-
-  PrivKeyEd25519: '954568A3288910',
-  PrivKeySecp256k1: '019E82E1B0F798',
-
-  SignatureKeyEd25519: '6BF5903DA1DB28',
-  SignatureKeySecp256k1: '6D1EA416E1FEE8'
-};
 
 const _MSGTYPE = {
   RegisterMsgType: '87780FA5DE6848',

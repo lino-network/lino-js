@@ -23,11 +23,10 @@ export class Transport implements ITransport {
   // This will be hard coded later
   private _chainId: string;
   private _rpc: Rpc;
-  private _cdc = null;
 
   constructor(opt: ITransportOptions) {
     this._rpc = new Rpc(opt.nodeUrl); // create with nodeUrl
-    this._chainId = opt.chainId || 'test-chain-FdqWc7';
+    this._chainId = opt.chainId || 'test-chain-rlmPwO';
   }
 
   query<T>(key: string, storeName: string): Promise<T | null> {
@@ -81,6 +80,7 @@ export class Transport implements ITransport {
       sigDERHex,
       seq
     );
+
     // return broadcast
     return this._rpc.broadcastTxCommit(tx).then(result => {
       return result as ResultBroadcastTxCommit;

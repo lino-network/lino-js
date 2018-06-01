@@ -1,6 +1,8 @@
 const NODE_URL = 'http://34.235.130.1:46657/';
-const testPrivHex =
-  'E1B0F79A20EF105137F5CE2C6A6D4FAF0840B22692E1C42BBDB779960F72983AE09B4DE22A';
+const testTxPrivHex =
+  'E1B0F79A2045793AD58ADA5872FC679754F43570BA0802520D3794508FBBDFA65694742601';
+const testMasterPrivHex =
+  'E1B0F79A2045793AD58ADA5872FC679754F43570BA0802520D3794508FBBDFA65694742601';
 
 function addSuite(envName) {
   describe('LINO', function() {
@@ -39,14 +41,6 @@ function addSuite(envName) {
         console.log(v);
         expect(v).to.exist;
       });
-      query.getBlock(237210).then(v => {
-        console.log(v);
-        expect(v).to.exist;
-      });
-      query.getTxsInBlock(237210).then(v => {
-        console.log(v);
-        expect(v).to.exist;
-      });
       query.getGlobalAllocationParam().then(v => {
         console.log(v);
         expect(v).to.exist;
@@ -59,13 +53,13 @@ function addSuite(envName) {
         console.log(v);
         expect(v).to.exist;
       });
-      query.doesUsernameMatchPrivKey('Lino', testPrivHex).then(v => {
+      query.doesUsernameMatchPrivKey('Lino', testTxPrivHex).then(v => {
         console.log(v);
         expect(v).to.exist;
       });
       const match = UTILS.isKeyMatch(
-        testPrivHex,
-        UTILS.pubKeyFromPrivate(testPrivHex)
+        testTxPrivHex,
+        UTILS.pubKeyFromPrivate(testTxPrivHex)
       );
       expect(match).to.equal(true);
 
@@ -79,10 +73,40 @@ function addSuite(envName) {
       });
 
       const broadcast = lino.broadcast;
-      broadcast.voterDeposit('Lino', '123456', testPrivHex).then(v => {
-        console.log(v);
-        expect(v).to.exist;
-      });
+      // broadcast.voterDeposit('Lino', '12345678', testTxPrivHex).then(v => {
+      //   console.log(v);
+      //   expect(v).to.exist;
+      // });
+
+      const masterPrivKey = UTILS.genPrivKeyHex();
+      const txPrivKey = UTILS.genPrivKeyHex();
+      const postPrivKey = UTILS.genPrivKeyHex();
+
+      const masterPubKey = UTILS.pubKeyFromPrivate(masterPrivKey);
+      const txPubKey = UTILS.pubKeyFromPrivate(txPrivKey);
+      const postPubKey = UTILS.pubKeyFromPrivate(postPrivKey);
+
+      broadcast
+        .register(
+          'Lino',
+          '200',
+          'zhimaoliu2',
+          masterPubKey,
+          postPubKey,
+          txPubKey,
+          testTxPrivHex
+        )
+        .then(v => {
+          console.log(v);
+          expect(v).to.exist;
+        });
+
+      // broadcast
+      //   .validatorDeposit('Lino', '123456', postPubKey, testPrivHex)
+      //   .then(v => {
+      //     console.log(v);
+      //     expect(v).to.exist;
+      //   });
     });
   });
 

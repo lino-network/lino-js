@@ -90,10 +90,28 @@ export default class Query {
 
   getGrantList(username: string): Promise<GrantKeyList | null> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<GrantKeyList>(
-      Keys.getGrantKeyListKey(username),
-      AccountKVStoreKey
-    );
+    return this._transport
+      .query<GrantKeyListInternal>(
+        Keys.getGrantKeyListKey(username),
+        AccountKVStoreKey
+      )
+      .then(result => {
+        if (result == null) {
+          return null;
+        }
+        var newList: GrantPubKey[] = new Array(
+          result.grant_public_key_list.length
+        );
+        for (var i = 0; i < result.grant_public_key_list.length; i++) {
+          newList[i].expires_at = result.grant_public_key_list[i].expires_at;
+          newList[i].username = result.grant_public_key_list[i].username;
+          newList[i].public_key = encodePubKey(
+            convertToRawPubKey(result.grant_public_key_list[i].public_key)
+          );
+        }
+        var newResult: GrantKeyList = { grant_public_key_list: newList };
+        return newResult;
+      });
   }
 
   getReward(username: string): Promise<Reward | null> {
@@ -560,7 +578,7 @@ export interface ProposalInfo {
   result: number;
 }
 
-// internal used
+// internally used
 interface GrantKeyListInternal {
   grant_public_key_list: GrantPubKeyInternal[];
 }

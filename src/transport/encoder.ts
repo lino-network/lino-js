@@ -1,6 +1,7 @@
 import { Coin } from '../common';
 import shajs from 'sha.js';
 import ByteBuffer from 'bytebuffer';
+import { encode } from 'punycode';
 
 // TODO: for int64, maybe we should do extra check in proper place, or use string
 export interface StdFee {
@@ -63,12 +64,12 @@ export function encodeTx(
 ): string {
   const stdMsg: StdMsg = {
     type: msgType,
-    value: msg
+    value: encodeMsg(msg)
   };
 
   const stdSig: StdSignature = {
-    pub_key: convertToInternalPubKey(rawPubKey),
-    signature: convertToInternalSig(rawSigDER),
+    pub_key: convertToInternalPubKey(rawPubKey, _TYPE.PubKeySecp256k1),
+    signature: convertToInternalSig(rawSigDER, _TYPE.SignatureKeySecp256k1),
     sequence: seq
   };
 
@@ -77,17 +78,51 @@ export function encodeTx(
     signatures: [stdSig],
     fee: getZeroFee()
   };
+
   const jsonStr = JSON.stringify(stdTx);
   return ByteBuffer.btoa(jsonStr);
 }
 
+export function encodeMsg(msg: any): any {
+  var encodedMsg = Object.assign({}, msg);
+  if ('new_master_public_key' in msg) {
+    encodedMsg.new_master_public_key = convertToInternalPubKey(
+      msg.new_master_public_key,
+      _TYPE.PubKeySecp256k1
+    );
+  }
+
+  if ('new_post_public_key' in msg) {
+    encodedMsg.new_post_public_key = convertToInternalPubKey(
+      msg.new_post_public_key,
+      _TYPE.PubKeySecp256k1
+    );
+  }
+
+  if ('new_transaction_public_key' in msg) {
+    encodedMsg.new_transaction_public_key = convertToInternalPubKey(
+      msg.new_transaction_public_key,
+      _TYPE.PubKeySecp256k1
+    );
+  }
+
+  if ('validator_public_key' in msg) {
+    encodedMsg.validator_public_key = convertToInternalPubKey(
+      msg.validator_public_key,
+      _TYPE.PubKeyEd25519
+    );
+  }
+
+  return encodedMsg;
+}
 export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
   const fee = getZeroFee();
+  const converted = convertMsg(msg);
   const stdSignMsg: StdSignMsg = {
     chain_id: chainId,
     sequences: [seq],
     fee_bytes: ByteBuffer.btoa(JSON.stringify(fee)),
-    msg_bytes: ByteBuffer.btoa(JSON.stringify(msg)),
+    msg_bytes: ByteBuffer.btoa(JSON.stringify(converted)),
     alt_bytes: null
   };
 
@@ -98,11 +133,45 @@ export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
   return signMsgHash;
 }
 
+export function convertMsg(msg: any): any {
+  var encodedMsg = Object.assign({}, msg);
+  if ('new_master_public_key' in msg) {
+    var buffer = ByteBuffer.fromHex(msg.new_master_public_key);
+    encodedMsg.new_master_public_key = getByteArray(buffer);
+  }
+
+  if ('new_post_public_key' in msg) {
+    var buffer = ByteBuffer.fromHex(msg.new_post_public_key);
+    encodedMsg.new_post_public_key = getByteArray(buffer);
+  }
+
+  if ('new_transaction_public_key' in msg) {
+    var buffer = ByteBuffer.fromHex(msg.new_transaction_public_key);
+    encodedMsg.new_transaction_public_key = getByteArray(buffer);
+  }
+
+  if ('validator_public_key' in msg) {
+    var buffer = ByteBuffer.fromHex(msg.validator_public_key);
+    encodedMsg.validator_public_key = getByteArray(buffer);
+  }
+  return encodedMsg;
+}
+
+function getByteArray(buffer: ByteBuffer): number[] {
+  let res: number[] = [];
+  for (var i = 0; i < buffer.limit; ++i) {
+    res.push(buffer.readUint8());
+  }
+  return res;
+}
+
 //decode std key to raw key, only support secp256k1 for now
 export function decodePrivKey(privKeyHex: string): string {
   privKeyHex = privKeyHex.toUpperCase();
   if (privKeyHex.startsWith(_PREFIX.PrefixPrivKeySecp256k1)) {
     return privKeyHex.slice(_PREFIX.PrefixPrivKeySecp256k1.length);
+  } else if (privKeyHex.startsWith(_PREFIX.PrefixPrivKeyEd25519)) {
+    return privKeyHex.slice(_PREFIX.PrefixPrivKeyEd25519.length);
   }
 
   throw new Error(`Decode priv key failed: ${privKeyHex}\n`);
@@ -112,6 +181,8 @@ export function decodePubKey(pubKeyHex: string): string {
   pubKeyHex = pubKeyHex.toUpperCase();
   if (pubKeyHex.startsWith(_PREFIX.PrefixPubKeySecp256k1)) {
     return pubKeyHex.slice(_PREFIX.PrefixPubKeySecp256k1.length);
+  } else if (pubKeyHex.startsWith(_PREFIX.PrefixPubKeyEd25519)) {
+    return pubKeyHex.slice(_PREFIX.PrefixPubKeyEd25519.length);
   }
 
   throw new Error(`Decode pub key failed: ${pubKeyHex}\n`);
@@ -127,25 +198,34 @@ export function encodePubKey(pubKeyHex: string): string {
 }
 
 // convert raw priv key to internal priv key format
-export function convertToInternalPrivKey(rawPrivKey: string): InternalPrivKey {
+export function convertToInternalPrivKey(
+  rawPrivKey: string,
+  type: string
+): InternalPrivKey {
   const res: InternalPrivKey = {
-    type: _TYPE.PrivKeySecp256k1,
+    type: type,
     value: ByteBuffer.fromHex(rawPrivKey).toString('base64')
   };
   return res;
 }
 // convert raw pub key to internal pub key format
-export function convertToInternalPubKey(rawPubKey: string): InternalPubKey {
+export function convertToInternalPubKey(
+  rawPubKey: string,
+  type: string
+): InternalPubKey {
   const res: InternalPubKey = {
-    type: _TYPE.PubKeySecp256k1,
+    type: type,
     value: ByteBuffer.fromHex(rawPubKey).toString('base64')
   };
   return res;
 }
 // convert raw sig to internal sig format
-export function convertToInternalSig(rawSig: string): InternalSignature {
+export function convertToInternalSig(
+  rawSig: string,
+  type: string
+): InternalSignature {
   const res: InternalSignature = {
-    type: _TYPE.SignatureKeySecp256k1,
+    type: type,
     value: ByteBuffer.fromHex(rawSig).toString('base64')
   };
   return res;
