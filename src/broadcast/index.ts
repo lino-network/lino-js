@@ -39,16 +39,14 @@ export default class Broadcast {
 
   transfer(
     sender: string,
-    receiver_name: string,
-    receiver_addr: string,
+    receiver: string,
     amount: string,
     memo: string,
     privKeyHex: string
   ) {
     const msg: TransferMsg = {
       sender,
-      receiver_name,
-      receiver_addr,
+      receiver,
       amount,
       memo
     };
@@ -634,8 +632,7 @@ export interface RegisterMsg {
 
 export interface TransferMsg {
   sender: string;
-  receiver_name: string;
-  receiver_addr: string;
+  receiver: string;
   amount: string;
   memo: string;
 }
