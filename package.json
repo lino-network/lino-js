@@ -2,7 +2,7 @@
   "name": "lino-js",
   "version": "1.0.0",
   "description": "",
-  "typings": "dist/index.d.ts",
+  "typings": "dist/lino-js.d.ts",
   "main": "dist/lino-js.cjs.js",
   "module": "dist/lino-js.esm.js",
   "browser": "dist/lino-js.umd.js",
@@ -38,7 +38,7 @@
     "typescript": "^2.8.3"
   },
   "scripts": {
-    "build": "npm run bundle",
+    "build": "npm run bundle; cp src/lino-js.d.ts dist",
     "bundle": "rollup -c",
     "dev": "rollup -c -w",
     "precommit": "lint-staged",

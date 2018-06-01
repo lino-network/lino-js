@@ -172,7 +172,7 @@ export default class Broadcast {
     post_id: string,
     content: string,
     redistribution_split_rate: string,
-    links: IDToURLMapping[],
+    links: Types.IDToURLMapping[],
     privKeyHex: string
   ) {
     const msg: UpdatePostMsg = {
@@ -672,13 +672,8 @@ export interface PostCreateParams {
   parent_postID: string;
   source_author: string;
   source_postID: string;
-  links: IDToURLMapping[];
+  links: Types.IDToURLMapping[];
   redistribution_split_rate: string;
-}
-
-export interface IDToURLMapping {
-  identifier: string;
-  url: string;
 }
 
 export interface LikeMsg {
@@ -721,7 +716,7 @@ export interface UpdatePostMsg {
   post_id: string;
   title: string;
   content: string;
-  links: IDToURLMapping[];
+  links: Types.IDToURLMapping[];
   redistribution_split_rate: string;
 }
 
