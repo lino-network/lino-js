@@ -1,7 +1,7 @@
-import { Coin } from '../common';
-import shajs from 'sha.js';
 import ByteBuffer from 'bytebuffer';
 import { encode } from 'punycode';
+import shajs from 'sha.js';
+import { Coin } from '../common';
 
 // TODO: for int64, maybe we should do extra check in proper place, or use string
 export interface StdFee {
@@ -198,10 +198,7 @@ export function encodePubKey(pubKeyHex: string): string {
 }
 
 // convert raw priv key to internal priv key format
-export function convertToInternalPrivKey(
-  rawPrivKey: string,
-  type: string
-): InternalPrivKey {
+export function convertToInternalPrivKey(rawPrivKey: string, type: string): InternalPrivKey {
   const res: InternalPrivKey = {
     type: type,
     value: ByteBuffer.fromHex(rawPrivKey).toString('base64')
@@ -209,10 +206,7 @@ export function convertToInternalPrivKey(
   return res;
 }
 // convert raw pub key to internal pub key format
-export function convertToInternalPubKey(
-  rawPubKey: string,
-  type: string
-): InternalPubKey {
+export function convertToInternalPubKey(rawPubKey: string, type: string): InternalPubKey {
   const res: InternalPubKey = {
     type: type,
     value: ByteBuffer.fromHex(rawPubKey).toString('base64')
@@ -220,10 +214,7 @@ export function convertToInternalPubKey(
   return res;
 }
 // convert raw sig to internal sig format
-export function convertToInternalSig(
-  rawSig: string,
-  type: string
-): InternalSignature {
+export function convertToInternalSig(rawSig: string, type: string): InternalSignature {
   const res: InternalSignature = {
     type: type,
     value: ByteBuffer.fromHex(rawSig).toString('base64')

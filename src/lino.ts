@@ -1,6 +1,6 @@
-import Query from './query';
 import Broadcast from './broadcast';
-import { ITransport, Transport, ITransportOptions } from './transport';
+import Query from './query';
+import { ITransport, ITransportOptions, Transport } from './transport';
 
 export class LINO {
   private _options: any;

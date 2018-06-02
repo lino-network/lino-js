@@ -203,15 +203,10 @@ namespace Keys {
 
   export function getPostReportOrUpvotePrefix(postKey: string): string {
     const postKeyHex = ByteBuffer.fromUTF8(postKey).toHex();
-    return _KEYS.postReportOrUpvoteSubStore
-      .concat(postKeyHex)
-      .concat(_KEYS.sep);
+    return _KEYS.postReportOrUpvoteSubStore.concat(postKeyHex).concat(_KEYS.sep);
   }
 
-  export function getPostReportOrUpvoteKey(
-    postKey: string,
-    user: string
-  ): string {
+  export function getPostReportOrUpvoteKey(postKey: string, user: string): string {
     const userHex = ByteBuffer.fromUTF8(user).toHex();
     return getPostReportOrUpvotePrefix(postKey).concat(userHex);
   }
@@ -231,10 +226,7 @@ namespace Keys {
     return _KEYS.postCommentSubStore.concat(postKeyHex).concat(_KEYS.sep);
   }
 
-  export function getPostCommentKey(
-    postKey: string,
-    commentPostKey: string
-  ): string {
+  export function getPostCommentKey(postKey: string, commentPostKey: string): string {
     const commentPostKeyHex = ByteBuffer.fromUTF8(commentPostKey).toHex();
     return getPostCommentPrefix(postKey).concat(commentPostKeyHex);
   }
@@ -244,10 +236,7 @@ namespace Keys {
     return _KEYS.postDonationsSubStore.concat(postKeyHex).concat(_KEYS.sep);
   }
 
-  export function getPostDonationKey(
-    postKey: string,
-    donateUser: string
-  ): string {
+  export function getPostDonationKey(postKey: string, donateUser: string): string {
     const donateUserHex = ByteBuffer.fromUTF8(donateUser).toHex();
     return getPostDonationPrefix(postKey).concat(donateUserHex);
   }

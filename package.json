@@ -35,7 +35,10 @@
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-resolve": "^3.3.0",
     "rollup-plugin-typescript2": "^0.14.0",
-    "typescript": "^2.8.3"
+    "tslint": "^5.10.0",
+    "tslint-config-prettier": "^1.13.0",
+    "tslint-plugin-prettier": "^1.3.0",
+    "typescript": "^2.9.1"
   },
   "scripts": {
     "build": "npm run bundle",
@@ -45,15 +48,12 @@
     "test": "npm run test:node",
     "test:node": "mocha test/node",
     "test:browser": "open test/browser/test.html",
+    "tslint": "tslint -c tslint.json --project tsconfig.json",
+    "tslint:format": "tslint -c tslint.json --project tsconfig.json --fix",
     "pretest": "npm run build"
   },
   "lint-staged": {
     "*.{js,json,md},{src,test}/**/*.{ts,js,json,md}": ["prettier --write", "git add"]
-  },
-  "prettier": {
-    "tabWidth": 2,
-    "singleQuote": true,
-    "printWidth": 120
   },
   "repository": {
     "type": "git",

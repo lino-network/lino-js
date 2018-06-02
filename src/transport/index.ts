@@ -1,7 +1,7 @@
 import ByteBuffer from 'bytebuffer';
-import { Rpc, ResultBroadcastTxCommit, ResultBlock } from './rpc';
-import { encodeSignMsg, encodeTx, decodePrivKey } from './encoder';
 import { ec as EC } from 'elliptic';
+import { decodePrivKey, encodeSignMsg, encodeTx } from './encoder';
+import { ResultBlock, ResultBroadcastTxCommit, Rpc } from './rpc';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T>;
@@ -68,13 +68,7 @@ export class Transport implements ITransport {
     const sig = key.sign(signMsgHash, { canonical: true });
     const sigDERHex = sig.toDER('hex');
     // build tx
-    const tx = encodeTx(
-      msg,
-      msgType,
-      key.getPublic(true, 'hex'),
-      sigDERHex,
-      seq
-    );
+    const tx = encodeTx(msg, msgType, key.getPublic(true, 'hex'), sigDERHex, seq);
 
     // return broadcast
     return this._rpc.broadcastTxCommit(tx).then(result => {
