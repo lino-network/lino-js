@@ -4,8 +4,8 @@ import { encodeSignMsg, encodeTx, decodePrivKey } from './encoder';
 import { ec as EC } from 'elliptic';
 
 export interface ITransport {
-  query<T = any>(key: string, storeName: string): Promise<T | null>;
-  block(height: number): Promise<ResultBlock | null>;
+  query<T = any>(key: string, storeName: string): Promise<T>;
+  block(height: number): Promise<ResultBlock>;
   signBuildBroadcast(
     msg: any,
     msgType: string,
@@ -29,7 +29,7 @@ export class Transport implements ITransport {
     this._chainId = opt.chainId || 'test-chain-rlmPwO';
   }
 
-  query<T>(key: string, storeName: string): Promise<T | null> {
+  query<T>(key: string, storeName: string): Promise<T> {
     // transport: get path and key for ABCIQuery and return result
     // get transport's node and do ABCIQuery
     // rpc client do rpc call
@@ -50,7 +50,7 @@ export class Transport implements ITransport {
     });
   }
 
-  block(height: number): Promise<ResultBlock | null> {
+  block(height: number): Promise<ResultBlock> {
     return this._rpc.block(height).then(result => {
       return result as ResultBlock;
     });
