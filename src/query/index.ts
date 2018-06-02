@@ -289,7 +289,7 @@ export default class Query {
       .block(height)
       .then(
         v =>
-          v && v.block && v.block.data
+          v && v.block && v.block.data && v.block.data.txs
             ? v.block.data.txs.map(tx => JSON.parse(ByteBuffer.atob(tx)))
             : []
       );
