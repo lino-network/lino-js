@@ -1,4 +1,5 @@
 import { ec as EC } from 'elliptic';
+import shajs from 'sha.js';
 import {
   decodePrivKey,
   decodePubKey,
@@ -29,4 +30,14 @@ export function isKeyMatch(privKeyHex: string, pubKeyHex: string): boolean {
   const ec = new EC('secp256k1');
   var key = ec.keyFromPrivate(decodePrivKey(privKeyHex), 'hex');
   return key.getPublic(true, 'hex').toUpperCase() == decodePubKey(pubKeyHex);
+}
+
+// deterministically generates new priv-key bytes from provided key.
+export function derivePrivKey(privKeyHex): string {
+  const ec = new EC('secp256k1');
+  const keyHash = shajs('sha256')
+    .update(privKeyHex)
+    .digest();
+  var key = ec.genKeyPair({ entropy: keyHash });
+  return encodePrivKey(key.getPrivate('hex'));
 }

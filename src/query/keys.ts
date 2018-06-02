@@ -126,8 +126,9 @@ namespace Keys {
     return _KEYS.accountInfoSubstore.concat(accKeyHex);
   }
 
-  export function getAccountBankKey(address: string): string {
-    return _KEYS.accountBankSubstore.concat(address);
+  export function getAccountBankKey(accKey: string): string {
+    const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
+    return _KEYS.accountBankSubstore.concat(accKeyHex);
   }
 
   export function getAccountMetaKey(accKey: string): string {

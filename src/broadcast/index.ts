@@ -39,16 +39,14 @@ export default class Broadcast {
 
   transfer(
     sender: string,
-    receiver_name: string,
-    receiver_addr: string,
+    receiver: string,
     amount: string,
     memo: string,
     privKeyHex: string
   ) {
     const msg: TransferMsg = {
       sender,
-      receiver_name,
-      receiver_addr,
+      receiver,
       amount,
       memo
     };
@@ -172,7 +170,7 @@ export default class Broadcast {
     post_id: string,
     content: string,
     redistribution_split_rate: string,
-    links: IDToURLMapping[],
+    links: Types.IDToURLMapping[],
     privKeyHex: string
   ) {
     const msg: UpdatePostMsg = {
@@ -195,12 +193,14 @@ export default class Broadcast {
     username: string,
     deposit: string,
     validator_public_key: string,
+    link: string,
     privKeyHex: string
   ) {
     const msg: ValidatorDepositMsg = {
-      username,
-      deposit,
-      validator_public_key
+      username: username,
+      deposit: deposit,
+      validator_public_key: decodePubKey(validator_public_key),
+      link: link
     };
     return this._broadcastTransaction(
       msg,
@@ -632,8 +632,7 @@ export interface RegisterMsg {
 
 export interface TransferMsg {
   sender: string;
-  receiver_name: string;
-  receiver_addr: string;
+  receiver: string;
   amount: string;
   memo: string;
 }
@@ -672,13 +671,8 @@ export interface PostCreateParams {
   parent_postID: string;
   source_author: string;
   source_postID: string;
-  links: IDToURLMapping[];
+  links: Types.IDToURLMapping[];
   redistribution_split_rate: string;
-}
-
-export interface IDToURLMapping {
-  identifier: string;
-  url: string;
 }
 
 export interface LikeMsg {
@@ -721,7 +715,7 @@ export interface UpdatePostMsg {
   post_id: string;
   title: string;
   content: string;
-  links: IDToURLMapping[];
+  links: Types.IDToURLMapping[];
   redistribution_split_rate: string;
 }
 
@@ -730,6 +724,7 @@ export interface ValidatorDepositMsg {
   username: string;
   deposit: string;
   validator_public_key: string;
+  link: string;
 }
 
 export interface ValidatorWithdrawMsg {
