@@ -36,13 +36,8 @@ export class Transport implements ITransport {
     // check resp
     const path = `/${storeName}/key`;
     return this._rpc.abciQuery(path, key).then(result => {
-      if (result.response == null) {
-        throw new Error(`Empty response\n`);
-      }
-      if (result.response.value == null) {
-        throw new Error(
-          `Query failed: ${result.response.code}\n${result.response.log}`
-        );
+      if (!result.response || !result.response.value) {
+        throw new Error('Query failed: Empty result');
       }
 
       const jsonStr = ByteBuffer.atob(result.response.value);
