@@ -52,11 +52,7 @@ export class Rpc {
     this._nodeUrl = nodeUrl;
   }
 
-  abciQuery(
-    path: string,
-    key: string,
-    opts = DefaultABCIQueryOptions
-  ): Promise<IResultABCIQuery> {
+  abciQuery(path: string, key: string, opts = DefaultABCIQueryOptions): Promise<IResultABCIQuery> {
     return fetch(this._nodeUrl, {
       headers: { 'Content-Type': 'text/json' },
       body: JSON.stringify({
@@ -133,18 +129,12 @@ export class Rpc {
       mode: 'cors'
     })
       .then((response: any) => response.json())
-      .then(
-        (
-          data:
-            | JsonRpc2.JsonRpcSuccess<ResultBlock>
-            | JsonRpc2.JsonRpcFailure<ResultBlock>
-        ) => {
-          if ('result' in data) {
-            return data.result as ResultBlock;
-          } else {
-            throw data.error;
-          }
+      .then((data: JsonRpc2.JsonRpcSuccess<ResultBlock> | JsonRpc2.JsonRpcFailure<ResultBlock>) => {
+        if ('result' in data) {
+          return data.result as ResultBlock;
+        } else {
+          throw data.error;
         }
-      );
+      });
   }
 }

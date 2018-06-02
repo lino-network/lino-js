@@ -1,4 +1,4 @@
-import { ResultBroadcastTxCommit, ResultBlock } from './rpc';
+import { ResultBlock, ResultBroadcastTxCommit } from './rpc';
 export interface ITransport {
     query<T = any>(key: string, storeName: string): Promise<T>;
     block(height: number): Promise<ResultBlock>;

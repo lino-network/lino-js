@@ -1,7 +1,7 @@
-import { ITransport } from '../transport';
-import { ResultBroadcastTxCommit } from '../transport/rpc';
 import * as Types from '../common';
+import { ITransport } from '../transport';
 import { decodePubKey } from '../transport/encoder';
+import { ResultBroadcastTxCommit } from '../transport/rpc';
 
 const InvalidSeqErrCode = 3;
 
@@ -30,31 +30,17 @@ export default class Broadcast {
       new_post_public_key: decodePubKey(postPubKeyHex),
       new_transaction_public_key: decodePubKey(transactionPubKeyHex)
     };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.RegisterMsgType,
-      referrerPrivKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.RegisterMsgType, referrerPrivKeyHex);
   }
 
-  transfer(
-    sender: string,
-    receiver: string,
-    amount: string,
-    memo: string,
-    privKeyHex: string
-  ) {
+  transfer(sender: string, receiver: string, amount: string, memo: string, privKeyHex: string) {
     const msg: TransferMsg = {
       sender,
       receiver,
       amount,
       memo
     };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.TransferMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.TransferMsgType, privKeyHex);
   }
 
   follow(follower: string, followee: string, privKeyHex: string) {
@@ -70,11 +56,7 @@ export default class Broadcast {
       follower,
       followee
     };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.UnfollowMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.UnfollowMsgType, privKeyHex);
   }
 
   claim(username: string, privKeyHex: string) {
@@ -85,13 +67,7 @@ export default class Broadcast {
   }
 
   // post related
-  like(
-    username: string,
-    author: string,
-    weight: number,
-    post_id: string,
-    privKeyHex: string
-  ) {
+  like(username: string, author: string, weight: number, post_id: string, privKeyHex: string) {
     const msg: LikeMsg = {
       username,
       weight,
@@ -136,11 +112,7 @@ export default class Broadcast {
       post_id,
       is_report
     };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ReportOrUpvoteMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ReportOrUpvoteMsgType, privKeyHex);
   }
 
   deletePost(author: string, post_id: string, privKeyHex: string) {
@@ -148,11 +120,7 @@ export default class Broadcast {
       author,
       post_id
     };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.DeletePostMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.DeletePostMsgType, privKeyHex);
   }
 
   view(username: string, author: string, post_id: string, privKeyHex: string) {
@@ -181,11 +149,7 @@ export default class Broadcast {
       links,
       redistribution_split_rate
     };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.UpdatePostMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.UpdatePostMsgType, privKeyHex);
   }
 
   // validator related
@@ -202,11 +166,7 @@ export default class Broadcast {
       validator_public_key: decodePubKey(validator_public_key),
       link: link
     };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ValidatorDepositMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ValidatorDepositMsgType, privKeyHex);
   }
 
   validatorWithdraw(username: string, amount: string, privKeyHex: string) {
@@ -214,31 +174,18 @@ export default class Broadcast {
       username,
       amount
     };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ValidatorWithdrawMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ValidatorWithdrawMsgType, privKeyHex);
   }
 
   ValidatorRevoke(username: string, privKeyHex: string) {
     const msg: ValidatorRevokeMsg = {
       username
     };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ValidatorRevokeMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ValidatorRevokeMsgType, privKeyHex);
   }
 
   // vote related
-  vote(
-    voter: string,
-    proposal_id: string,
-    result: boolean,
-    privKeyHex: string
-  ) {
+  vote(voter: string, proposal_id: string, result: boolean, privKeyHex: string) {
     const msg: VoteMsg = {
       voter,
       proposal_id,
@@ -252,11 +199,7 @@ export default class Broadcast {
       username,
       deposit
     };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.VoterDepositMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.VoterDepositMsgType, privKeyHex);
   }
 
   voterWithdraw(username: string, amount: string, privKeyHex: string) {
@@ -264,60 +207,34 @@ export default class Broadcast {
       username,
       amount
     };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.VoterWithdrawMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.VoterWithdrawMsgType, privKeyHex);
   }
 
   voterRevoke(username: string, privKeyHex: string) {
     const msg: VoterRevokeMsg = {
       username
     };
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.VoterRevokeMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.VoterRevokeMsgType, privKeyHex);
   }
 
-  delegate(
-    delegator: string,
-    voter: string,
-    amount: string,
-    privKeyHex: string
-  ) {
+  delegate(delegator: string, voter: string, amount: string, privKeyHex: string) {
     const msg: DelegateMsg = {
       delegator,
       voter,
       amount
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.DelegateMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.DelegateMsgType, privKeyHex);
   }
 
-  delegatorWithdraw(
-    delegator: string,
-    voter: string,
-    amount: string,
-    privKeyHex: string
-  ) {
+  delegatorWithdraw(delegator: string, voter: string, amount: string, privKeyHex: string) {
     const msg: DelegatorWithdrawMsg = {
       delegator,
       voter,
       amount
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.DelegatorWithdrawMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.DelegatorWithdrawMsgType, privKeyHex);
   }
 
   revokeDelegation(delegator: string, voter: string, privKeyHex: string) {
@@ -326,11 +243,7 @@ export default class Broadcast {
       voter
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.RevokeDelegationMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.RevokeDelegationMsgType, privKeyHex);
   }
 
   // developer related
@@ -340,11 +253,7 @@ export default class Broadcast {
       deposit
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.DeveloperRegisterMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.DeveloperRegisterMsgType, privKeyHex);
   }
 
   developerRevoke(username: string, privKeyHex: string) {
@@ -352,11 +261,7 @@ export default class Broadcast {
       username
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.DeveloperRevokeMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.DeveloperRevokeMsgType, privKeyHex);
   }
 
   grantDeveloper(
@@ -373,11 +278,7 @@ export default class Broadcast {
       grant_level
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.GrantDeveloperMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.GrantDeveloperMsgType, privKeyHex);
   }
 
   // infra related
@@ -387,11 +288,7 @@ export default class Broadcast {
       usage
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ProviderReportMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ProviderReportMsgType, privKeyHex);
   }
 
   // proposal related
@@ -405,11 +302,7 @@ export default class Broadcast {
       parameter
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ChangeGlobalAllocationParamMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ChangeGlobalAllocationParamMsgType, privKeyHex);
   }
 
   changeEvaluateOfContentValueParam(
@@ -446,123 +339,67 @@ export default class Broadcast {
     );
   }
 
-  changeVoteParam(
-    creator: string,
-    parameter: Types.VoteParam,
-    privKeyHex: string
-  ) {
+  changeVoteParam(creator: string, parameter: Types.VoteParam, privKeyHex: string) {
     const msg: ChangeVoteParamMsg = {
       creator,
       parameter
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ChangeVoteParamMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ChangeVoteParamMsgType, privKeyHex);
   }
 
-  changeProposalParam(
-    creator: string,
-    parameter: Types.ProposalParam,
-    privKeyHex: string
-  ) {
+  changeProposalParam(creator: string, parameter: Types.ProposalParam, privKeyHex: string) {
     const msg: ChangeProposalParamMsg = {
       creator,
       parameter
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ChangeProposalParamMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ChangeProposalParamMsgType, privKeyHex);
   }
 
-  changeDeveloperParam(
-    creator: string,
-    parameter: Types.DeveloperParam,
-    privKeyHex: string
-  ) {
+  changeDeveloperParam(creator: string, parameter: Types.DeveloperParam, privKeyHex: string) {
     const msg: ChangeDeveloperParamMsg = {
       creator,
       parameter
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ChangeDeveloperParamMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ChangeDeveloperParamMsgType, privKeyHex);
   }
 
-  changeValidatorParam(
-    creator: string,
-    parameter: Types.ValidatorParam,
-    privKeyHex: string
-  ) {
+  changeValidatorParam(creator: string, parameter: Types.ValidatorParam, privKeyHex: string) {
     const msg: ChangeValidatorParamMsg = {
       creator,
       parameter
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ChangeValidatorParamMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ChangeValidatorParamMsgType, privKeyHex);
   }
 
-  changeCoinDayParam(
-    creator: string,
-    parameter: Types.CoinDayParam,
-    privKeyHex: string
-  ) {
+  changeCoinDayParam(creator: string, parameter: Types.CoinDayParam, privKeyHex: string) {
     const msg: ChangeCoinDayParamMsg = {
       creator,
       parameter
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ChangeCoinDayParamMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ChangeCoinDayParamMsgType, privKeyHex);
   }
 
-  changeBandwidthParam(
-    creator: string,
-    parameter: Types.BandwidthParam,
-    privKeyHex: string
-  ) {
+  changeBandwidthParam(creator: string, parameter: Types.BandwidthParam, privKeyHex: string) {
     const msg: ChangeBandwidthParamMsg = {
       creator,
       parameter
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ChangeBandwidthParamMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ChangeBandwidthParamMsgType, privKeyHex);
   }
 
-  changeAccountParam(
-    creator: string,
-    parameter: Types.AccountParam,
-    privKeyHex: string
-  ) {
+  changeAccountParam(creator: string, parameter: Types.AccountParam, privKeyHex: string) {
     const msg: ChangeAccountParamMsg = {
       creator,
       parameter
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ChangeAccountParamMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ChangeAccountParamMsgType, privKeyHex);
   }
 
   deletePostContent(creator: string, permLink: string, privKeyHex: string) {
@@ -571,11 +408,7 @@ export default class Broadcast {
       permLink
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.DeletePostContentMsgType,
-      privKeyHex
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.DeletePostContentMsgType, privKeyHex);
   }
   _broadcastTransaction(
     msg: any,
@@ -583,22 +416,15 @@ export default class Broadcast {
     privKeyHex: string
   ): Promise<ResultBroadcastTxCommit> {
     const reg = /expected (\d+)/;
-    return this._transport
-      .signBuildBroadcast(msg, msgType, privKeyHex, 0)
-      .then(result => {
-        if (result.check_tx.code === InvalidSeqErrCode) {
-          const match = reg.exec(result.check_tx.log);
-          if (!match) throw new Error('Wrong seq number');
-          const newSeq = parseInt(match[0].substring(9), 10);
-          return this._transport.signBuildBroadcast(
-            msg,
-            msgType,
-            privKeyHex,
-            newSeq
-          );
-        }
-        return result;
-      });
+    return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, 0).then(result => {
+      if (result.check_tx.code === InvalidSeqErrCode) {
+        const match = reg.exec(result.check_tx.log);
+        if (!match) throw new Error('Wrong seq number');
+        const newSeq = parseInt(match[0].substring(9), 10);
+        return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, newSeq);
+      }
+      return result;
+    });
   }
 }
 

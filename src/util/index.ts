@@ -1,11 +1,6 @@
 import { ec as EC } from 'elliptic';
 import shajs from 'sha.js';
-import {
-  decodePrivKey,
-  decodePubKey,
-  encodePubKey,
-  encodePrivKey
-} from '../transport/encoder';
+import { decodePrivKey, decodePubKey, encodePrivKey, encodePubKey } from '../transport/encoder';
 
 export function genPrivKeyHex(): string {
   const ec = new EC('secp256k1');

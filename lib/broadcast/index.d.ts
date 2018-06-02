@@ -1,6 +1,6 @@
+import * as Types from '../common';
 import { ITransport } from '../transport';
 import { ResultBroadcastTxCommit } from '../transport/rpc';
-import * as Types from '../common';
 export default class Broadcast {
     private _transport;
     constructor(transport: ITransport);

@@ -1,15 +1,12 @@
 const NODE_URL = 'http://34.235.130.1:46657/';
-const testTxPrivHex =
-  'E1B0F79A2045793AD58ADA5872FC679754F43570BA0802520D3794508FBBDFA65694742601';
+const testTxPrivHex = 'E1B0F79A2045793AD58ADA5872FC679754F43570BA0802520D3794508FBBDFA65694742601';
 const testValidatorPubHex =
   '1624DE6220e008041ccafcc76788099b990531697ff4bf8eb2d1fabe204ee5fe0fc2c7c3f6';
 
 function addSuite(envName) {
   describe('LINO', function() {
     it('remote nodeUrl works', async function() {
-      const result = await fetch(`${NODE_URL}block?height=1`).then(resp =>
-        resp.json()
-      );
+      const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
       expect(result).to.exist;
     });
     it('query', async function() {
@@ -83,10 +80,7 @@ function addSuite(envName) {
     });
 
     it('private key match pub key', function() {
-      const match = UTILS.isKeyMatch(
-        testTxPrivHex,
-        UTILS.pubKeyFromPrivate(testTxPrivHex)
-      );
+      const match = UTILS.isKeyMatch(testTxPrivHex, UTILS.pubKeyFromPrivate(testTxPrivHex));
       expect(match).to.equal(true);
     });
 
@@ -123,12 +117,10 @@ function addSuite(envName) {
           console.log(v);
           expect(v).to.exist;
           sleep(3000).then(() => {
-            broadcast
-              .voterDeposit('test-userx', '15000', derivedPostPrivKey)
-              .then(v => {
-                console.log(v);
-                expect(v).to.exist;
-              });
+            broadcast.voterDeposit('test-userx', '15000', derivedPostPrivKey).then(v => {
+              console.log(v);
+              expect(v).to.exist;
+            });
           });
         });
     });
