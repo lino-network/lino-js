@@ -50,6 +50,10 @@ function addSuite(envName) {
         console.log(v);
         expect(v).to.exist;
       });
+      query.getSeqNumber('Lino').then(v => {
+        console.log(v);
+        expect(v).to.exist;
+      });
       query.doesUsernameMatchPrivKey('Lino', testTxPrivHex).then(v => {
         console.log(v);
         expect(v).to.exist;
@@ -95,6 +99,7 @@ function addSuite(envName) {
       });
 
       const broadcast = lino.broadcast;
+      const query = lino.query;
       const randomMasterPrivKey = UTILS.genPrivKeyHex();
       const derivedTxPrivKey = UTILS.derivePrivKey(randomMasterPrivKey);
       const derivedPostPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
@@ -103,26 +108,24 @@ function addSuite(envName) {
       const txPubKey = UTILS.pubKeyFromPrivate(derivedTxPrivKey);
       const postPubKey = UTILS.pubKeyFromPrivate(derivedPostPrivKey);
 
-      broadcast
-        .register(
-          'Lino',
-          '20000000',
-          'test-userx',
-          masterPubKey,
-          postPubKey,
-          txPubKey,
-          testTxPrivHex
-        )
-        .then(v => {
-          console.log(v);
-          expect(v).to.exist;
-          sleep(3000).then(() => {
-            broadcast.voterDeposit('test-userx', '15000', derivedPostPrivKey).then(v => {
-              console.log(v);
-              expect(v).to.exist;
-            });
+      query.getSeqNumber('Lino').then(seq => {
+        expect(seq).to.exist;
+        broadcast
+          .register(
+            'Lino',
+            '20000000',
+            'new-test-user',
+            masterPubKey,
+            postPubKey,
+            txPubKey,
+            testTxPrivHex,
+            seq
+          )
+          .then(v => {
+            console.log(v);
+            expect(v).to.exist;
           });
-        });
+      });
     });
   });
 }
