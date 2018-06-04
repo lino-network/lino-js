@@ -33,6 +33,12 @@ export default class Query {
   }
 
   // account related query
+  getSeqNumber(username: string): Promise<Number> {
+    return this.getAccountMeta(username).then(meta => {
+      return meta.sequence;
+    });
+  }
+
   getAccountMeta(username: string): Promise<AccountMeta> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.query<AccountMeta>(Keys.getAccountMetaKey(username), AccountKVStoreKey);
@@ -43,15 +49,11 @@ export default class Query {
     return this._transport.query<AccountBank>(Keys.getAccountBankKey(username), AccountKVStoreKey);
   }
 
-  getAccountInfo(username: string): Promise<AccountInfo | null> {
+  getAccountInfo(username: string): Promise<AccountInfo> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport
       .query<AccountInfoInternal>(Keys.getAccountInfoKey(username), AccountKVStoreKey)
       .then(info => {
-        if (!info) {
-          return null;
-        }
-
         const res: AccountInfo = {
           username: info.username,
           created_at: info.created_at,
@@ -63,14 +65,11 @@ export default class Query {
       });
   }
 
-  getGrantList(username: string): Promise<GrantKeyList | null> {
+  getGrantList(username: string): Promise<GrantKeyList> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport
       .query<GrantKeyListInternal>(Keys.getGrantKeyListKey(username), AccountKVStoreKey)
       .then(result => {
-        if (!result) {
-          return null;
-        }
         var newList: GrantPubKey[] = new Array(result.grant_public_key_list.length);
         for (var i = 0; i < result.grant_public_key_list.length; i++) {
           newList[i].expires_at = result.grant_public_key_list[i].expires_at;
