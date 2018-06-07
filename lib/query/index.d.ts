@@ -8,7 +8,7 @@ export default class Query {
     doesUsernameMatchPrivKey(username: string, privKeyHex: string): Promise<boolean>;
     getAllValidators(): Promise<AllValidators>;
     getValidator(username: string): Promise<Validator>;
-    getSeqNumber(username: string): Promise<Number>;
+    getSeqNumber(username: string): Promise<number>;
     getRecentBalanceHistory(username: string, interval: number): Promise<BalanceHistory>;
     getAccountMeta(username: string): Promise<AccountMeta>;
     getAccountBank(username: string): Promise<AccountBank>;
