@@ -33,6 +33,8 @@ declare namespace Keys {
     function getFollowingPrefix(me: string): string;
     function getFollowerKey(me: string, myFollower: string): string;
     function getFollowingKey(me: string, myFollowing: string): string;
+    function getBalanceHistoryPrefix(me: string): string;
+    function getBalanceHistoryKey(me: string, atWhen: string): string;
     function getPostInfoKey(postKey: string): string;
     function getPostKey(author: string, postID: string): string;
     function getPostMetaKey(postKey: string): string;

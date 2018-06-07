@@ -33,6 +33,24 @@ export default class Query {
   }
 
   // account related query
+  getSeqNumber(username: string): Promise<Number> {
+    return this.getAccountMeta(username).then(meta => {
+      return meta.sequence;
+    });
+  }
+
+  // get past days tx history of an account
+  getRecentBalanceHistory(username: string, interval: number): Promise<BalanceHistory> {
+    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
+    const curTime = new Date().getTime() / 1000;
+    const timeSlot = Math.floor(curTime / _TIMECONST.BalanceHistoryIntervalTime);
+    // TODO: filter txs according to interval
+    return this._transport.query<BalanceHistory>(
+      Keys.getBalanceHistoryKey(username, timeSlot.toString()),
+      AccountKVStoreKey
+    );
+  }
+
   getAccountMeta(username: string): Promise<AccountMeta> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.query<AccountMeta>(Keys.getAccountMetaKey(username), AccountKVStoreKey);
@@ -43,15 +61,11 @@ export default class Query {
     return this._transport.query<AccountBank>(Keys.getAccountBankKey(username), AccountKVStoreKey);
   }
 
-  getAccountInfo(username: string): Promise<AccountInfo | null> {
+  getAccountInfo(username: string): Promise<AccountInfo> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport
       .query<AccountInfoInternal>(Keys.getAccountInfoKey(username), AccountKVStoreKey)
       .then(info => {
-        if (!info) {
-          return null;
-        }
-
         const res: AccountInfo = {
           username: info.username,
           created_at: info.created_at,
@@ -63,14 +77,11 @@ export default class Query {
       });
   }
 
-  getGrantList(username: string): Promise<GrantKeyList | null> {
+  getGrantList(username: string): Promise<GrantKeyList> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport
       .query<GrantKeyListInternal>(Keys.getGrantKeyListKey(username), AccountKVStoreKey)
       .then(result => {
-        if (!result) {
-          return null;
-        }
         var newList: GrantPubKey[] = new Array(result.grant_public_key_list.length);
         for (var i = 0; i < result.grant_public_key_list.length; i++) {
           newList[i].expires_at = result.grant_public_key_list[i].expires_at;
@@ -79,7 +90,9 @@ export default class Query {
             convertToRawPubKey(result.grant_public_key_list[i].public_key)
           );
         }
-        var newResult: GrantKeyList = { grant_public_key_list: newList };
+        var newResult: GrantKeyList = {
+          grant_public_key_list: newList
+        };
         return newResult;
       });
   }
@@ -417,6 +430,16 @@ export interface InfraProviderList {
 }
 
 // account related
+export interface BalanceHistory {
+  details: Detail[];
+}
+
+export interface Detail {
+  detail: number;
+  amount: Types.Coin;
+  created_at: number;
+}
+
 export interface AccountMeta {
   sequence: number;
   last_activity: number;
@@ -488,6 +511,40 @@ export interface ProposalInfo {
   disagree_vote: Types.Coin;
   result: number;
 }
+
+// tx detail type
+export const DETAILTYPE = {
+  // Different possible incomes
+  TransferIn: 0,
+  DonationIn: 1,
+  ClaimReward: 2,
+  ValidatorInflation: 3,
+  DeveloperInflation: 4,
+  InfraInflation: 5,
+  VoteReturnCoin: 6,
+  DelegationReturnCoin: 7,
+  ValidatorReturnCoin: 8,
+  DeveloperReturnCoin: 9,
+  InfraReturnCoin: 10,
+  ProposalReturnCoin: 11,
+  GenesisCoin: 12,
+  // Different possible outcomes
+  TransferOut: 13,
+  DonationOut: 14,
+  Delegate: 15,
+  VoterDeposit: 16,
+  ValidatorDeposit: 17,
+  DeveloperDeposit: 18,
+  InfraDeposit: 19,
+  ProposalDeposit: 20
+};
+
+const _TIMECONST = {
+  HoursPerYear: 8766,
+  MinutesPerYear: 8766 * 60,
+  MinutesPerMonth: 8766 * 60 / 12,
+  BalanceHistoryIntervalTime: 8766 * 60 / 12 * 60
+};
 
 // internally used
 interface GrantKeyListInternal {

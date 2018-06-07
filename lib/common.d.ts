@@ -1,5 +1,9 @@
 export interface Coin {
-    amount: number;
+    amount: Int128;
+}
+export interface Int128 {
+    Lo: number;
+    Hi: number;
 }
 export interface Rat {
     num: number;

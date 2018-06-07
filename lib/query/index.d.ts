@@ -8,10 +8,12 @@ export default class Query {
     doesUsernameMatchPrivKey(username: string, privKeyHex: string): Promise<boolean>;
     getAllValidators(): Promise<AllValidators>;
     getValidator(username: string): Promise<Validator>;
+    getSeqNumber(username: string): Promise<Number>;
+    getRecentBalanceHistory(username: string, interval: number): Promise<BalanceHistory>;
     getAccountMeta(username: string): Promise<AccountMeta>;
     getAccountBank(username: string): Promise<AccountBank>;
-    getAccountInfo(username: string): Promise<AccountInfo | null>;
-    getGrantList(username: string): Promise<GrantKeyList | null>;
+    getAccountInfo(username: string): Promise<AccountInfo>;
+    getGrantList(username: string): Promise<GrantKeyList>;
     getReward(username: string): Promise<Reward>;
     getRelationship(me: string, other: string): Promise<Relationship>;
     getFollowerMeta(me: string, myFollower: string): Promise<FollowerMeta>;
@@ -140,6 +142,14 @@ export interface InfraProvider {
 export interface InfraProviderList {
     all_infra_providers: string[];
 }
+export interface BalanceHistory {
+    details: Detail[];
+}
+export interface Detail {
+    detail: number;
+    amount: Types.Coin;
+    created_at: number;
+}
 export interface AccountMeta {
     sequence: number;
     last_activity: number;
@@ -199,3 +209,26 @@ export interface ProposalInfo {
     disagree_vote: Types.Coin;
     result: number;
 }
+export declare const DETAILTYPE: {
+    TransferIn: number;
+    DonationIn: number;
+    ClaimReward: number;
+    ValidatorInflation: number;
+    DeveloperInflation: number;
+    InfraInflation: number;
+    VoteReturnCoin: number;
+    DelegationReturnCoin: number;
+    ValidatorReturnCoin: number;
+    DeveloperReturnCoin: number;
+    InfraReturnCoin: number;
+    ProposalReturnCoin: number;
+    GenesisCoin: number;
+    TransferOut: number;
+    DonationOut: number;
+    Delegate: number;
+    VoterDeposit: number;
+    ValidatorDeposit: number;
+    DeveloperDeposit: number;
+    InfraDeposit: number;
+    ProposalDeposit: number;
+};
