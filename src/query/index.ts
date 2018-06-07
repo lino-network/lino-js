@@ -33,7 +33,7 @@ export default class Query {
   }
 
   // account related query
-  getSeqNumber(username: string): Promise<Number> {
+  getSeqNumber(username: string): Promise<number> {
     return this.getAccountMeta(username).then(meta => {
       return meta.sequence;
     });
