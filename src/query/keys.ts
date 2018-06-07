@@ -41,6 +41,7 @@ namespace Keys {
     accountPendingStakeQueueSubstore: '06',
     accountRelationshipSubstore: '07',
     accountGrantListSubstore: '08',
+    accountBalanceHistorySubstore: '09',
 
     postInfoSubStore: '00',
     postMetaSubStore: '01',
@@ -174,6 +175,16 @@ namespace Keys {
   export function getFollowingKey(me: string, myFollowing: string): string {
     const myFollowingHex = ByteBuffer.fromUTF8(myFollowing).toHex();
     return getFollowingPrefix(me).concat(myFollowingHex);
+  }
+
+  export function getBalanceHistoryPrefix(me: string): string {
+    const meHex = ByteBuffer.fromUTF8(me).toHex();
+    return _KEYS.accountBalanceHistorySubstore.concat(meHex).concat(_KEYS.sep);
+  }
+
+  export function getBalanceHistoryKey(me: string, atWhen: string): string {
+    const atWhenHex = ByteBuffer.fromUTF8(atWhen).toHex();
+    return getBalanceHistoryPrefix(me).concat(atWhenHex);
   }
 
   // post related

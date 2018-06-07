@@ -1,5 +1,5 @@
 const NODE_URL = 'http://34.235.130.1:46657/';
-const testTxPrivHex = 'E1B0F79A2045793AD58ADA5872FC679754F43570BA0802520D3794508FBBDFA65694742601';
+const testTxPrivHex = 'E1B0F79A20FC8F3712F73D3870B04A1644EDD85863609B002CAB09454758EE292C6F6687B3';
 const testValidatorPubHex =
   '1624DE6220e008041ccafcc76788099b990531697ff4bf8eb2d1fabe204ee5fe0fc2c7c3f6';
 
@@ -99,10 +99,8 @@ function addSuite(envName) {
           );
         });
       });
-
       it('getAccountBank', function() {
         return query.getAccountBank('Lino').then(v => {
-          console.log(v);
           expect(v).to.have.all.keys('saving', 'stake', 'frozen_money_list');
         });
       });
@@ -110,6 +108,13 @@ function addSuite(envName) {
       it('getSeqNumber', function() {
         return query.getSeqNumber('Lino').then(v => {
           expect(v).to.be.a('number');
+        });
+      });
+
+      it('getRecentBalanceHistory', function() {
+        return query.getRecentBalanceHistory('Lino', 7).then(v => {
+          console.log(v);
+          expect(v).to.have.all.keys('details');
         });
       });
 
@@ -178,7 +183,7 @@ function addSuite(envName) {
             .register(
               'Lino',
               '20000000',
-              'new-test-user',
+              'Zhimao',
               masterPubKey,
               postPubKey,
               txPubKey,
