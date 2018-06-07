@@ -9,73 +9,132 @@ function addSuite(envName) {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
       expect(result).to.exist;
     });
-    it('query', async function() {
+    describe('query', function() {
       const query = new LINO({
         // chainId: 'test-chain-FdqWc7',
         nodeUrl: NODE_URL
       }).query;
-      query.getAllValidators().then(v => {
-        console.log(v);
-        expect(v).to.exist;
+
+      it('getAllValidators', function() {
+        return query.getAllValidators().then(v => {
+          console.log(v);
+          expect(v).to.have.all.keys(
+            'oncall_validators',
+            'all_validators',
+            'pre_block_validators',
+            'lowest_power',
+            'lowest_validator'
+          );
+        });
       });
-      query.getValidator('Lino').then(v => {
-        console.log(v);
-        expect(v).to.exist;
+
+      it('getValidator', function() {
+        return query.getValidator('Lino').then(v => {
+          console.log(v);
+          expect(v).to.have.all.keys(
+            'ABCIValidator',
+            'username',
+            'deposit',
+            'absent_commit',
+            'produced_blocks',
+            'link'
+          );
+        });
       });
-      query.getDevelopers().then(v => {
-        console.log(v);
-        expect(v).to.exist;
+
+      it('getDevelopers', function() {
+        return query.getDevelopers().then(v => {
+          console.log(v);
+          expect(v).to.have.all.keys('all_developers');
+        });
       });
-      query.getDeveloper('Lino').then(v => {
-        console.log(v);
-        expect(v).to.exist;
+
+      it('getDeveloper', function() {
+        return query.getDeveloper('Lino').then(v => {
+          console.log(v);
+          expect(v).to.have.all.keys('username', 'deposit', 'app_consumption');
+        });
       });
-      query.getInfraProviders().then(v => {
-        console.log(v);
-        expect(v).to.exist;
+
+      it('getInfraProviders', function() {
+        return query.getInfraProviders().then(v => {
+          console.log(v);
+          expect(v).to.have.all.keys('all_infra_providers');
+        });
       });
-      query.getInfraProvider('Lino').then(v => {
-        console.log(v);
-        expect(v).to.exist;
+
+      it('getInfraProvider', function() {
+        return query.getInfraProvider('Lino').then(v => {
+          console.log(v);
+          expect(v).to.have.all.keys('username', 'usage');
+        });
       });
-      query.getGlobalAllocationParam().then(v => {
-        console.log(v);
-        expect(v).to.exist;
+
+      it('getGlobalAllocationParam', function() {
+        return query.getGlobalAllocationParam().then(v => {
+          console.log(v);
+          expect(v).to.have.all.keys(
+            'infra_allocation',
+            'content_creator_allocation',
+            'developer_allocation',
+            'validator_allocation'
+          );
+        });
       });
-      query.getValidatorParam().then(v => {
-        console.log(v);
-        expect(v).to.exist;
+
+      it('getValidatorParam', function() {
+        return query.getValidatorParam().then(v => {
+          console.log(v);
+          expect(v).to.have.all.keys(
+            'validator_min_withdraw',
+            'validator_min_voting_deposit',
+            'validator_min_commiting_deposit',
+            'validator_coin_return_interval',
+            'validator_coin_return_times',
+            'penalty_miss_vote',
+            'penalty_miss_commit',
+            'penalty_byzantine',
+            'validator_list_size',
+            'absent_commit_limitation'
+          );
+        });
       });
-      query.getAccountBank('Lino').then(v => {
-        console.log(v);
-        expect(v).to.exist;
+
+      it('getAccountBank', function() {
+        return query.getAccountBank('Lino').then(v => {
+          console.log(v);
+          expect(v).to.have.all.keys('saving', 'stake', 'frozen_money_list');
+        });
       });
-      query.getSeqNumber('Lino').then(v => {
-        console.log(v);
-        expect(v).to.exist;
+
+      it('getSeqNumber', function() {
+        return query.getSeqNumber('Lino').then(v => {
+          expect(v).to.be.a('number');
+        });
       });
-      query.doesUsernameMatchPrivKey('Lino', testTxPrivHex).then(v => {
-        console.log(v);
-        expect(v).to.exist;
+
+      it('doesUsernameMatchPrivKey', function() {
+        return query.doesUsernameMatchPrivKey('Lino', testTxPrivHex).then(v => {
+          expect(v).to.be.false;
+        });
       });
     });
 
-    it('broadcast', async function() {
-      const lino = new LINO({
-        nodeUrl: NODE_URL
-      });
+    // describe('broadcast', function() {
+    //   const lino = new LINO({
+    //     nodeUrl: NODE_URL
+    //   });
 
-      const broadcast = lino.broadcast;
-      const query = lino.query;
+    //   const broadcast = lino.broadcast;
 
-      const masterPrivKey = UTILS.genPrivKeyHex();
-      const txPrivKey = UTILS.genPrivKeyHex();
-      const postPrivKey = UTILS.genPrivKeyHex();
+    //   const masterPrivKey = UTILS.genPrivKeyHex();
+    //   const txPrivKey = UTILS.genPrivKeyHex();
+    //   const postPrivKey = UTILS.genPrivKeyHex();
 
-      const masterPubKey = UTILS.pubKeyFromPrivate(masterPrivKey);
-      const txPubKey = UTILS.pubKeyFromPrivate(txPrivKey);
-      const postPubKey = UTILS.pubKeyFromPrivate(postPrivKey);
-    });
+    //   const masterPubKey = UTILS.pubKeyFromPrivate(masterPrivKey);
+    //   const txPubKey = UTILS.pubKeyFromPrivate(txPrivKey);
+    //   const postPubKey = UTILS.pubKeyFromPrivate(postPrivKey);
+    // });
   });
 
   describe('UTILS', function() {
@@ -108,24 +167,29 @@ function addSuite(envName) {
       const txPubKey = UTILS.pubKeyFromPrivate(derivedTxPrivKey);
       const postPubKey = UTILS.pubKeyFromPrivate(derivedPostPrivKey);
 
-      query.getSeqNumber('Lino').then(seq => {
-        expect(seq).to.exist;
-        broadcast
-          .register(
-            'Lino',
-            '20000000',
-            'new-test-user',
-            masterPubKey,
-            postPubKey,
-            txPubKey,
-            testTxPrivHex,
-            seq
-          )
-          .then(v => {
-            console.log(v);
-            expect(v).to.exist;
-          });
-      });
+      return query
+        .getSeqNumber('Lino')
+        .then(seq => {
+          expect(seq).to.be.a('number');
+          return seq;
+        })
+        .then(seq => {
+          return broadcast
+            .register(
+              'Lino',
+              '20000000',
+              'new-test-user',
+              masterPubKey,
+              postPubKey,
+              txPubKey,
+              testTxPrivHex,
+              seq
+            )
+            .then(v => {
+              console.log(v);
+              expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+            });
+        });
     });
   });
 }
