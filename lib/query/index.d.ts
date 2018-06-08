@@ -31,6 +31,7 @@ export default class Query {
     getInfraProvider(providerName: string): Promise<InfraProvider>;
     getInfraProviders(): Promise<InfraProviderList>;
     getProposalList(): Promise<ProposalList>;
+    getProposal(proposalID: string): Promise<Proposal>;
     getEvaluateOfContentValueParam(): Promise<Types.EvaluateOfContentValueParam>;
     getGlobalAllocationParam(): Promise<Types.GlobalAllocationParam>;
     getInfraInternalAllocationParam(): Promise<Types.InfraInternalAllocationParam>;
@@ -208,6 +209,22 @@ export interface ProposalInfo {
     agree_vote: Types.Coin;
     disagree_vote: Types.Coin;
     result: number;
+}
+export interface Proposal {
+    type: string;
+    value: any;
+}
+export interface ChangeParamProposal {
+    ProposalInfo: ProposalInfo;
+    param: Types.Parameter;
+}
+export interface ContentCensorshipProposal {
+    ProposalInfo: ProposalInfo;
+    perm_link: string;
+}
+export interface ProtocolUpgradeProposal {
+    ProposalInfo: ProposalInfo;
+    link: string;
 }
 export declare const DETAILTYPE: {
     TransferIn: number;
