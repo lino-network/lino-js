@@ -212,18 +212,19 @@ export interface ProposalInfo {
 }
 export interface Proposal {
     type: string;
-    value: any;
+    value: ProposalValue;
 }
-export interface ChangeParamProposal {
+export interface ProposalValue {
     ProposalInfo: ProposalInfo;
+    [propName: string]: any;
+}
+export interface ChangeParamProposalValue extends ProposalValue {
     param: Types.Parameter;
 }
-export interface ContentCensorshipProposal {
-    ProposalInfo: ProposalInfo;
+export interface ContentCensorshipProposalValue extends ProposalValue {
     perm_link: string;
 }
-export interface ProtocolUpgradeProposal {
-    ProposalInfo: ProposalInfo;
+export interface ProtocolUpgradeProposalValue extends ProposalValue {
     link: string;
 }
 export declare const DETAILTYPE: {
