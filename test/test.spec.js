@@ -118,6 +118,13 @@ function addSuite(envName) {
         });
       });
 
+      it('getAllProposal', function() {
+        return query.getProposal('1').then(v => {
+          console.log(v);
+          expect(v).to.have.all.keys('type', 'value');
+        });
+      });
+
       it('doesUsernameMatchPrivKey', function() {
         return query.doesUsernameMatchPrivKey('Lino', testTxPrivHex).then(v => {
           expect(v).to.be.false;
