@@ -1,6 +1,11 @@
 //Common Type defination
 export interface Coin {
-  amount: number;
+  amount: Int128;
+}
+
+export interface Int128 {
+  Lo: number;
+  Hi: number;
 }
 
 export interface Rat {
@@ -11,6 +16,11 @@ export interface Rat {
 export interface IDToURLMapping {
   identifier: string;
   url: string;
+}
+
+export interface Parameter {
+  type: string;
+  value: any;
 }
 
 export interface EvaluateOfContentValueParam {

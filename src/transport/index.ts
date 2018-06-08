@@ -1,7 +1,7 @@
 import ByteBuffer from 'bytebuffer';
-import { Rpc, ResultBroadcastTxCommit, ResultBlock } from './rpc';
-import { encodeSignMsg, encodeTx, decodePrivKey } from './encoder';
 import { ec as EC } from 'elliptic';
+import { decodePrivKey, encodeSignMsg, encodeTx } from './encoder';
+import { ResultBlock, ResultBroadcastTxCommit, Rpc } from './rpc';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T>;
@@ -26,7 +26,7 @@ export class Transport implements ITransport {
 
   constructor(opt: ITransportOptions) {
     this._rpc = new Rpc(opt.nodeUrl); // create with nodeUrl
-    this._chainId = opt.chainId || 'test-chain-rlmPwO';
+    this._chainId = opt.chainId || 'test-chain-OkZHJB';
   }
 
   query<T>(key: string, storeName: string): Promise<T> {
@@ -36,13 +36,8 @@ export class Transport implements ITransport {
     // check resp
     const path = `/${storeName}/key`;
     return this._rpc.abciQuery(path, key).then(result => {
-      if (result.response == null) {
-        throw new Error(`Empty response\n`);
-      }
-      if (result.response.value == null) {
-        throw new Error(
-          `Query failed: ${result.response.code}\n${result.response.log}`
-        );
+      if (!result.response || !result.response.value) {
+        throw new Error('Query failed: Empty result');
       }
 
       const jsonStr = ByteBuffer.atob(result.response.value);
@@ -73,13 +68,7 @@ export class Transport implements ITransport {
     const sig = key.sign(signMsgHash, { canonical: true });
     const sigDERHex = sig.toDER('hex');
     // build tx
-    const tx = encodeTx(
-      msg,
-      msgType,
-      key.getPublic(true, 'hex'),
-      sigDERHex,
-      seq
-    );
+    const tx = encodeTx(msg, msgType, key.getPublic(true, 'hex'), sigDERHex, seq);
 
     // return broadcast
     return this._rpc.broadcastTxCommit(tx).then(result => {

@@ -1,0 +1,54 @@
+{
+  "extends": ["tslint-config-prettier", "tslint-plugin-prettier"],
+  "defaultSeverity": "warning",
+  "rules": {
+    "prettier": [
+      true,
+      {
+        "singleQuote": true,
+        "trailingComma": "none",
+        "printWidth": 100
+      }
+    ],
+    "arrow-parens": [true, "ban-single-arg-parens"],
+    "curly": [true, "ignore-same-line"],
+    "forin": false,
+    "interface-name": [false],
+    "max-classes-per-file": [false],
+    "max-line-length": [false],
+    "member-access": [true, "no-public"],
+    "no-duplicate-imports": true,
+    "no-empty-interface": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": [
+      true,
+      {
+        "import-sources-order": "lowercase-last",
+        "named-imports-order": "lowercase-last"
+      }
+    ],
+    "prefer-const": false,
+    "quotemark": [true, "single"],
+    "trailing-comma": [true, { "multiline": "never", "singleline": "never" }],
+    "variable-name": [
+      true,
+      "ban-keywords",
+      "check-format",
+      "allow-leading-underscore",
+      "allow-pascal-case",
+      "allow-snake-case"
+    ],
+    "whitespace": [
+      true,
+      "check-branch",
+      "check-decl",
+      "check-module",
+      "check-operator",
+      "check-preblock",
+      "check-rest-spread",
+      "check-separator",
+      "check-type",
+      "check-type-operator"
+    ]
+  }
+}

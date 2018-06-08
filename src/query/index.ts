@@ -1,15 +1,10 @@
-import { ITransport } from '../transport';
-import {
-  StdTx,
-  encodePubKey,
-  InternalPubKey,
-  convertToRawPubKey
-} from '../transport/encoder';
-import Keys from './keys';
-import { ResultBlock } from '../transport/rpc';
 import ByteBuffer from 'bytebuffer';
 import * as Types from '../common';
+import { ITransport } from '../transport';
+import { InternalPubKey, StdTx, convertToRawPubKey, encodePubKey } from '../transport/encoder';
+import { ResultBlock } from '../transport/rpc';
 import * as Util from '../util/index';
+import Keys from './keys';
 
 export default class Query {
   private _transport: ITransport;
@@ -18,10 +13,7 @@ export default class Query {
     this._transport = transport;
   }
 
-  doesUsernameMatchPrivKey(
-    username: string,
-    privKeyHex: string
-  ): Promise<boolean> {
+  doesUsernameMatchPrivKey(username: string, privKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
       if (info == null) {
         return false;
@@ -32,76 +24,65 @@ export default class Query {
   // validator related query
   getAllValidators(): Promise<AllValidators> {
     const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
-    return this._transport.query<AllValidators>(
-      Keys.getValidatorListKey(),
-      ValidatorKVStoreKey
-    );
+    return this._transport.query<AllValidators>(Keys.getValidatorListKey(), ValidatorKVStoreKey);
   }
 
   getValidator(username: string): Promise<Validator> {
     const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
-    return this._transport.query<Validator>(
-      Keys.getValidatorKey(username),
-      ValidatorKVStoreKey
-    );
+    return this._transport.query<Validator>(Keys.getValidatorKey(username), ValidatorKVStoreKey);
   }
 
   // account related query
-  getAccountMeta(username: string): Promise<AccountMeta> {
+  getSeqNumber(username: string): Promise<number> {
+    return this.getAccountMeta(username).then(meta => {
+      return meta.sequence;
+    });
+  }
+
+  // get past days tx history of an account
+  getRecentBalanceHistory(username: string, interval: number): Promise<BalanceHistory> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<AccountMeta>(
-      Keys.getAccountMetaKey(username),
+    const curTime = new Date().getTime() / 1000;
+    const timeSlot = Math.floor(curTime / _TIMECONST.BalanceHistoryIntervalTime);
+    // TODO: filter txs according to interval
+    return this._transport.query<BalanceHistory>(
+      Keys.getBalanceHistoryKey(username, timeSlot.toString()),
       AccountKVStoreKey
     );
+  }
+
+  getAccountMeta(username: string): Promise<AccountMeta> {
+    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
+    return this._transport.query<AccountMeta>(Keys.getAccountMetaKey(username), AccountKVStoreKey);
   }
 
   getAccountBank(username: string): Promise<AccountBank> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<AccountBank>(
-      Keys.getAccountBankKey(username),
-      AccountKVStoreKey
-    );
+    return this._transport.query<AccountBank>(Keys.getAccountBankKey(username), AccountKVStoreKey);
   }
 
-  getAccountInfo(username: string): Promise<AccountInfo | null> {
+  getAccountInfo(username: string): Promise<AccountInfo> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport
-      .query<AccountInfoInternal>(
-        Keys.getAccountInfoKey(username),
-        AccountKVStoreKey
-      )
+      .query<AccountInfoInternal>(Keys.getAccountInfoKey(username), AccountKVStoreKey)
       .then(info => {
-        if (!info) {
-          return null;
-        }
-
         const res: AccountInfo = {
           username: info.username,
           created_at: info.created_at,
           master_key: encodePubKey(convertToRawPubKey(info.master_key)),
-          transaction_key: encodePubKey(
-            convertToRawPubKey(info.transaction_key)
-          ),
+          transaction_key: encodePubKey(convertToRawPubKey(info.transaction_key)),
           post_key: encodePubKey(convertToRawPubKey(info.post_key))
         };
         return res;
       });
   }
 
-  getGrantList(username: string): Promise<GrantKeyList | null> {
+  getGrantList(username: string): Promise<GrantKeyList> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport
-      .query<GrantKeyListInternal>(
-        Keys.getGrantKeyListKey(username),
-        AccountKVStoreKey
-      )
+      .query<GrantKeyListInternal>(Keys.getGrantKeyListKey(username), AccountKVStoreKey)
       .then(result => {
-        if (!result) {
-          return null;
-        }
-        var newList: GrantPubKey[] = new Array(
-          result.grant_public_key_list.length
-        );
+        var newList: GrantPubKey[] = new Array(result.grant_public_key_list.length);
         for (var i = 0; i < result.grant_public_key_list.length; i++) {
           newList[i].expires_at = result.grant_public_key_list[i].expires_at;
           newList[i].username = result.grant_public_key_list[i].username;
@@ -109,17 +90,16 @@ export default class Query {
             convertToRawPubKey(result.grant_public_key_list[i].public_key)
           );
         }
-        var newResult: GrantKeyList = { grant_public_key_list: newList };
+        var newResult: GrantKeyList = {
+          grant_public_key_list: newList
+        };
         return newResult;
       });
   }
 
   getReward(username: string): Promise<Reward> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.query<Reward>(
-      Keys.getRewardKey(username),
-      AccountKVStoreKey
-    );
+    return this._transport.query<Reward>(Keys.getRewardKey(username), AccountKVStoreKey);
   }
 
   getRelationship(me: string, other: string): Promise<Relationship> {
@@ -147,11 +127,7 @@ export default class Query {
   }
 
   // post related query
-  getPostComment(
-    author: string,
-    postID: string,
-    commentPostKey: string
-  ): Promise<Comment> {
+  getPostComment(author: string, postID: string, commentPostKey: string): Promise<Comment> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const PostKey = Keys.getPostKey(author, postID);
     return this._transport.query<Comment>(
@@ -163,17 +139,10 @@ export default class Query {
   getPostView(author: string, postID: string, viewUser: string): Promise<View> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<View>(
-      Keys.getPostViewKey(PostKey, viewUser),
-      PostKVStoreKey
-    );
+    return this._transport.query<View>(Keys.getPostViewKey(PostKey, viewUser), PostKVStoreKey);
   }
 
-  getPostDonation(
-    author: string,
-    postID: string,
-    donateUser: string
-  ): Promise<Donation> {
+  getPostDonation(author: string, postID: string, donateUser: string): Promise<Donation> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const PostKey = Keys.getPostKey(author, postID);
     return this._transport.query<Donation>(
@@ -182,11 +151,7 @@ export default class Query {
     );
   }
 
-  getPostReportOrUpvote(
-    author: string,
-    postID: string,
-    user: string
-  ): Promise<ReportOrUpvote> {
+  getPostReportOrUpvote(author: string, postID: string, user: string): Promise<ReportOrUpvote> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const PostKey = Keys.getPostKey(author, postID);
     return this._transport.query<ReportOrUpvote>(
@@ -198,19 +163,13 @@ export default class Query {
   getPostInfo(author: string, postID: string): Promise<PostInfo> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<PostInfo>(
-      Keys.getPostInfoKey(PostKey),
-      PostKVStoreKey
-    );
+    return this._transport.query<PostInfo>(Keys.getPostInfoKey(PostKey), PostKVStoreKey);
   }
 
   getPostMeta(author: string, postID: string): Promise<PostMeta> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<PostMeta>(
-      Keys.getPostMetaKey(PostKey),
-      PostKVStoreKey
-    );
+    return this._transport.query<PostMeta>(Keys.getPostMetaKey(PostKey), PostKVStoreKey);
   }
 
   // vote related query
@@ -224,10 +183,7 @@ export default class Query {
 
   getVoter(voterName: string): Promise<Voter> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-    return this._transport.query<Voter>(
-      Keys.getVoterKey(voterName),
-      VoteKVStoreKey
-    );
+    return this._transport.query<Voter>(Keys.getVoterKey(voterName), VoteKVStoreKey);
   }
 
   // developer related query
@@ -241,10 +197,7 @@ export default class Query {
 
   getDevelopers(): Promise<DeveloperList> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
-    return this._transport.query<DeveloperList>(
-      Keys.getDeveloperListKey(),
-      DeveloperKVStoreKey
-    );
+    return this._transport.query<DeveloperList>(Keys.getDeveloperListKey(), DeveloperKVStoreKey);
   }
 
   // infra related query
@@ -267,10 +220,12 @@ export default class Query {
   // proposal related query
   getProposalList(): Promise<ProposalList> {
     const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
-    return this._transport.query<ProposalList>(
-      Keys.getProposalListKey(),
-      ProposalKVStoreKey
-    );
+    return this._transport.query<ProposalList>(Keys.getProposalListKey(), ProposalKVStoreKey);
+  }
+
+  getProposal(proposalID: string): Promise<Proposal> {
+    const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
+    return this._transport.query<Proposal>(Keys.getProposalKey(proposalID), ProposalKVStoreKey);
   }
 
   // param related query
@@ -290,9 +245,7 @@ export default class Query {
     );
   }
 
-  getInfraInternalAllocationParam(): Promise<
-    Types.InfraInternalAllocationParam
-  > {
+  getInfraInternalAllocationParam(): Promise<Types.InfraInternalAllocationParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.InfraInternalAllocationParam>(
       Keys.getInfraInternalAllocationParamKey(),
@@ -310,18 +263,12 @@ export default class Query {
 
   getVoteParam(): Promise<Types.VoteParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
-    return this._transport.query<Types.VoteParam>(
-      Keys.getVoteParamKey(),
-      ParamKVStoreKey
-    );
+    return this._transport.query<Types.VoteParam>(Keys.getVoteParamKey(), ParamKVStoreKey);
   }
 
   getProposalParam(): Promise<Types.ProposalParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
-    return this._transport.query<Types.ProposalParam>(
-      Keys.getProposalParamKey(),
-      ParamKVStoreKey
-    );
+    return this._transport.query<Types.ProposalParam>(Keys.getProposalParamKey(), ParamKVStoreKey);
   }
 
   getValidatorParam(): Promise<Types.ValidatorParam> {
@@ -334,10 +281,7 @@ export default class Query {
 
   getCoinDayParam(): Promise<Types.CoinDayParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
-    return this._transport.query<Types.CoinDayParam>(
-      Keys.getCoinDayParamKey(),
-      ParamKVStoreKey
-    );
+    return this._transport.query<Types.CoinDayParam>(Keys.getCoinDayParamKey(), ParamKVStoreKey);
   }
 
   getBandwidthParam(): Promise<Types.BandwidthParam> {
@@ -350,10 +294,7 @@ export default class Query {
 
   getAccountParam(): Promise<Types.AccountParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
-    return this._transport.query<Types.AccountParam>(
-      Keys.getAccountParamKey(),
-      ParamKVStoreKey
-    );
+    return this._transport.query<Types.AccountParam>(Keys.getAccountParamKey(), ParamKVStoreKey);
   }
 
   // block related
@@ -366,7 +307,7 @@ export default class Query {
       .block(height)
       .then(
         v =>
-          v && v.block && v.block.data
+          v && v.block && v.block.data && v.block.data.txs
             ? v.block.data.txs.map(tx => JSON.parse(ByteBuffer.atob(tx)))
             : []
       );
@@ -494,6 +435,16 @@ export interface InfraProviderList {
 }
 
 // account related
+export interface BalanceHistory {
+  details: Detail[];
+}
+
+export interface Detail {
+  detail: number;
+  amount: Types.Coin;
+  created_at: number;
+}
+
 export interface AccountMeta {
   sequence: number;
   last_activity: number;
@@ -565,6 +516,62 @@ export interface ProposalInfo {
   disagree_vote: Types.Coin;
   result: number;
 }
+
+export interface Proposal {
+  type: string;
+  value: ProposalValue;
+}
+
+export interface ProposalValue {
+  ProposalInfo: ProposalInfo;
+  [propName: string]: any;
+}
+
+export interface ChangeParamProposalValue extends ProposalValue {
+  param: Types.Parameter;
+}
+
+export interface ContentCensorshipProposalValue extends ProposalValue {
+  perm_link: string;
+}
+
+export interface ProtocolUpgradeProposalValue extends ProposalValue {
+  link: string;
+}
+
+// tx detail type
+export const DETAILTYPE = {
+  // Different possible incomes
+  TransferIn: 0,
+  DonationIn: 1,
+  ClaimReward: 2,
+  ValidatorInflation: 3,
+  DeveloperInflation: 4,
+  InfraInflation: 5,
+  VoteReturnCoin: 6,
+  DelegationReturnCoin: 7,
+  ValidatorReturnCoin: 8,
+  DeveloperReturnCoin: 9,
+  InfraReturnCoin: 10,
+  ProposalReturnCoin: 11,
+  GenesisCoin: 12,
+  // Different possible outcomes
+  TransferOut: 13,
+  DonationOut: 14,
+  Delegate: 15,
+  VoterDeposit: 16,
+  ValidatorDeposit: 17,
+  DeveloperDeposit: 18,
+  InfraDeposit: 19,
+  ProposalDeposit: 20
+};
+
+const _TIMECONST = {
+  HoursPerYear: 8766,
+  MinutesPerYear: 8766 * 60,
+  MinutesPerMonth: 8766 * 60 / 12,
+  BalanceHistoryIntervalTime: 8766 * 60 / 12 * 60
+};
 
 // internally used
 interface GrantKeyListInternal {
