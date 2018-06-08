@@ -223,6 +223,11 @@ export default class Query {
     return this._transport.query<ProposalList>(Keys.getProposalListKey(), ProposalKVStoreKey);
   }
 
+  getProposal(proposalID: string): Promise<Proposal> {
+    const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
+    return this._transport.query<Proposal>(Keys.getProposalKey(proposalID), ProposalKVStoreKey);
+  }
+
   // param related query
   getEvaluateOfContentValueParam(): Promise<Types.EvaluateOfContentValueParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
@@ -510,6 +515,26 @@ export interface ProposalInfo {
   agree_vote: Types.Coin;
   disagree_vote: Types.Coin;
   result: number;
+}
+
+export interface Proposal {
+  type: string;
+  value: any;
+}
+
+export interface ChangeParamProposal {
+  ProposalInfo: ProposalInfo;
+  param: Types.Parameter;
+}
+
+export interface ContentCensorshipProposal {
+  ProposalInfo: ProposalInfo;
+  perm_link: string;
+}
+
+export interface ProtocolUpgradeProposal {
+  ProposalInfo: ProposalInfo;
+  link: string;
 }
 
 // tx detail type

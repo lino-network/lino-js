@@ -18,6 +18,11 @@ export interface IDToURLMapping {
   url: string;
 }
 
+export interface Parameter {
+  type: string;
+  value: any;
+}
+
 export interface EvaluateOfContentValueParam {
   consumption_time_adjust_base: number;
   consumption_time_adjust_offset: number;

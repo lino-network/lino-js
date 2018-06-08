@@ -118,6 +118,13 @@ function addSuite(envName) {
         });
       });
 
+      it('getAllProposal', function() {
+        return query.getProposal('1').then(v => {
+          console.log(v);
+          expect(v).to.have.all.keys('type', 'value');
+        });
+      });
+
       it('doesUsernameMatchPrivKey', function() {
         return query.doesUsernameMatchPrivKey('Lino', testTxPrivHex).then(v => {
           expect(v).to.be.false;
@@ -125,21 +132,29 @@ function addSuite(envName) {
       });
     });
 
-    // describe('broadcast', function() {
-    //   const lino = new LINO({
-    //     nodeUrl: NODE_URL
-    //   });
+    describe('broadcast', function() {
+      const lino = new LINO({
+        nodeUrl: NODE_URL
+      });
 
-    //   const broadcast = lino.broadcast;
+      const broadcast = lino.broadcast;
+      const query = lino.query;
 
-    //   const masterPrivKey = UTILS.genPrivKeyHex();
-    //   const txPrivKey = UTILS.genPrivKeyHex();
-    //   const postPrivKey = UTILS.genPrivKeyHex();
-
-    //   const masterPubKey = UTILS.pubKeyFromPrivate(masterPrivKey);
-    //   const txPubKey = UTILS.pubKeyFromPrivate(txPrivKey);
-    //   const postPubKey = UTILS.pubKeyFromPrivate(postPrivKey);
-    // });
+      // it('changeGlobalAllocationParam', function() {
+      //   return query.getGlobalAllocationParam().then(v => {
+      //     v.content_creator_allocation.num = 35;
+      //     v.developer_allocation.num = 40;
+      //     return query.getSeqNumber('Lino').then(seq => {
+      //       return broadcast
+      //         .changeGlobalAllocationParam('Lino', v, testTxPrivHex, seq)
+      //         .then(res => {
+      //           console.log(res);
+      //           expect(res).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+      //         });
+      //     });
+      //   });
+      // });
+    });
   });
 
   describe('UTILS', function() {
@@ -172,29 +187,29 @@ function addSuite(envName) {
       const txPubKey = UTILS.pubKeyFromPrivate(derivedTxPrivKey);
       const postPubKey = UTILS.pubKeyFromPrivate(derivedPostPrivKey);
 
-      return query
-        .getSeqNumber('Lino')
-        .then(seq => {
-          expect(seq).to.be.a('number');
-          return seq;
-        })
-        .then(seq => {
-          return broadcast
-            .register(
-              'Lino',
-              '20000000',
-              'Zhimao',
-              masterPubKey,
-              postPubKey,
-              txPubKey,
-              testTxPrivHex,
-              seq
-            )
-            .then(v => {
-              console.log(v);
-              expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-            });
-        });
+      // return query
+      //   .getSeqNumber('Lino')
+      //   .then(seq => {
+      //     expect(seq).to.be.a('number');
+      //     return seq;
+      //   })
+      //   .then(seq => {
+      //     return broadcast
+      //       .register(
+      //         'Lino',
+      //         '20000000',
+      //         'Zhimao',
+      //         masterPubKey,
+      //         postPubKey,
+      //         txPubKey,
+      //         testTxPrivHex,
+      //         seq
+      //       )
+      //       .then(v => {
+      //         console.log(v);
+      //         expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+      //       });
+      //   });
     });
   });
 }
