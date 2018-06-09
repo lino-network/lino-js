@@ -228,6 +228,18 @@ export default class Query {
     return this._transport.query<Proposal>(Keys.getProposalKey(proposalID), ProposalKVStoreKey);
   }
 
+  getOngoingProposal(): Promise<Proposal[]> {
+    return this.getProposalList().then(list =>
+      Promise.all((list.ongoing_proposal || []).map(p => this.getProposal(p)))
+    );
+  }
+
+  getExpiredProposal(): Promise<Proposal[]> {
+    return this.getProposalList().then(list =>
+      Promise.all((list.past_proposal || []).map(p => this.getProposal(p)))
+    );
+  }
+
   // param related query
   getEvaluateOfContentValueParam(): Promise<Types.EvaluateOfContentValueParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
@@ -506,8 +518,8 @@ export interface FollowingMeta {
 
 // proposal related
 export interface ProposalList {
-  ongoing_proposal: string[];
-  past_proposal: string[];
+  ongoing_proposal?: string[];
+  past_proposal?: string[];
 }
 
 export interface ProposalInfo {
