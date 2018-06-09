@@ -3,6 +3,8 @@ mocha.setup('bdd');
 
 // Add chai's expect to the global scope
 window.expect = chai.expect;
+window.debug = debug('LINO:test');
+localStorage.debug = 'LINO:test';
 
 window.LINO = lino.LINO;
 window.UTILS = lino.UTILS;
