@@ -4,6 +4,8 @@ const testValidatorPubHex =
   '1624DE6220e008041ccafcc76788099b990531697ff4bf8eb2d1fabe204ee5fe0fc2c7c3f6';
 
 function addSuite(envName) {
+  const { LINO, UTILS } = lino;
+
   describe('LINO', function() {
     const linoClient = new LINO({
       nodeUrl: NODE_URL,
@@ -164,6 +166,20 @@ function addSuite(envName) {
                 expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
               });
           });
+      });
+
+      it('throws error if fail', function() {
+        return query.getSeqNumber('Lino').then(seq => {
+          debug('query seq number before transfer', seq);
+          expect(seq).to.be.a('number');
+          return broadcast
+            .transfer('Lino', 'middle-man', 'INVALID_AMOUNT', 'hi', testTxPrivHex, seq)
+            .catch(err => {
+              debug('transfer error', err);
+              expect(err).to.have.all.keys('code', 'type');
+              expect(err).to.be.an.instanceOf(lino.BroadcastError);
+            });
+        });
       });
     });
   });

@@ -5,10 +5,6 @@ mocha.setup('bdd');
 window.expect = chai.expect;
 window.debug = debug('LINO:test');
 localStorage.debug = 'LINO:test';
-
-window.LINO = lino.LINO;
-window.UTILS = lino.UTILS;
-
 // // Enable fake server
 // before(function() {
 //   this.server = sinon.createFakeServer({ autoRespond: true });
