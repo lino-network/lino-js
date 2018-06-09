@@ -582,8 +582,8 @@ export const DETAILTYPE = {
 const _TIMECONST = {
   HoursPerYear: 8766,
   MinutesPerYear: 8766 * 60,
-  MinutesPerMonth: (8766 * 60) / 12,
-  BalanceHistoryIntervalTime: ((8766 * 60) / 12) * 60
+  MinutesPerMonth: 8766 * 60 / 12,
+  BalanceHistoryIntervalTime: 8766 * 60 / 12 * 60
 };
 
 // internally used

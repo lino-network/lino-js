@@ -5,15 +5,16 @@ const testValidatorPubHex =
 
 function addSuite(envName) {
   describe('LINO', function() {
+    const linoClient = new LINO({
+      nodeUrl: NODE_URL,
+      chainId: 'test-chain-FdqWc7'
+    });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
       expect(result).to.exist;
     });
     describe('query', function() {
-      const query = new LINO({
-        // chainId: 'test-chain-FdqWc7',
-        nodeUrl: NODE_URL
-      }).query;
+      const query = linoClient.query;
 
       it('getAllValidators', function() {
         return query.getAllValidators().then(v => {
@@ -165,12 +166,8 @@ function addSuite(envName) {
     });
 
     it('use derive priv key', function() {
-      const lino = new LINO({
-        nodeUrl: NODE_URL
-      });
-
-      const broadcast = lino.broadcast;
-      const query = lino.query;
+      const broadcast = linoClient.broadcast;
+      const query = linoClient.query;
       const randomMasterPrivKey = UTILS.genPrivKeyHex();
       const derivedTxPrivKey = UTILS.derivePrivKey(randomMasterPrivKey);
       const derivedPostPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);

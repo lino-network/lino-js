@@ -72,7 +72,39 @@ export class Transport implements ITransport {
 
     // return broadcast
     return this._rpc.broadcastTxCommit(tx).then(result => {
-      return result as ResultBroadcastTxCommit;
+      if (result.check_tx.code !== undefined) {
+        throw new BroadcastError(
+          BroadCastErrorEnum.CheckTx,
+          result.check_tx.log,
+          result.check_tx.code
+        );
+      } else if (result.deliver_tx.code !== undefined) {
+        throw new BroadcastError(
+          BroadCastErrorEnum.DeliverTx,
+          result.deliver_tx.log,
+          result.deliver_tx.code
+        );
+      }
+      return result;
     });
+  }
+}
+
+export enum BroadCastErrorEnum {
+  CheckTx,
+  DeliverTx
+}
+
+// How to extend Error in TS2.1+:
+// https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work
+export class BroadcastError extends Error {
+  readonly code: number;
+  readonly type: BroadCastErrorEnum;
+
+  constructor(type: BroadCastErrorEnum, log: string, code: number) {
+    super(log);
+    Object.setPrototypeOf(this, BroadcastError.prototype);
+    this.type = type;
+    this.code = code;
   }
 }
