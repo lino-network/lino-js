@@ -18,7 +18,7 @@ function addSuite(envName) {
 
       it('getAllValidators', function() {
         return query.getAllValidators().then(v => {
-          debug(v);
+          debug('getAllValidators', v);
           expect(v).to.have.all.keys(
             'oncall_validators',
             'all_validators',
@@ -31,7 +31,7 @@ function addSuite(envName) {
 
       it('getValidator', function() {
         return query.getValidator('Lino').then(v => {
-          debug(v);
+          debug('getValidator', v);
           expect(v).to.have.all.keys(
             'ABCIValidator',
             'username',
@@ -45,35 +45,35 @@ function addSuite(envName) {
 
       it('getDevelopers', function() {
         return query.getDevelopers().then(v => {
-          debug(v);
+          debug('getDevelopers', v);
           expect(v).to.have.all.keys('all_developers');
         });
       });
 
       it('getDeveloper', function() {
         return query.getDeveloper('Lino').then(v => {
-          debug(v);
+          debug('getDeveloper', v);
           expect(v).to.have.all.keys('username', 'deposit', 'app_consumption');
         });
       });
 
       it('getInfraProviders', function() {
         return query.getInfraProviders().then(v => {
-          debug(v);
+          debug('getInfraProviders', v);
           expect(v).to.have.all.keys('all_infra_providers');
         });
       });
 
       it('getInfraProvider', function() {
         return query.getInfraProvider('Lino').then(v => {
-          debug(v);
+          debug('getInfraProvider', v);
           expect(v).to.have.all.keys('username', 'usage');
         });
       });
 
       it('getGlobalAllocationParam', function() {
         return query.getGlobalAllocationParam().then(v => {
-          debug(v);
+          debug('getGlobalAllocationParam', v);
           expect(v).to.have.all.keys(
             'infra_allocation',
             'content_creator_allocation',
@@ -85,7 +85,7 @@ function addSuite(envName) {
 
       it('getValidatorParam', function() {
         return query.getValidatorParam().then(v => {
-          debug(v);
+          debug('getValidatorParam', v);
           expect(v).to.have.all.keys(
             'validator_min_withdraw',
             'validator_min_voting_deposit',
@@ -102,32 +102,35 @@ function addSuite(envName) {
       });
       it('getAccountBank', function() {
         return query.getAccountBank('Lino').then(v => {
+          debug('getAccountBank', v);
           expect(v).to.have.all.keys('saving', 'stake', 'frozen_money_list');
         });
       });
 
       it('getSeqNumber', function() {
         return query.getSeqNumber('Lino').then(v => {
+          debug('getSeqNumber', v);
           expect(v).to.be.a('number');
         });
       });
 
       it('getRecentBalanceHistory', function() {
         return query.getRecentBalanceHistory('Lino', 7).then(v => {
-          debug(v);
+          debug('getRecentBalanceHistory', v);
           expect(v).to.have.all.keys('details');
         });
       });
 
       it('getAllProposal', function() {
         return query.getProposal('1').then(v => {
-          debug(v);
+          debug('getAllProposal', v);
           expect(v).to.have.all.keys('type', 'value');
         });
       });
 
       it('doesUsernameMatchPrivKey', function() {
         return query.doesUsernameMatchPrivKey('Lino', testTxPrivHex).then(v => {
+          debug('doesUsernameMatchPrivKey', v);
           expect(v).to.be.false;
         });
       });
@@ -145,18 +148,23 @@ function addSuite(envName) {
       const txPubKey = UTILS.pubKeyFromPrivate(txPrivKey);
       const postPubKey = UTILS.pubKeyFromPrivate(postPrivKey);
 
-      return query
-        .getSeqNumber('Lino')
-        .then(seq => {
-          expect(seq).to.be.a('number');
-          return seq;
-        })
-        .then(seq => {
-          return broadcast.transfer('Lino', 'middle-man', '1', 'hi', testTxPrivHex, seq).then(v => {
-            debug(v);
-            expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+      it('transfer', function() {
+        return query
+          .getSeqNumber('Lino')
+          .then(seq => {
+            debug('query seq number before transfer', seq);
+            expect(seq).to.be.a('number');
+            return seq;
+          })
+          .then(seq => {
+            return broadcast
+              .transfer('Lino', 'middle-man', '1', 'hi', testTxPrivHex, seq)
+              .then(v => {
+                debug('transfer', v);
+                expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+              });
           });
-        });
+      });
     });
   });
 
