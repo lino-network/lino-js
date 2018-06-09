@@ -74,6 +74,14 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ClaimMsgType, privKeyHex, seq);
   }
 
+  updateAccount(username: string, json_meta: string, privKeyHex: string, seq: number) {
+    const msg: UpdateAccountMsg = {
+      username,
+      json_meta
+    };
+    return this._broadcastTransaction(msg, _MSGTYPE.UpdateAccountMsgType, privKeyHex, seq);
+  }
+
   // post related
   like(
     username: string,
@@ -523,6 +531,11 @@ export interface RecoverMsg {
   new_transaction_public_key: string;
 }
 
+export interface UpdateAccountMsg {
+  username: string;
+  json_meta: string;
+}
+
 // post related messages
 export interface CreatePostMsg {
   PostCreateParams;
@@ -726,6 +739,7 @@ const _MSGTYPE = {
   UnfollowMsgType: '84F010638F0200',
   ClaimMsgType: 'DD1B3C312CF7D8',
   RecoverMsgType: 'EC3915F542E0F8',
+  UpdateAccountMsgType: '688B831F24C188',
 
   CreatePostMsgType: '72231043BC1800',
   LikeMsgType: 'CAB2644828BCC0',
