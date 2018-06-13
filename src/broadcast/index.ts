@@ -526,8 +526,6 @@ export default class Broadcast {
     seq: number
   ) {
     const permLink = postAuthor.concat('#').concat(postID);
-    console.log('permlink', permLink);
-    console.log('key', privKeyHex);
     const msg: DeletePostContentMsg = {
       creator,
       permLink
