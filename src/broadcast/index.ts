@@ -74,7 +74,57 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ClaimMsgType, privKeyHex, seq);
   }
 
+  updateAccount(username: string, json_meta: string, privKeyHex: string, seq: number) {
+    const msg: UpdateAccountMsg = {
+      username,
+      json_meta
+    };
+    return this._broadcastTransaction(msg, _MSGTYPE.UpdateAccountMsgType, privKeyHex, seq);
+  }
+
   // post related
+  createPost(
+    author: string,
+    postID: string,
+    title: string,
+    content: string,
+    parentAuthor: string,
+    parentPostID: string,
+    sourceAuthor: string,
+    sourcePostID: string,
+    redistributionSplitRate: string,
+    links: Map<string, string>,
+    privKeyHex: string,
+    seq: number
+  ) {
+    let mLinks: Types.IDToURLMapping[] | null = null;
+    if (links != null) {
+      mLinks = [];
+      for (let entry of links.entries()) {
+        const mapping: Types.IDToURLMapping = {
+          identifier: entry[0],
+          url: entry[1]
+        };
+        mLinks.push(mapping);
+      }
+    }
+
+    const msg: CreatePostMsg = {
+      author: author,
+      post_id: postID,
+      title: title,
+      content: content,
+      parent_author: parentAuthor,
+      parent_postID: parentPostID,
+      source_author: sourceAuthor,
+      source_postID: sourcePostID,
+      links: mLinks,
+      redistribution_split_rate: redistributionSplitRate
+    };
+
+    return this._broadcastTransaction(msg, _MSGTYPE.CreatePostMsgType, privKeyHex, seq);
+  }
+
   like(
     username: string,
     author: string,
@@ -468,7 +518,14 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeAccountParamMsgType, privKeyHex, seq);
   }
 
-  deletePostContent(creator: string, permLink: string, privKeyHex: string, seq: number) {
+  deletePostContent(
+    creator: string,
+    postAuthor: string,
+    postID: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const permLink = postAuthor.concat('#').concat(postID);
     const msg: DeletePostContentMsg = {
       creator,
       permLink
@@ -523,21 +580,22 @@ export interface RecoverMsg {
   new_transaction_public_key: string;
 }
 
-// post related messages
-export interface CreatePostMsg {
-  PostCreateParams;
+export interface UpdateAccountMsg {
+  username: string;
+  json_meta: string;
 }
 
-export interface PostCreateParams {
+// post related messages
+export interface CreatePostMsg {
+  author: string;
   post_id: string;
   title: string;
   content: string;
-  author: string;
   parent_author: string;
   parent_postID: string;
   source_author: string;
   source_postID: string;
-  links: Types.IDToURLMapping[];
+  links: Types.IDToURLMapping[] | null;
   redistribution_split_rate: string;
 }
 
@@ -726,6 +784,7 @@ const _MSGTYPE = {
   UnfollowMsgType: '84F010638F0200',
   ClaimMsgType: 'DD1B3C312CF7D8',
   RecoverMsgType: 'EC3915F542E0F8',
+  UpdateAccountMsgType: '688B831F24C188',
 
   CreatePostMsgType: '72231043BC1800',
   LikeMsgType: 'CAB2644828BCC0',

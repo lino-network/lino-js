@@ -9,6 +9,8 @@ export default class Broadcast {
     follow(follower: string, followee: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     unfollow(follower: string, followee: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     claim(username: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    updateAccount(username: string, json_meta: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    createPost(author: string, postID: string, title: string, content: string, parentAuthor: string, parentPostID: string, sourceAuthor: string, sourcePostID: string, redistributionSplitRate: string, links: Map<string, string>, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     like(username: string, author: string, weight: number, post_id: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     donate(username: string, author: string, amount: string, post_id: string, from_app: string, from_checking: boolean, memo: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     reportOrUpvote(username: string, author: string, post_id: string, is_report: boolean, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
@@ -39,7 +41,7 @@ export default class Broadcast {
     changeCoinDayParam(creator: string, parameter: Types.CoinDayParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     changeBandwidthParam(creator: string, parameter: Types.BandwidthParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     changeAccountParam(creator: string, parameter: Types.AccountParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
-    deletePostContent(creator: string, permLink: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    deletePostContent(creator: string, postAuthor: string, postID: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     _broadcastTransaction(msg: any, msgType: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
 }
 export interface RegisterMsg {
@@ -72,19 +74,20 @@ export interface RecoverMsg {
     new_post_public_key: string;
     new_transaction_public_key: string;
 }
-export interface CreatePostMsg {
-    PostCreateParams: any;
+export interface UpdateAccountMsg {
+    username: string;
+    json_meta: string;
 }
-export interface PostCreateParams {
+export interface CreatePostMsg {
+    author: string;
     post_id: string;
     title: string;
     content: string;
-    author: string;
     parent_author: string;
     parent_postID: string;
     source_author: string;
     source_postID: string;
-    links: Types.IDToURLMapping[];
+    links: Types.IDToURLMapping[] | null;
     redistribution_split_rate: string;
 }
 export interface LikeMsg {

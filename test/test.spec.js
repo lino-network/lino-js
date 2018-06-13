@@ -1,23 +1,27 @@
-const NODE_URL = 'http://34.235.130.1:46657/';
-const testTxPrivHex = 'E1B0F79A20FC8F3712F73D3870B04A1644EDD85863609B002CAB09454758EE292C6F6687B3';
+const NODE_URL = 'http://18.188.188.164:46657/';
+const testTxPrivHex = 'E1B0F79A2052C64C97A6C5E6B456B7601AC6177BCA3FB4A06C5ED7234325EB0826C88E7B64';
+const zhimaoTx = 'E1B0F79A20C8DC0A9F3AA9A1289F1CA11D7AB6768CF933711FEEF47C304768CBD8A766DF0C';
 const testValidatorPubHex =
   '1624DE6220e008041ccafcc76788099b990531697ff4bf8eb2d1fabe204ee5fe0fc2c7c3f6';
 
 function addSuite(envName) {
+  const { LINO, UTILS } = lino;
+
   describe('LINO', function() {
+    const linoClient = new LINO({
+      nodeUrl: NODE_URL,
+      chainId: 'test-chain-7sCpR6'
+    });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
       expect(result).to.exist;
     });
     describe('query', function() {
-      const query = new LINO({
-        // chainId: 'test-chain-FdqWc7',
-        nodeUrl: NODE_URL
-      }).query;
+      const query = linoClient.query;
 
       it('getAllValidators', function() {
         return query.getAllValidators().then(v => {
-          console.log(v);
+          debug('getAllValidators', v);
           expect(v).to.have.all.keys(
             'oncall_validators',
             'all_validators',
@@ -30,7 +34,7 @@ function addSuite(envName) {
 
       it('getValidator', function() {
         return query.getValidator('Lino').then(v => {
-          console.log(v);
+          debug('getValidator', v);
           expect(v).to.have.all.keys(
             'ABCIValidator',
             'username',
@@ -44,35 +48,35 @@ function addSuite(envName) {
 
       it('getDevelopers', function() {
         return query.getDevelopers().then(v => {
-          console.log(v);
+          debug('getDevelopers', v);
           expect(v).to.have.all.keys('all_developers');
         });
       });
 
       it('getDeveloper', function() {
         return query.getDeveloper('Lino').then(v => {
-          console.log(v);
+          debug('getDeveloper', v);
           expect(v).to.have.all.keys('username', 'deposit', 'app_consumption');
         });
       });
 
       it('getInfraProviders', function() {
         return query.getInfraProviders().then(v => {
-          console.log(v);
+          debug('getInfraProviders', v);
           expect(v).to.have.all.keys('all_infra_providers');
         });
       });
 
       it('getInfraProvider', function() {
         return query.getInfraProvider('Lino').then(v => {
-          console.log(v);
+          debug('getInfraProvider', v);
           expect(v).to.have.all.keys('username', 'usage');
         });
       });
 
       it('getGlobalAllocationParam', function() {
         return query.getGlobalAllocationParam().then(v => {
-          console.log(v);
+          debug('getGlobalAllocationParam', v);
           expect(v).to.have.all.keys(
             'infra_allocation',
             'content_creator_allocation',
@@ -84,7 +88,7 @@ function addSuite(envName) {
 
       it('getValidatorParam', function() {
         return query.getValidatorParam().then(v => {
-          console.log(v);
+          debug('getValidatorParam', v);
           expect(v).to.have.all.keys(
             'validator_min_withdraw',
             'validator_min_voting_deposit',
@@ -101,52 +105,99 @@ function addSuite(envName) {
       });
       it('getAccountBank', function() {
         return query.getAccountBank('Lino').then(v => {
-          expect(v).to.have.all.keys('saving', 'stake', 'frozen_money_list');
+          debug('getAccountBank', v);
+          expect(v).to.have.all.keys(
+            'saving',
+            'stake',
+            'frozen_money_list',
+            'number_of_transaction'
+          );
         });
       });
 
       it('getSeqNumber', function() {
         return query.getSeqNumber('Lino').then(v => {
+          debug('getSeqNumber', v);
           expect(v).to.be.a('number');
         });
       });
 
-      it('getRecentBalanceHistory', function() {
-        return query.getRecentBalanceHistory('Lino', 7).then(v => {
-          console.log(v);
+      it('getAllBalanceHistory', function() {
+        return query.getAllBalanceHistory('Lino').then(v => {
+          debug('getAllBalanceHistory', v);
           expect(v).to.have.all.keys('details');
         });
       });
 
-      it('getAllProposal', function() {
+      it('getProposal', function() {
         return query.getProposal('1').then(v => {
-          console.log(v);
+          debug('getAllProposal', v);
           expect(v).to.have.all.keys('type', 'value');
+        });
+      });
+
+      it('getOngoingProposal', function() {
+        return query.getOngoingProposal().then(v => {
+          debug('getOngoingProposal', v);
+        });
+      });
+
+      it('getExpiredProposal', function() {
+        return query.getExpiredProposal().then(v => {
+          debug('getExpiredProposal', v);
         });
       });
 
       it('doesUsernameMatchPrivKey', function() {
         return query.doesUsernameMatchPrivKey('Lino', testTxPrivHex).then(v => {
+          debug('doesUsernameMatchPrivKey', v);
           expect(v).to.be.false;
         });
       });
     });
 
-    // describe('broadcast', function() {
-    //   const lino = new LINO({
-    //     nodeUrl: NODE_URL
-    //   });
+    describe('broadcast', function() {
+      const query = linoClient.query;
+      const broadcast = linoClient.broadcast;
 
-    //   const broadcast = lino.broadcast;
+      const masterPrivKey = UTILS.genPrivKeyHex();
+      const txPrivKey = UTILS.genPrivKeyHex();
+      const postPrivKey = UTILS.genPrivKeyHex();
 
-    //   const masterPrivKey = UTILS.genPrivKeyHex();
-    //   const txPrivKey = UTILS.genPrivKeyHex();
-    //   const postPrivKey = UTILS.genPrivKeyHex();
+      const masterPubKey = UTILS.pubKeyFromPrivate(masterPrivKey);
+      const txPubKey = UTILS.pubKeyFromPrivate(txPrivKey);
+      const postPubKey = UTILS.pubKeyFromPrivate(postPrivKey);
 
-    //   const masterPubKey = UTILS.pubKeyFromPrivate(masterPrivKey);
-    //   const txPubKey = UTILS.pubKeyFromPrivate(txPrivKey);
-    //   const postPubKey = UTILS.pubKeyFromPrivate(postPrivKey);
-    // });
+      it('transfer', function() {
+        return query
+          .getSeqNumber('Lino')
+          .then(seq => {
+            debug('query seq number before transfer', seq);
+            expect(seq).to.be.a('number');
+            return seq;
+          })
+          .then(seq => {
+            return broadcast.transfer('Lino', 'zhimao', '1', 'hi', testTxPrivHex, seq).then(v => {
+              debug('transfer', v);
+              expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+            });
+          });
+      });
+
+      it('throws error if fail', function() {
+        return query.getSeqNumber('Lino').then(seq => {
+          debug('query seq number before transfer', seq);
+          expect(seq).to.be.a('number');
+          return broadcast
+            .transfer('Lino', 'middle-man', 'INVALID_AMOUNT', 'hi', testTxPrivHex, seq)
+            .catch(err => {
+              debug('transfer error', err);
+              expect(err).to.have.all.keys('code', 'type');
+              expect(err).to.be.an.instanceOf(lino.BroadcastError);
+            });
+        });
+      });
+    });
   });
 
   describe('UTILS', function() {
@@ -164,13 +215,9 @@ function addSuite(envName) {
       expect(res).to.equal(false);
     });
 
-    it('use derive priv key', function() {
-      const lino = new LINO({
-        nodeUrl: NODE_URL
-      });
-
-      const broadcast = lino.broadcast;
-      const query = lino.query;
+    it.skip('use derive priv key', function() {
+      const broadcast = linoClient.broadcast;
+      const query = linoClient.query;
       const randomMasterPrivKey = UTILS.genPrivKeyHex();
       const derivedTxPrivKey = UTILS.derivePrivKey(randomMasterPrivKey);
       const derivedPostPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
@@ -190,7 +237,7 @@ function addSuite(envName) {
             .register(
               'Lino',
               '20000000',
-              'Zhimao',
+              'zhimao',
               masterPubKey,
               postPubKey,
               txPubKey,
@@ -198,16 +245,58 @@ function addSuite(envName) {
               seq
             )
             .then(v => {
-              console.log(v);
+              debug('register', v);
               expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
             });
         });
+
+      return query.getSeqNumber('zhimao').then(seq => {
+        return broadcast.deletePostContent('zhimao', 'zhimao', 'id', zhimaoTx, seq).then(v => {
+          debug('make delete content proposal', v);
+          expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+        });
+      });
+
+      return query.getSeqNumber('zhimao').then(seq => {
+        let map = new Map();
+        map.set('A', '1');
+        map.set('B', '2');
+
+        return broadcast
+          .createPost(
+            'zhimao',
+            'id4',
+            'mytitle',
+            'dummycontent',
+            '',
+            '',
+            '',
+            '',
+            '0.5',
+            map,
+            zhimaoTx,
+            seq
+          )
+          .then(v => {
+            debug('createPost', v);
+            expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+          });
+      });
+
+      return query.getSeqNumber('Lino').then(seq => {
+        return query.getGlobalAllocationParam().then(param => {
+          param.content_creator_allocation.num = 70;
+          param.developer_allocation.num = 5;
+          return broadcast
+            .changeGlobalAllocationParam('Lino', param, testTxPrivHex, seq)
+            .then(v => {
+              debug('changeGlobalAllocationParam', v);
+              expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+            });
+        });
+      });
     });
   });
-}
-
-function sleep(time) {
-  return new Promise(resolve => setTimeout(resolve, time));
 }
 
 // Since this test suite needs to run on different environments,

@@ -39,14 +39,28 @@ export default class Query {
     });
   }
 
-  // get past days tx history of an account
-  getRecentBalanceHistory(username: string, interval: number): Promise<BalanceHistory> {
+  getAllBalanceHistory(username: string): Promise<BalanceHistory> {
+    return this.getAccountBank(username).then(bank => {
+      let numberOfbundle = bank.number_of_transaction / 100;
+      let promises: Promise<BalanceHistory>[] = [];
+      for (var i = 0; i <= numberOfbundle; ++i) {
+        promises.push(this.getBalanceHistoryBundle(username, i));
+      }
+      let res = <BalanceHistory>{ details: [] };
+      return Promise.all(promises).then(bundles => {
+        bundles.reduce((prev, curr) => {
+          prev.details.push(...curr.details);
+          return prev;
+        }, res);
+        return res;
+      });
+    });
+  }
+
+  getBalanceHistoryBundle(username: string, index: number): Promise<BalanceHistory> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    const curTime = new Date().getTime() / 1000;
-    const timeSlot = Math.floor(curTime / _TIMECONST.BalanceHistoryIntervalTime);
-    // TODO: filter txs according to interval
     return this._transport.query<BalanceHistory>(
-      Keys.getBalanceHistoryKey(username, timeSlot.toString()),
+      Keys.getBalanceHistoryKey(username, index.toString()),
       AccountKVStoreKey
     );
   }
@@ -226,6 +240,18 @@ export default class Query {
   getProposal(proposalID: string): Promise<Proposal> {
     const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
     return this._transport.query<Proposal>(Keys.getProposalKey(proposalID), ProposalKVStoreKey);
+  }
+
+  getOngoingProposal(): Promise<Proposal[]> {
+    return this.getProposalList().then(list =>
+      Promise.all((list.ongoing_proposal || []).map(p => this.getProposal(p)))
+    );
+  }
+
+  getExpiredProposal(): Promise<Proposal[]> {
+    return this.getProposalList().then(list =>
+      Promise.all((list.past_proposal || []).map(p => this.getProposal(p)))
+    );
   }
 
   // param related query
@@ -449,6 +475,7 @@ export interface AccountMeta {
   sequence: number;
   last_activity: number;
   transaction_capacity: Types.Coin;
+  json_meta: string;
 }
 
 export interface AccountInfo {
@@ -463,6 +490,7 @@ export interface AccountBank {
   saving: Types.Coin;
   stake: Types.Coin;
   frozen_money_list: FrozenMoney[];
+  number_of_transaction: number;
 }
 
 export interface FrozenMoney {
@@ -505,8 +533,8 @@ export interface FollowingMeta {
 
 // proposal related
 export interface ProposalList {
-  ongoing_proposal: string[];
-  past_proposal: string[];
+  ongoing_proposal?: string[];
+  past_proposal?: string[];
 }
 
 export interface ProposalInfo {

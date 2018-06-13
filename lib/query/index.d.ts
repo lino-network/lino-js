@@ -9,7 +9,8 @@ export default class Query {
     getAllValidators(): Promise<AllValidators>;
     getValidator(username: string): Promise<Validator>;
     getSeqNumber(username: string): Promise<number>;
-    getRecentBalanceHistory(username: string, interval: number): Promise<BalanceHistory>;
+    getAllBalanceHistory(username: string): Promise<BalanceHistory>;
+    getBalanceHistoryBundle(username: string, index: number): Promise<BalanceHistory>;
     getAccountMeta(username: string): Promise<AccountMeta>;
     getAccountBank(username: string): Promise<AccountBank>;
     getAccountInfo(username: string): Promise<AccountInfo>;
@@ -32,6 +33,8 @@ export default class Query {
     getInfraProviders(): Promise<InfraProviderList>;
     getProposalList(): Promise<ProposalList>;
     getProposal(proposalID: string): Promise<Proposal>;
+    getOngoingProposal(): Promise<Proposal[]>;
+    getExpiredProposal(): Promise<Proposal[]>;
     getEvaluateOfContentValueParam(): Promise<Types.EvaluateOfContentValueParam>;
     getGlobalAllocationParam(): Promise<Types.GlobalAllocationParam>;
     getInfraInternalAllocationParam(): Promise<Types.InfraInternalAllocationParam>;
@@ -155,6 +158,7 @@ export interface AccountMeta {
     sequence: number;
     last_activity: number;
     transaction_capacity: Types.Coin;
+    json_meta: string;
 }
 export interface AccountInfo {
     username: string;
@@ -167,6 +171,7 @@ export interface AccountBank {
     saving: Types.Coin;
     stake: Types.Coin;
     frozen_money_list: FrozenMoney[];
+    number_of_transaction: number;
 }
 export interface FrozenMoney {
     amount: Types.Coin;
@@ -200,8 +205,8 @@ export interface FollowingMeta {
     following_name: string;
 }
 export interface ProposalList {
-    ongoing_proposal: string[];
-    past_proposal: string[];
+    ongoing_proposal?: string[];
+    past_proposal?: string[];
 }
 export interface ProposalInfo {
     creator: string;
