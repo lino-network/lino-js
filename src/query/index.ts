@@ -39,14 +39,28 @@ export default class Query {
     });
   }
 
-  // get past days tx history of an account
-  getRecentBalanceHistory(username: string, interval: number): Promise<BalanceHistory> {
+  getAllBalanceHistory(username: string): Promise<BalanceHistory> {
+    return this.getAccountBank(username).then(bank => {
+      let numberOfbundle = bank.number_of_transaction / 100;
+      let promises: Promise<BalanceHistory>[] = [];
+      for (var i = 0; i <= numberOfbundle; ++i) {
+        promises.push(this.getBalanceHistoryBundle(username, i));
+      }
+      let res = <BalanceHistory>{ details: [] };
+      return Promise.all(promises).then(bundles => {
+        bundles.reduce((prev, curr) => {
+          prev.details.push(...curr.details);
+          return prev;
+        }, res);
+        return res;
+      });
+    });
+  }
+
+  getBalanceHistoryBundle(username: string, index: number): Promise<BalanceHistory> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    const curTime = new Date().getTime() / 1000;
-    const timeSlot = Math.floor(curTime / _TIMECONST.BalanceHistoryIntervalTime);
-    // TODO: filter txs according to interval
     return this._transport.query<BalanceHistory>(
-      Keys.getBalanceHistoryKey(username, timeSlot.toString()),
+      Keys.getBalanceHistoryKey(username, index.toString()),
       AccountKVStoreKey
     );
   }
@@ -476,6 +490,7 @@ export interface AccountBank {
   saving: Types.Coin;
   stake: Types.Coin;
   frozen_money_list: FrozenMoney[];
+  number_of_transaction: number;
 }
 
 export interface FrozenMoney {
@@ -582,8 +597,8 @@ export const DETAILTYPE = {
 const _TIMECONST = {
   HoursPerYear: 8766,
   MinutesPerYear: 8766 * 60,
-  MinutesPerMonth: 8766 * 60 / 12,
-  BalanceHistoryIntervalTime: 8766 * 60 / 12 * 60
+  MinutesPerMonth: (8766 * 60) / 12,
+  BalanceHistoryIntervalTime: ((8766 * 60) / 12) * 60
 };
 
 // internally used

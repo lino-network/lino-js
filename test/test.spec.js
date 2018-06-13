@@ -1,5 +1,6 @@
 const NODE_URL = 'http://18.188.188.164:46657/';
-const testTxPrivHex = 'E1B0F79A20FB81B2F3253E2B41234D57CCDDDC9238B2001154AEDCB7061301C32D680B2184';
+const testTxPrivHex = 'E1B0F79A2052C64C97A6C5E6B456B7601AC6177BCA3FB4A06C5ED7234325EB0826C88E7B64';
+const zhimaoTx = 'E1B0F79A20C8DC0A9F3AA9A1289F1CA11D7AB6768CF933711FEEF47C304768CBD8A766DF0C';
 const testValidatorPubHex =
   '1624DE6220e008041ccafcc76788099b990531697ff4bf8eb2d1fabe204ee5fe0fc2c7c3f6';
 
@@ -9,7 +10,7 @@ function addSuite(envName) {
   describe('LINO', function() {
     const linoClient = new LINO({
       nodeUrl: NODE_URL,
-      chainId: 'test-chain-i21cJ7'
+      chainId: 'test-chain-7sCpR6'
     });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
@@ -105,7 +106,12 @@ function addSuite(envName) {
       it('getAccountBank', function() {
         return query.getAccountBank('Lino').then(v => {
           debug('getAccountBank', v);
-          expect(v).to.have.all.keys('saving', 'stake', 'frozen_money_list');
+          expect(v).to.have.all.keys(
+            'saving',
+            'stake',
+            'frozen_money_list',
+            'number_of_transaction'
+          );
         });
       });
 
@@ -116,17 +122,29 @@ function addSuite(envName) {
         });
       });
 
-      it('getRecentBalanceHistory', function() {
-        return query.getRecentBalanceHistory('Lino', 7).then(v => {
-          debug('getRecentBalanceHistory', v);
+      it('getAllBalanceHistory', function() {
+        return query.getAllBalanceHistory('Lino').then(v => {
+          debug('getAllBalanceHistory', v);
           expect(v).to.have.all.keys('details');
         });
       });
 
-      it('getAllProposal', function() {
+      it('getProposal', function() {
         return query.getProposal('1').then(v => {
           debug('getAllProposal', v);
           expect(v).to.have.all.keys('type', 'value');
+        });
+      });
+
+      it('getOngoingProposal', function() {
+        return query.getOngoingProposal().then(v => {
+          debug('getOngoingProposal', v);
+        });
+      });
+
+      it('getExpiredProposal', function() {
+        return query.getExpiredProposal().then(v => {
+          debug('getExpiredProposal', v);
         });
       });
 
@@ -159,12 +177,10 @@ function addSuite(envName) {
             return seq;
           })
           .then(seq => {
-            return broadcast
-              .transfer('Lino', 'middle-man', '1', 'hi', testTxPrivHex, seq)
-              .then(v => {
-                debug('transfer', v);
-                expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-              });
+            return broadcast.transfer('Lino', 'zhimao', '1', 'hi', testTxPrivHex, seq).then(v => {
+              debug('transfer', v);
+              expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+            });
           });
       });
 
@@ -221,7 +237,7 @@ function addSuite(envName) {
             .register(
               'Lino',
               '20000000',
-              'Zhimao',
+              'zhimao',
               masterPubKey,
               postPubKey,
               txPubKey,
@@ -229,16 +245,58 @@ function addSuite(envName) {
               seq
             )
             .then(v => {
-              debug(v);
+              debug('register', v);
               expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
             });
         });
+
+      return query.getSeqNumber('zhimao').then(seq => {
+        return broadcast.deletePostContent('zhimao', 'zhimao', 'id', zhimaoTx, seq).then(v => {
+          debug('make delete content proposal', v);
+          expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+        });
+      });
+
+      return query.getSeqNumber('zhimao').then(seq => {
+        let map = new Map();
+        map.set('A', '1');
+        map.set('B', '2');
+
+        return broadcast
+          .createPost(
+            'zhimao',
+            'id4',
+            'mytitle',
+            'dummycontent',
+            '',
+            '',
+            '',
+            '',
+            '0.5',
+            map,
+            zhimaoTx,
+            seq
+          )
+          .then(v => {
+            debug('createPost', v);
+            expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+          });
+      });
+
+      return query.getSeqNumber('Lino').then(seq => {
+        return query.getGlobalAllocationParam().then(param => {
+          param.content_creator_allocation.num = 70;
+          param.developer_allocation.num = 5;
+          return broadcast
+            .changeGlobalAllocationParam('Lino', param, testTxPrivHex, seq)
+            .then(v => {
+              debug('changeGlobalAllocationParam', v);
+              expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+            });
+        });
+      });
     });
   });
-}
-
-function sleep(time) {
-  return new Promise(resolve => setTimeout(resolve, time));
 }
 
 // Since this test suite needs to run on different environments,
