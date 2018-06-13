@@ -33,25 +33,30 @@ export interface JsonRpcRequest<T> extends JsonRpcNotification<T> {
   id: JsonRpcId;
 }
 
-export interface JsonRpcResponseBase<T> {
+export interface JsonRpcResponseBase {
   jsonrpc: JsonRpcVersion;
   id: JsonRpcId;
 }
 
-export interface JsonRpcSuccess<T> extends JsonRpcResponseBase<T> {
+export interface JsonRpcSuccess<T = object> extends JsonRpcResponseBase {
   result: T;
 }
+export function isJsonRpcSuccess(response: object): response is JsonRpcSuccess {
+  return 'result' in response;
+}
 
-export interface JsonRpcFailure<T> extends JsonRpcResponseBase<T> {
+export interface JsonRpcFailure<T> extends JsonRpcResponseBase {
   error: JsonRpcError<T>;
 }
 
-export interface JsonRpcError<T = Object> {
+export interface JsonRpcError<T = object> {
   /** Must be an integer */
   code: number;
   message: string;
   data?: T;
 }
+
+export type JsonRpcResponse<T> = JsonRpcSuccess<T> | JsonRpcFailure<T>;
 
 //
 // PRE-DEFINED ERROR CODES

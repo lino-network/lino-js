@@ -46,7 +46,7 @@ export default class Query {
       for (var i = 0; i <= numberOfbundle; ++i) {
         promises.push(this.getBalanceHistoryBundle(username, i));
       }
-      let res = <BalanceHistory>{ details: [] };
+      let res: BalanceHistory = { details: [] };
       return Promise.all(promises).then(bundles => {
         bundles.reduce((prev, curr) => {
           prev.details.push(...curr.details);
@@ -612,8 +612,8 @@ export const DETAILTYPE = {
 const _TIMECONST = {
   HoursPerYear: 8766,
   MinutesPerYear: 8766 * 60,
-  MinutesPerMonth: (8766 * 60) / 12,
-  BalanceHistoryIntervalTime: ((8766 * 60) / 12) * 60
+  MinutesPerMonth: 8766 * 60 / 12,
+  BalanceHistoryIntervalTime: 8766 * 60 / 12 * 60
 };
 
 // internally used

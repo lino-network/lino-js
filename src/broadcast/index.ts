@@ -534,7 +534,7 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.DeletePostContentMsgType, privKeyHex, seq);
   }
   _broadcastTransaction(
-    msg: any,
+    msg: object,
     msgType: string,
     privKeyHex: string,
     seq: number
