@@ -131,8 +131,10 @@ function addSuite(envName) {
 
       it('getProposal', function() {
         return query.getProposal('1').then(v => {
-          debug('getAllProposal', v);
+          debug('getProposal', v);
           expect(v).to.have.all.keys('type', 'value');
+          expect(lino.isChangeParamProposalValue(v.value)).to.be.true;
+          expect(lino.isGlobalAllocationParam(v.value.param.value)).to.be.true;
         });
       });
 

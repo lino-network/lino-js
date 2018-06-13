@@ -558,13 +558,28 @@ export interface ProposalValue {
 export interface ChangeParamProposalValue extends ProposalValue {
   param: Types.Parameter;
 }
+export function isChangeParamProposalValue(
+  value: ProposalValue
+): value is ChangeParamProposalValue {
+  return 'param' in value;
+}
 
 export interface ContentCensorshipProposalValue extends ProposalValue {
   perm_link: string;
 }
+export function isContentCensorshipProposalValue(
+  value: ProposalValue
+): value is ContentCensorshipProposalValue {
+  return 'perm_link' in value;
+}
 
 export interface ProtocolUpgradeProposalValue extends ProposalValue {
   link: string;
+}
+export function isProtocolUpgradeProposalValue(
+  value: ProposalValue
+): value is ProtocolUpgradeProposalValue {
+  return 'link' in value;
 }
 
 // tx detail type
