@@ -27,6 +27,7 @@ export default class Query {
     getPostMeta(author: string, postID: string): Promise<PostMeta>;
     getDelegation(voter: string, delegator: string): Promise<Delegation>;
     getVoter(voterName: string): Promise<Voter>;
+    getDelegateeList(delegatorName: string): Promise<DelegateeList>;
     getDeveloper(developerName: string): Promise<Developer>;
     getDevelopers(): Promise<DeveloperList>;
     getInfraProvider(providerName: string): Promise<InfraProvider>;
@@ -79,6 +80,9 @@ export interface Vote {
 export interface Delegation {
     delegator: string;
     amount: Types.Coin;
+}
+export interface DelegateeList {
+    delegatee_list?: string[];
 }
 export interface Comment {
     author: string;
@@ -226,12 +230,16 @@ export interface ProposalValue {
 export interface ChangeParamProposalValue extends ProposalValue {
     param: Types.Parameter;
 }
+export declare function isChangeParamProposalValue(value: ProposalValue): value is ChangeParamProposalValue;
 export interface ContentCensorshipProposalValue extends ProposalValue {
     perm_link: string;
+    reason: string;
 }
+export declare function isContentCensorshipProposalValue(value: ProposalValue): value is ContentCensorshipProposalValue;
 export interface ProtocolUpgradeProposalValue extends ProposalValue {
     link: string;
 }
+export declare function isProtocolUpgradeProposalValue(value: ProposalValue): value is ProtocolUpgradeProposalValue;
 export declare const DETAILTYPE: {
     TransferIn: number;
     DonationIn: number;

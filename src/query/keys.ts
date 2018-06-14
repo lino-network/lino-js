@@ -18,10 +18,11 @@ namespace Keys {
     validatorListSubstore: '01',
     validatorSubstore: '00',
 
-    delegatorSubstore: '00',
+    delegationSubstore: '00',
     voterSubstore: '01',
     voteSubstore: '02',
     referenceListSubStore: '03',
+    delegateeListSubStore: '04',
 
     proposalSubstore: '00',
     proposalListSubStore: '01',
@@ -88,7 +89,7 @@ namespace Keys {
 
   export function getDelegatorPrefix(me: string): string {
     const meHex = ByteBuffer.fromUTF8(me).toHex();
-    return _KEYS.delegatorSubstore.concat(meHex).concat(_KEYS.sep);
+    return _KEYS.delegationSubstore.concat(meHex).concat(_KEYS.sep);
   }
 
   export function getDelegationKey(me: string, myDelegator: string): string {
@@ -99,6 +100,11 @@ namespace Keys {
   export function getVoterKey(me: string): string {
     const meHex = ByteBuffer.fromUTF8(me).toHex();
     return _KEYS.voterSubstore.concat(meHex);
+  }
+
+  export function getDelegateeListKey(me: string): string {
+    const meHex = ByteBuffer.fromUTF8(me).toHex();
+    return _KEYS.delegateeListSubStore.concat(meHex);
   }
 
   // developer related

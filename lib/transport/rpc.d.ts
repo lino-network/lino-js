@@ -1,7 +1,7 @@
-export interface IResultABCIQuery {
-    response: IResponseQuery;
+export interface ResultABCIQuery {
+    response: ResponseQuery;
 }
-export interface IResponseQuery {
+export interface ResponseQuery {
     code: number;
     log: string;
     info: string;
@@ -35,7 +35,7 @@ export declare class Rpc {
     abciQuery(path: string, key: string, opts?: {
         height: number;
         trusted: boolean;
-    }): Promise<IResultABCIQuery>;
+    }): Promise<ResultABCIQuery>;
     broadcastTxCommit(tx: string): Promise<ResultBroadcastTxCommit>;
     block(height: number): Promise<ResultBlock>;
 }

@@ -26,7 +26,7 @@ export class Transport implements ITransport {
 
   constructor(opt: ITransportOptions) {
     this._rpc = new Rpc(opt.nodeUrl); // create with nodeUrl
-    this._chainId = opt.chainId || 'test-chain-i21cJ7';
+    this._chainId = opt.chainId || 'test-chain-z0QKeL';
   }
 
   query<T>(key: string, storeName: string): Promise<T> {

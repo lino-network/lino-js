@@ -18,6 +18,7 @@ declare namespace Keys {
     function getDelegatorPrefix(me: string): string;
     function getDelegationKey(me: string, myDelegator: string): string;
     function getVoterKey(me: string): string;
+    function getDelegateeListKey(me: string): string;
     function getDeveloperKey(accKey: string): string;
     function getDeveloperListKey(): string;
     function getInfraProviderKey(accKey: string): string;

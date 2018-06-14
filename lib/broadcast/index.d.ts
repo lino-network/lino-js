@@ -4,7 +4,7 @@ import { ResultBroadcastTxCommit } from '../transport/rpc';
 export default class Broadcast {
     private _transport;
     constructor(transport: ITransport);
-    register(referrer: string, register_fee: string, username: string, masterPubKeyHex: string, postPubKeyHex: string, transactionPubKeyHex: string, referrerPrivKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    register(referrer: string, register_fee: string, username: string, masterPubKeyHex: string, transactionPubKeyHex: string, postPubKeyHex: string, referrerPrivKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     transfer(sender: string, receiver: string, amount: string, memo: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     follow(follower: string, followee: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     unfollow(follower: string, followee: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
@@ -41,16 +41,16 @@ export default class Broadcast {
     changeCoinDayParam(creator: string, parameter: Types.CoinDayParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     changeBandwidthParam(creator: string, parameter: Types.BandwidthParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     changeAccountParam(creator: string, parameter: Types.AccountParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
-    deletePostContent(creator: string, postAuthor: string, postID: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
-    _broadcastTransaction(msg: any, msgType: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    deletePostContent(creator: string, postAuthor: string, postID: string, reason: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    _broadcastTransaction(msg: object, msgType: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
 }
 export interface RegisterMsg {
     referrer: string;
     register_fee: string;
     new_username: string;
     new_master_public_key: string;
-    new_post_public_key: string;
     new_transaction_public_key: string;
+    new_post_public_key: string;
 }
 export interface TransferMsg {
     sender: string;
@@ -191,6 +191,7 @@ export interface ProviderReportMsg {
 export interface DeletePostContentMsg {
     creator: string;
     permLink: string;
+    reason: string;
 }
 export interface ChangeGlobalAllocationParamMsg {
     creator: string;

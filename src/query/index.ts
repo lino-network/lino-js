@@ -46,7 +46,7 @@ export default class Query {
       for (var i = 0; i <= numberOfbundle; ++i) {
         promises.push(this.getBalanceHistoryBundle(username, i));
       }
-      let res = <BalanceHistory>{ details: [] };
+      let res: BalanceHistory = { details: [] };
       return Promise.all(promises).then(bundles => {
         bundles.reduce((prev, curr) => {
           prev.details.push(...curr.details);
@@ -198,6 +198,14 @@ export default class Query {
   getVoter(voterName: string): Promise<Voter> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
     return this._transport.query<Voter>(Keys.getVoterKey(voterName), VoteKVStoreKey);
+  }
+
+  getDelegateeList(delegatorName: string): Promise<DelegateeList> {
+    const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
+    return this._transport.query<DelegateeList>(
+      Keys.getDelegateeListKey(delegatorName),
+      VoteKVStoreKey
+    );
   }
 
   // developer related query
@@ -380,6 +388,10 @@ export interface Delegation {
   amount: Types.Coin;
 }
 
+export interface DelegateeList {
+  delegatee_list?: string[];
+}
+
 // post related
 export interface Comment {
   author: string;
@@ -558,13 +570,29 @@ export interface ProposalValue {
 export interface ChangeParamProposalValue extends ProposalValue {
   param: Types.Parameter;
 }
+export function isChangeParamProposalValue(
+  value: ProposalValue
+): value is ChangeParamProposalValue {
+  return 'param' in value;
+}
 
 export interface ContentCensorshipProposalValue extends ProposalValue {
   perm_link: string;
+  reason: string;
+}
+export function isContentCensorshipProposalValue(
+  value: ProposalValue
+): value is ContentCensorshipProposalValue {
+  return 'perm_link' in value;
 }
 
 export interface ProtocolUpgradeProposalValue extends ProposalValue {
   link: string;
+}
+export function isProtocolUpgradeProposalValue(
+  value: ProposalValue
+): value is ProtocolUpgradeProposalValue {
+  return 'link' in value;
 }
 
 // tx detail type
