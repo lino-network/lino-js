@@ -478,9 +478,12 @@ export interface BalanceHistory {
 }
 
 export interface Detail {
-  detail: number;
+  detail_type: number;
+  from: string;
+  to: string;
   amount: Types.Coin;
   created_at: number;
+  memo: string;
 }
 
 export interface AccountMeta {
