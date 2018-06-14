@@ -18,8 +18,8 @@ export default class Broadcast {
     register_fee: string,
     username: string,
     masterPubKeyHex: string,
-    postPubKeyHex: string,
     transactionPubKeyHex: string,
+    postPubKeyHex: string,
     referrerPrivKeyHex: string,
     seq: number
   ) {
@@ -28,8 +28,8 @@ export default class Broadcast {
       register_fee: register_fee,
       new_username: username,
       new_master_public_key: decodePubKey(masterPubKeyHex),
-      new_post_public_key: decodePubKey(postPubKeyHex),
-      new_transaction_public_key: decodePubKey(transactionPubKeyHex)
+      new_transaction_public_key: decodePubKey(transactionPubKeyHex),
+      new_post_public_key: decodePubKey(postPubKeyHex)
     };
     return this._broadcastTransaction(msg, _MSGTYPE.RegisterMsgType, referrerPrivKeyHex, seq);
   }
@@ -551,8 +551,8 @@ export interface RegisterMsg {
   register_fee: string;
   new_username: string;
   new_master_public_key: string;
-  new_post_public_key: string;
   new_transaction_public_key: string;
+  new_post_public_key: string;
 }
 
 export interface TransferMsg {

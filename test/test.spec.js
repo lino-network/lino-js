@@ -1,6 +1,6 @@
 const NODE_URL = 'http://18.188.188.164:46657/';
-const testTxPrivHex = 'E1B0F79A2052C64C97A6C5E6B456B7601AC6177BCA3FB4A06C5ED7234325EB0826C88E7B64';
-const zhimaoTx = 'E1B0F79A20C8DC0A9F3AA9A1289F1CA11D7AB6768CF933711FEEF47C304768CBD8A766DF0C';
+const testTxPrivHex = 'E1B0F79A20C25E4115AB6C421D457BFD2B7B545094718CBF27ADF6923BEF19F01580990DD2';
+const zhimaoTx = 'E1B0F79A207965259AFE06EEC9528BC4F692D0F5DE5B97BCF68B8BAF2D1A6C1D0057F58079';
 const testValidatorPubHex =
   '1624DE6220e008041ccafcc76788099b990531697ff4bf8eb2d1fabe204ee5fe0fc2c7c3f6';
 
@@ -10,7 +10,7 @@ function addSuite(envName) {
   describe('LINO', function() {
     const linoClient = new LINO({
       nodeUrl: NODE_URL,
-      chainId: 'test-chain-7sCpR6'
+      chainId: 'test-chain-z0QKeL'
     });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
@@ -206,103 +206,104 @@ function addSuite(envName) {
         });
       });
     });
-  });
 
-  describe('UTILS', function() {
-    it('generate private key', function() {
-      expect(UTILS.genPrivKeyHex()).to.exist;
-    });
-
-    it('private key match pub key', function() {
-      const match = UTILS.isKeyMatch(testTxPrivHex, UTILS.pubKeyFromPrivate(testTxPrivHex));
-      expect(match).to.equal(true);
-    });
-
-    it('invalid username', function() {
-      const res = UTILS.isValidUsername('-register');
-      expect(res).to.equal(false);
-    });
-
-    it.skip('use derive priv key', function() {
-      const broadcast = linoClient.broadcast;
+    describe('UTILS', function() {
       const query = linoClient.query;
-      const randomMasterPrivKey = UTILS.genPrivKeyHex();
-      const derivedTxPrivKey = UTILS.derivePrivKey(randomMasterPrivKey);
-      const derivedPostPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
+      const broadcast = linoClient.broadcast;
 
-      const masterPubKey = UTILS.pubKeyFromPrivate(randomMasterPrivKey);
-      const txPubKey = UTILS.pubKeyFromPrivate(derivedTxPrivKey);
-      const postPubKey = UTILS.pubKeyFromPrivate(derivedPostPrivKey);
+      it('generate private key', function() {
+        expect(UTILS.genPrivKeyHex()).to.exist;
+      });
 
-      return query
-        .getSeqNumber('Lino')
-        .then(seq => {
-          expect(seq).to.be.a('number');
-          return seq;
-        })
-        .then(seq => {
+      it('private key match pub key', function() {
+        const match = UTILS.isKeyMatch(testTxPrivHex, UTILS.pubKeyFromPrivate(testTxPrivHex));
+        expect(match).to.equal(true);
+      });
+
+      it('invalid username', function() {
+        const res = UTILS.isValidUsername('-register');
+        expect(res).to.equal(false);
+      });
+
+      it.skip('use derive priv key', function() {
+        const randomMasterPrivKey = UTILS.genPrivKeyHex();
+        const derivedTxPrivKey = UTILS.derivePrivKey(randomMasterPrivKey);
+        const derivedPostPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
+
+        const masterPubKey = UTILS.pubKeyFromPrivate(randomMasterPrivKey);
+        const txPubKey = UTILS.pubKeyFromPrivate(derivedTxPrivKey);
+        const postPubKey = UTILS.pubKeyFromPrivate(derivedPostPrivKey);
+
+        return query
+          .getSeqNumber('Lino')
+          .then(seq => {
+            expect(seq).to.be.a('number');
+            return seq;
+          })
+          .then(seq => {
+            return broadcast
+              .register(
+                'Lino',
+                '20000000',
+                'zhimao',
+                masterPubKey,
+                txPubKey,
+                postPubKey,
+                testTxPrivHex,
+                seq
+              )
+              .then(v => {
+                debug('register', v);
+                expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+              });
+          });
+
+        return query.getSeqNumber('zhimao').then(seq => {
           return broadcast
-            .register(
-              'Lino',
-              '20000000',
-              'zhimao',
-              masterPubKey,
-              postPubKey,
-              txPubKey,
-              testTxPrivHex,
-              seq
-            )
+            .deletePostContent('zhimao', 'zhimao', 'id', 'violence', zhimaoTx, seq)
             .then(v => {
-              debug('register', v);
+              debug('make delete content proposal', v);
               expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
             });
         });
 
-      return query.getSeqNumber('zhimao').then(seq => {
-        return broadcast
-          .deletePostContent('zhimao', 'zhimao', 'id', 'violence', zhimaoTx, seq)
-          .then(v => {
-            debug('make delete content proposal', v);
-            expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-          });
-      });
+        return query.getSeqNumber('zhimao').then(seq => {
+          let map = new Map();
+          map.set('A', '1');
+          map.set('B', '2');
 
-      return query.getSeqNumber('zhimao').then(seq => {
-        let map = new Map();
-        map.set('A', '1');
-        map.set('B', '2');
-
-        return broadcast
-          .createPost(
-            'zhimao',
-            'id4',
-            'mytitle',
-            'dummycontent',
-            '',
-            '',
-            '',
-            '',
-            '0.5',
-            map,
-            zhimaoTx,
-            seq
-          )
-          .then(v => {
-            debug('createPost', v);
-            expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-          });
-      });
-
-      return query.getSeqNumber('Lino').then(seq => {
-        return query.getGlobalAllocationParam().then(param => {
-          param.content_creator_allocation.num = 70;
-          param.developer_allocation.num = 5;
           return broadcast
-            .changeGlobalAllocationParam('Lino', param, testTxPrivHex, seq)
+            .createPost(
+              'zhimao',
+              'id',
+              'mytitle',
+              'dummycontent',
+              '',
+              '',
+              '',
+              '',
+              '0.5',
+              map,
+              zhimaoTx,
+              seq
+            )
             .then(v => {
-              debug('changeGlobalAllocationParam', v);
+              debug('createPost', v);
               expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
             });
+        });
+
+        return query.getSeqNumber('Lino').then(seq => {
+          return query.getGlobalAllocationParam().then(param => {
+            param.content_creator_allocation.num = 70;
+            param.developer_allocation.num = 5;
+            return broadcast
+              .changeGlobalAllocationParam('Lino', param, testTxPrivHex, seq)
+              .then(v => {
+                debug('changeGlobalAllocationParam', v);
+                expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+              });
+          });
         });
       });
     });
