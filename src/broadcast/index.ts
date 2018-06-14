@@ -522,13 +522,15 @@ export default class Broadcast {
     creator: string,
     postAuthor: string,
     postID: string,
+    reason: string,
     privKeyHex: string,
     seq: number
   ) {
     const permLink = postAuthor.concat('#').concat(postID);
     const msg: DeletePostContentMsg = {
       creator,
-      permLink
+      permLink,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.DeletePostContentMsgType, privKeyHex, seq);
@@ -725,6 +727,7 @@ export interface ProviderReportMsg {
 export interface DeletePostContentMsg {
   creator: string;
   permLink: string;
+  reason: string;
 }
 
 export interface ChangeGlobalAllocationParamMsg {

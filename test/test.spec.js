@@ -253,10 +253,12 @@ function addSuite(envName) {
         });
 
       return query.getSeqNumber('zhimao').then(seq => {
-        return broadcast.deletePostContent('zhimao', 'zhimao', 'id', zhimaoTx, seq).then(v => {
-          debug('make delete content proposal', v);
-          expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-        });
+        return broadcast
+          .deletePostContent('zhimao', 'zhimao', 'id', 'violence', zhimaoTx, seq)
+          .then(v => {
+            debug('make delete content proposal', v);
+            expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+          });
       });
 
       return query.getSeqNumber('zhimao').then(seq => {
