@@ -200,6 +200,14 @@ export default class Query {
     return this._transport.query<Voter>(Keys.getVoterKey(voterName), VoteKVStoreKey);
   }
 
+  getDelegateeList(delegatorName: string): Promise<DelegateeList> {
+    const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
+    return this._transport.query<DelegateeList>(
+      Keys.getDelegateeListKey(delegatorName),
+      VoteKVStoreKey
+    );
+  }
+
   // developer related query
   getDeveloper(developerName: string): Promise<Developer> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
@@ -378,6 +386,10 @@ export interface Vote {
 export interface Delegation {
   delegator: string;
   amount: Types.Coin;
+}
+
+export interface DelegateeList {
+  delegatee_list?: string[];
 }
 
 // post related

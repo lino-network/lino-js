@@ -138,6 +138,12 @@ function addSuite(envName) {
         });
       });
 
+      it('getDelegateeList', function() {
+        return query.getDelegateeList('zhimao').then(v => {
+          debug('getDelegateeList', v);
+        });
+      });
+
       it('getOngoingProposal', function() {
         return query.getOngoingProposal().then(v => {
           debug('getOngoingProposal', v);
