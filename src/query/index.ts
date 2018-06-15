@@ -189,10 +189,12 @@ export default class Query {
   // vote related query
   getDelegation(voter: string, delegator: string): Promise<Delegation> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-    return this._transport.query<Delegation>(
-      Keys.getDelegationKey(voter, delegator),
-      VoteKVStoreKey
-    );
+    return this._transport
+      .query<Delegation>(Keys.getDelegationKey(voter, delegator), VoteKVStoreKey)
+      .then(result => {
+        result.delegatee = voter;
+        return result;
+      });
   }
 
   getVoter(voterName: string): Promise<Voter> {
@@ -208,6 +210,13 @@ export default class Query {
     );
   }
 
+  getAllDelegation(delegatorName: string): Promise<Delegation[]> {
+    return this.getDelegateeList(delegatorName).then(list =>
+      Promise.all(
+        (list.delegatee_list || []).map(delegatee => this.getDelegation(delegatee, delegatorName))
+      )
+    );
+  }
   // developer related query
   getDeveloper(developerName: string): Promise<Developer> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
@@ -385,6 +394,7 @@ export interface Vote {
 
 export interface Delegation {
   delegator: string;
+  delegatee: string;
   amount: Types.Coin;
 }
 

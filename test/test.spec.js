@@ -156,6 +156,12 @@ function addSuite(envName) {
         });
       });
 
+      it('getAllDelegation', function() {
+        return query.getAllDelegation('zhimao').then(v => {
+          debug('getAllDelegation', v);
+        });
+      });
+
       it('doesUsernameMatchPrivKey', function() {
         return query.doesUsernameMatchPrivKey('Lino', testTxPrivHex).then(v => {
           debug('doesUsernameMatchPrivKey', v);
