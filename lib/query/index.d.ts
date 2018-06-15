@@ -28,6 +28,7 @@ export default class Query {
     getDelegation(voter: string, delegator: string): Promise<Delegation>;
     getVoter(voterName: string): Promise<Voter>;
     getDelegateeList(delegatorName: string): Promise<DelegateeList>;
+    getAllDelegation(delegatorName: string): Promise<Delegation[]>;
     getDeveloper(developerName: string): Promise<Developer>;
     getDevelopers(): Promise<DeveloperList>;
     getInfraProvider(providerName: string): Promise<InfraProvider>;
@@ -79,6 +80,7 @@ export interface Vote {
 }
 export interface Delegation {
     delegator: string;
+    delegatee: string;
     amount: Types.Coin;
 }
 export interface DelegateeList {
