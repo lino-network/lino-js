@@ -241,7 +241,7 @@ export interface ChangeParamProposalValue extends ProposalValue {
 }
 export declare function isChangeParamProposalValue(value: ProposalValue): value is ChangeParamProposalValue;
 export interface ContentCensorshipProposalValue extends ProposalValue {
-    perm_link: string;
+    permLink: string;
     reason: string;
 }
 export declare function isContentCensorshipProposalValue(value: ProposalValue): value is ContentCensorshipProposalValue;
