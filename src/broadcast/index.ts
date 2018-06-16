@@ -82,6 +82,23 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.UpdateAccountMsgType, privKeyHex, seq);
   }
 
+  recover(
+    username: string,
+    new_master_public_key: string,
+    new_post_public_key: string,
+    new_transaction_public_key: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: RecoverMsg = {
+      username,
+      new_master_public_key,
+      new_post_public_key,
+      new_transaction_public_key
+    };
+    return this._broadcastTransaction(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
+  }
+
   // post related
   createPost(
     author: string,
@@ -148,7 +165,6 @@ export default class Broadcast {
     amount: string,
     post_id: string,
     from_app: string,
-    from_checking: boolean,
     memo: string,
     privKeyHex: string,
     seq: number
@@ -159,7 +175,6 @@ export default class Broadcast {
       author,
       post_id,
       from_app,
-      from_checking,
       memo
     };
     return this._broadcastTransaction(msg, _MSGTYPE.DonateMsgType, privKeyHex, seq);
@@ -205,17 +220,29 @@ export default class Broadcast {
     post_id: string,
     content: string,
     redistribution_split_rate: string,
-    links: Types.IDToURLMapping[],
+    links: Map<string, string>,
     privKeyHex: string,
     seq: number
   ) {
+    let mLinks: Types.IDToURLMapping[] | null = null;
+    if (links != null) {
+      mLinks = [];
+      for (let entry of links.entries()) {
+        const mapping: Types.IDToURLMapping = {
+          identifier: entry[0],
+          url: entry[1]
+        };
+        mLinks.push(mapping);
+      }
+    }
+
     const msg: UpdatePostMsg = {
-      author,
-      post_id,
-      title,
-      content,
-      links,
-      redistribution_split_rate
+      author: author,
+      post_id: post_id,
+      title: title,
+      content: content,
+      links: mLinks,
+      redistribution_split_rate: redistribution_split_rate
     };
     return this._broadcastTransaction(msg, _MSGTYPE.UpdatePostMsgType, privKeyHex, seq);
   }
@@ -578,6 +605,7 @@ export interface ClaimMsg {
 
 export interface RecoverMsg {
   username: string;
+  new_master_public_key: string;
   new_post_public_key: string;
   new_transaction_public_key: string;
 }
@@ -614,7 +642,6 @@ export interface DonateMsg {
   author: string;
   post_id: string;
   from_app: string;
-  from_checking: boolean;
   memo: string;
 }
 
@@ -641,7 +668,7 @@ export interface UpdatePostMsg {
   post_id: string;
   title: string;
   content: string;
-  links: Types.IDToURLMapping[];
+  links: Types.IDToURLMapping[] | null;
   redistribution_split_rate: string;
 }
 
