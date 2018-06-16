@@ -281,13 +281,19 @@ export default class Broadcast {
   }
 
   // vote related
-  vote(voter: string, proposal_id: string, result: boolean, privKeyHex: string, seq: number) {
+  voteProposal(
+    voter: string,
+    proposal_id: string,
+    result: boolean,
+    privKeyHex: string,
+    seq: number
+  ) {
     const msg: VoteMsg = {
       voter,
       proposal_id,
       result
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.VoteMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.VoteProposalMsgType, privKeyHex, seq);
   }
 
   voterDeposit(username: string, deposit: string, privKeyHex: string, seq: number) {
@@ -562,6 +568,15 @@ export default class Broadcast {
 
     return this._broadcastTransaction(msg, _MSGTYPE.DeletePostContentMsgType, privKeyHex, seq);
   }
+
+  upgradeProtocol(creator: string, link: string, privKeyHex: string, seq: number) {
+    const msg: UpgradeProtocolMsg = {
+      creator,
+      link
+    };
+
+    return this._broadcastTransaction(msg, _MSGTYPE.UpgradeProtocolMsgType, privKeyHex, seq);
+  }
   _broadcastTransaction(
     msg: object,
     msgType: string,
@@ -757,6 +772,11 @@ export interface DeletePostContentMsg {
   reason: string;
 }
 
+export interface UpgradeProtocolMsg {
+  creator: string;
+  link: string;
+}
+
 export interface ChangeGlobalAllocationParamMsg {
   creator: string;
   parameter: Types.GlobalAllocationParam;
@@ -828,7 +848,7 @@ const _MSGTYPE = {
   ValidatorWithdrawMsgType: '32E51EDD228920',
   ValidatorRevokeMsgType: '0E2B2E4A3441E0',
 
-  VoteMsgType: 'AB274474A6AA80',
+  VoteProposalMsgType: '3126D3663EE938',
   VoterDepositMsgType: '9E6F93EDF45140',
   VoterWithdrawMsgType: '68E1FB898955A0',
   VoterRevokeMsgType: 'D8C93E26BD1E58',
@@ -843,6 +863,7 @@ const _MSGTYPE = {
   ProviderReportMsgType: '108D925A05BE70',
 
   DeletePostContentMsgType: '7E63F5F154D2C8',
+  UpgradeProtocolMsgType: '862664E4E9F8A0',
   ChangeGlobalAllocationParamMsgType: 'A9F46C097B5F50',
   ChangeEvaluateOfContentValueParamMsgType: '8A59091B1DCEF0',
   ChangeInfraInternalAllocationParamMsgType: 'D7296C8C03B1C8',
