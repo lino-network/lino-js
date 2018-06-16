@@ -202,6 +202,11 @@ export default class Query {
     return this._transport.query<Voter>(Keys.getVoterKey(voterName), VoteKVStoreKey);
   }
 
+  getVote(proposalID: string, voter: string): Promise<Vote> {
+    const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
+    return this._transport.query<Vote>(Keys.getVoteKey(proposalID, voter), VoteKVStoreKey);
+  }
+
   getDelegateeList(delegatorName: string): Promise<DelegateeList> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
     return this._transport.query<DelegateeList>(
@@ -390,6 +395,7 @@ export interface Voter {
 export interface Vote {
   voter: string;
   result: boolean;
+  voting_power: Types.Coin;
 }
 
 export interface Delegation {
@@ -568,6 +574,8 @@ export interface ProposalInfo {
   agree_vote: Types.Coin;
   disagree_vote: Types.Coin;
   result: number;
+  created_at: number;
+  expired_at: number;
 }
 
 export interface Proposal {

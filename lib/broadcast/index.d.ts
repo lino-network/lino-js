@@ -10,13 +10,14 @@ export default class Broadcast {
     unfollow(follower: string, followee: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     claim(username: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     updateAccount(username: string, json_meta: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    recover(username: string, new_master_public_key: string, new_post_public_key: string, new_transaction_public_key: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     createPost(author: string, postID: string, title: string, content: string, parentAuthor: string, parentPostID: string, sourceAuthor: string, sourcePostID: string, redistributionSplitRate: string, links: Map<string, string>, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     like(username: string, author: string, weight: number, post_id: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
-    donate(username: string, author: string, amount: string, post_id: string, from_app: string, from_checking: boolean, memo: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    donate(username: string, author: string, amount: string, post_id: string, from_app: string, memo: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     reportOrUpvote(username: string, author: string, post_id: string, is_report: boolean, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     deletePost(author: string, post_id: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     view(username: string, author: string, post_id: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
-    updatePost(author: string, title: string, post_id: string, content: string, redistribution_split_rate: string, links: Types.IDToURLMapping[], privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    updatePost(author: string, title: string, post_id: string, content: string, redistribution_split_rate: string, links: Map<string, string>, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     validatorDeposit(username: string, deposit: string, validator_public_key: string, link: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     validatorWithdraw(username: string, amount: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     ValidatorRevoke(username: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
@@ -71,6 +72,7 @@ export interface ClaimMsg {
 }
 export interface RecoverMsg {
     username: string;
+    new_master_public_key: string;
     new_post_public_key: string;
     new_transaction_public_key: string;
 }
@@ -102,7 +104,6 @@ export interface DonateMsg {
     author: string;
     post_id: string;
     from_app: string;
-    from_checking: boolean;
     memo: string;
 }
 export interface ReportOrUpvoteMsg {
@@ -125,7 +126,7 @@ export interface UpdatePostMsg {
     post_id: string;
     title: string;
     content: string;
-    links: Types.IDToURLMapping[];
+    links: Types.IDToURLMapping[] | null;
     redistribution_split_rate: string;
 }
 export interface ValidatorDepositMsg {

@@ -138,6 +138,13 @@ function addSuite(envName) {
         });
       });
 
+      it('getVote', function() {
+        return query.getVote('2', 'zhimao').then(v => {
+          debug('getVote', v);
+          expect(v).to.have.all.keys('voter', 'result', 'voting_power');
+        });
+      });
+
       it('getDelegateeList', function() {
         return query.getDelegateeList('zhimao').then(v => {
           debug('getDelegateeList', v);

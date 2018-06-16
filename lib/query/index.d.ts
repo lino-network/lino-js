@@ -27,6 +27,7 @@ export default class Query {
     getPostMeta(author: string, postID: string): Promise<PostMeta>;
     getDelegation(voter: string, delegator: string): Promise<Delegation>;
     getVoter(voterName: string): Promise<Voter>;
+    getVote(proposalID: string, voter: string): Promise<Vote>;
     getDelegateeList(delegatorName: string): Promise<DelegateeList>;
     getAllDelegation(delegatorName: string): Promise<Delegation[]>;
     getDeveloper(developerName: string): Promise<Developer>;
@@ -77,6 +78,7 @@ export interface Voter {
 export interface Vote {
     voter: string;
     result: boolean;
+    voting_power: Types.Coin;
 }
 export interface Delegation {
     delegator: string;
@@ -223,6 +225,8 @@ export interface ProposalInfo {
     agree_vote: Types.Coin;
     disagree_vote: Types.Coin;
     result: number;
+    created_at: number;
+    expired_at: number;
 }
 export interface Proposal {
     type: string;
