@@ -3,7 +3,7 @@ import Query from './query';
 import { ITransport, ITransportOptions, Transport } from './transport';
 
 export class LINO {
-  private _options: any;
+  private _options: ITransportOptions;
   private _transport: ITransport;
   private _query: Query;
   private _broadcast: Broadcast;

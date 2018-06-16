@@ -18,8 +18,8 @@ export default class Broadcast {
     register_fee: string,
     username: string,
     masterPubKeyHex: string,
-    postPubKeyHex: string,
     transactionPubKeyHex: string,
+    postPubKeyHex: string,
     referrerPrivKeyHex: string,
     seq: number
   ) {
@@ -28,8 +28,8 @@ export default class Broadcast {
       register_fee: register_fee,
       new_username: username,
       new_master_public_key: decodePubKey(masterPubKeyHex),
-      new_post_public_key: decodePubKey(postPubKeyHex),
-      new_transaction_public_key: decodePubKey(transactionPubKeyHex)
+      new_transaction_public_key: decodePubKey(transactionPubKeyHex),
+      new_post_public_key: decodePubKey(postPubKeyHex)
     };
     return this._broadcastTransaction(msg, _MSGTYPE.RegisterMsgType, referrerPrivKeyHex, seq);
   }
@@ -74,7 +74,74 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ClaimMsgType, privKeyHex, seq);
   }
 
+  updateAccount(username: string, json_meta: string, privKeyHex: string, seq: number) {
+    const msg: UpdateAccountMsg = {
+      username,
+      json_meta
+    };
+    return this._broadcastTransaction(msg, _MSGTYPE.UpdateAccountMsgType, privKeyHex, seq);
+  }
+
+  recover(
+    username: string,
+    new_master_public_key: string,
+    new_post_public_key: string,
+    new_transaction_public_key: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: RecoverMsg = {
+      username,
+      new_master_public_key,
+      new_post_public_key,
+      new_transaction_public_key
+    };
+    return this._broadcastTransaction(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
+  }
+
   // post related
+  createPost(
+    author: string,
+    postID: string,
+    title: string,
+    content: string,
+    parentAuthor: string,
+    parentPostID: string,
+    sourceAuthor: string,
+    sourcePostID: string,
+    redistributionSplitRate: string,
+    links: Map<string, string>,
+    privKeyHex: string,
+    seq: number
+  ) {
+    let mLinks: Types.IDToURLMapping[] | null = null;
+    if (links != null) {
+      mLinks = [];
+      for (let entry of links.entries()) {
+        const mapping: Types.IDToURLMapping = {
+          identifier: entry[0],
+          url: entry[1]
+        };
+        mLinks.push(mapping);
+      }
+    }
+
+    const msg: CreatePostMsg = {
+      author: author,
+      post_id: postID,
+      title: title,
+      content: content,
+      parent_author: parentAuthor,
+      parent_postID: parentPostID,
+      source_author: sourceAuthor,
+      source_postID: sourcePostID,
+      links: mLinks,
+      redistribution_split_rate: redistributionSplitRate
+    };
+
+    return this._broadcastTransaction(msg, _MSGTYPE.CreatePostMsgType, privKeyHex, seq);
+  }
+
   like(
     username: string,
     author: string,
@@ -98,7 +165,6 @@ export default class Broadcast {
     amount: string,
     post_id: string,
     from_app: string,
-    from_checking: boolean,
     memo: string,
     privKeyHex: string,
     seq: number
@@ -109,7 +175,6 @@ export default class Broadcast {
       author,
       post_id,
       from_app,
-      from_checking,
       memo
     };
     return this._broadcastTransaction(msg, _MSGTYPE.DonateMsgType, privKeyHex, seq);
@@ -155,17 +220,29 @@ export default class Broadcast {
     post_id: string,
     content: string,
     redistribution_split_rate: string,
-    links: Types.IDToURLMapping[],
+    links: Map<string, string>,
     privKeyHex: string,
     seq: number
   ) {
+    let mLinks: Types.IDToURLMapping[] | null = null;
+    if (links != null) {
+      mLinks = [];
+      for (let entry of links.entries()) {
+        const mapping: Types.IDToURLMapping = {
+          identifier: entry[0],
+          url: entry[1]
+        };
+        mLinks.push(mapping);
+      }
+    }
+
     const msg: UpdatePostMsg = {
-      author,
-      post_id,
-      title,
-      content,
-      links,
-      redistribution_split_rate
+      author: author,
+      post_id: post_id,
+      title: title,
+      content: content,
+      links: mLinks,
+      redistribution_split_rate: redistribution_split_rate
     };
     return this._broadcastTransaction(msg, _MSGTYPE.UpdatePostMsgType, privKeyHex, seq);
   }
@@ -204,13 +281,19 @@ export default class Broadcast {
   }
 
   // vote related
-  vote(voter: string, proposal_id: string, result: boolean, privKeyHex: string, seq: number) {
+  voteProposal(
+    voter: string,
+    proposal_id: string,
+    result: boolean,
+    privKeyHex: string,
+    seq: number
+  ) {
     const msg: VoteMsg = {
       voter,
       proposal_id,
       result
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.VoteMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.VoteProposalMsgType, privKeyHex, seq);
   }
 
   voterDeposit(username: string, deposit: string, privKeyHex: string, seq: number) {
@@ -468,16 +551,34 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeAccountParamMsgType, privKeyHex, seq);
   }
 
-  deletePostContent(creator: string, permLink: string, privKeyHex: string, seq: number) {
+  deletePostContent(
+    creator: string,
+    postAuthor: string,
+    postID: string,
+    reason: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const permLink = postAuthor.concat('#').concat(postID);
     const msg: DeletePostContentMsg = {
       creator,
-      permLink
+      permLink,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.DeletePostContentMsgType, privKeyHex, seq);
   }
+
+  upgradeProtocol(creator: string, link: string, privKeyHex: string, seq: number) {
+    const msg: UpgradeProtocolMsg = {
+      creator,
+      link
+    };
+
+    return this._broadcastTransaction(msg, _MSGTYPE.UpgradeProtocolMsgType, privKeyHex, seq);
+  }
   _broadcastTransaction(
-    msg: any,
+    msg: object,
     msgType: string,
     privKeyHex: string,
     seq: number
@@ -492,8 +593,8 @@ export interface RegisterMsg {
   register_fee: string;
   new_username: string;
   new_master_public_key: string;
-  new_post_public_key: string;
   new_transaction_public_key: string;
+  new_post_public_key: string;
 }
 
 export interface TransferMsg {
@@ -519,25 +620,27 @@ export interface ClaimMsg {
 
 export interface RecoverMsg {
   username: string;
+  new_master_public_key: string;
   new_post_public_key: string;
   new_transaction_public_key: string;
 }
 
-// post related messages
-export interface CreatePostMsg {
-  PostCreateParams;
+export interface UpdateAccountMsg {
+  username: string;
+  json_meta: string;
 }
 
-export interface PostCreateParams {
+// post related messages
+export interface CreatePostMsg {
+  author: string;
   post_id: string;
   title: string;
   content: string;
-  author: string;
   parent_author: string;
   parent_postID: string;
   source_author: string;
   source_postID: string;
-  links: Types.IDToURLMapping[];
+  links: Types.IDToURLMapping[] | null;
   redistribution_split_rate: string;
 }
 
@@ -554,7 +657,6 @@ export interface DonateMsg {
   author: string;
   post_id: string;
   from_app: string;
-  from_checking: boolean;
   memo: string;
 }
 
@@ -581,7 +683,7 @@ export interface UpdatePostMsg {
   post_id: string;
   title: string;
   content: string;
-  links: Types.IDToURLMapping[];
+  links: Types.IDToURLMapping[] | null;
   redistribution_split_rate: string;
 }
 
@@ -667,6 +769,12 @@ export interface ProviderReportMsg {
 export interface DeletePostContentMsg {
   creator: string;
   permLink: string;
+  reason: string;
+}
+
+export interface UpgradeProtocolMsg {
+  creator: string;
+  link: string;
 }
 
 export interface ChangeGlobalAllocationParamMsg {
@@ -726,6 +834,7 @@ const _MSGTYPE = {
   UnfollowMsgType: '84F010638F0200',
   ClaimMsgType: 'DD1B3C312CF7D8',
   RecoverMsgType: 'EC3915F542E0F8',
+  UpdateAccountMsgType: '688B831F24C188',
 
   CreatePostMsgType: '72231043BC1800',
   LikeMsgType: 'CAB2644828BCC0',
@@ -739,7 +848,7 @@ const _MSGTYPE = {
   ValidatorWithdrawMsgType: '32E51EDD228920',
   ValidatorRevokeMsgType: '0E2B2E4A3441E0',
 
-  VoteMsgType: 'AB274474A6AA80',
+  VoteProposalMsgType: '3126D3663EE938',
   VoterDepositMsgType: '9E6F93EDF45140',
   VoterWithdrawMsgType: '68E1FB898955A0',
   VoterRevokeMsgType: 'D8C93E26BD1E58',
@@ -754,6 +863,7 @@ const _MSGTYPE = {
   ProviderReportMsgType: '108D925A05BE70',
 
   DeletePostContentMsgType: '7E63F5F154D2C8',
+  UpgradeProtocolMsgType: '862664E4E9F8A0',
   ChangeGlobalAllocationParamMsgType: 'A9F46C097B5F50',
   ChangeEvaluateOfContentValueParamMsgType: '8A59091B1DCEF0',
   ChangeInfraInternalAllocationParamMsgType: 'D7296C8C03B1C8',

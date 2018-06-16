@@ -39,14 +39,28 @@ export default class Query {
     });
   }
 
-  // get past days tx history of an account
-  getRecentBalanceHistory(username: string, interval: number): Promise<BalanceHistory> {
+  getAllBalanceHistory(username: string): Promise<BalanceHistory> {
+    return this.getAccountBank(username).then(bank => {
+      let numberOfbundle = bank.number_of_transaction / 100;
+      let promises: Promise<BalanceHistory>[] = [];
+      for (var i = 0; i <= numberOfbundle; ++i) {
+        promises.push(this.getBalanceHistoryBundle(username, i));
+      }
+      let res: BalanceHistory = { details: [] };
+      return Promise.all(promises).then(bundles => {
+        bundles.reduce((prev, curr) => {
+          prev.details.push(...curr.details);
+          return prev;
+        }, res);
+        return res;
+      });
+    });
+  }
+
+  getBalanceHistoryBundle(username: string, index: number): Promise<BalanceHistory> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    const curTime = new Date().getTime() / 1000;
-    const timeSlot = Math.floor(curTime / _TIMECONST.BalanceHistoryIntervalTime);
-    // TODO: filter txs according to interval
     return this._transport.query<BalanceHistory>(
-      Keys.getBalanceHistoryKey(username, timeSlot.toString()),
+      Keys.getBalanceHistoryKey(username, index.toString()),
       AccountKVStoreKey
     );
   }
@@ -175,10 +189,12 @@ export default class Query {
   // vote related query
   getDelegation(voter: string, delegator: string): Promise<Delegation> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-    return this._transport.query<Delegation>(
-      Keys.getDelegationKey(voter, delegator),
-      VoteKVStoreKey
-    );
+    return this._transport
+      .query<Delegation>(Keys.getDelegationKey(voter, delegator), VoteKVStoreKey)
+      .then(result => {
+        result.delegatee = voter;
+        return result;
+      });
   }
 
   getVoter(voterName: string): Promise<Voter> {
@@ -186,6 +202,26 @@ export default class Query {
     return this._transport.query<Voter>(Keys.getVoterKey(voterName), VoteKVStoreKey);
   }
 
+  getVote(proposalID: string, voter: string): Promise<Vote> {
+    const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
+    return this._transport.query<Vote>(Keys.getVoteKey(proposalID, voter), VoteKVStoreKey);
+  }
+
+  getDelegateeList(delegatorName: string): Promise<DelegateeList> {
+    const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
+    return this._transport.query<DelegateeList>(
+      Keys.getDelegateeListKey(delegatorName),
+      VoteKVStoreKey
+    );
+  }
+
+  getAllDelegation(delegatorName: string): Promise<Delegation[]> {
+    return this.getDelegateeList(delegatorName).then(list =>
+      Promise.all(
+        (list.delegatee_list || []).map(delegatee => this.getDelegation(delegatee, delegatorName))
+      )
+    );
+  }
   // developer related query
   getDeveloper(developerName: string): Promise<Developer> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
@@ -226,6 +262,18 @@ export default class Query {
   getProposal(proposalID: string): Promise<Proposal> {
     const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
     return this._transport.query<Proposal>(Keys.getProposalKey(proposalID), ProposalKVStoreKey);
+  }
+
+  getOngoingProposal(): Promise<Proposal[]> {
+    return this.getProposalList().then(list =>
+      Promise.all((list.ongoing_proposal || []).map(p => this.getProposal(p)))
+    );
+  }
+
+  getExpiredProposal(): Promise<Proposal[]> {
+    return this.getProposalList().then(list =>
+      Promise.all((list.past_proposal || []).map(p => this.getProposal(p)))
+    );
   }
 
   // param related query
@@ -347,11 +395,17 @@ export interface Voter {
 export interface Vote {
   voter: string;
   result: boolean;
+  voting_power: Types.Coin;
 }
 
 export interface Delegation {
   delegator: string;
+  delegatee: string;
   amount: Types.Coin;
+}
+
+export interface DelegateeList {
+  delegatee_list?: string[];
 }
 
 // post related
@@ -440,15 +494,19 @@ export interface BalanceHistory {
 }
 
 export interface Detail {
-  detail: number;
+  detail_type: number;
+  from: string;
+  to: string;
   amount: Types.Coin;
   created_at: number;
+  memo: string;
 }
 
 export interface AccountMeta {
   sequence: number;
   last_activity: number;
   transaction_capacity: Types.Coin;
+  json_meta: string;
 }
 
 export interface AccountInfo {
@@ -463,6 +521,7 @@ export interface AccountBank {
   saving: Types.Coin;
   stake: Types.Coin;
   frozen_money_list: FrozenMoney[];
+  number_of_transaction: number;
 }
 
 export interface FrozenMoney {
@@ -505,8 +564,8 @@ export interface FollowingMeta {
 
 // proposal related
 export interface ProposalList {
-  ongoing_proposal: string[];
-  past_proposal: string[];
+  ongoing_proposal?: string[];
+  past_proposal?: string[];
 }
 
 export interface ProposalInfo {
@@ -515,6 +574,8 @@ export interface ProposalInfo {
   agree_vote: Types.Coin;
   disagree_vote: Types.Coin;
   result: number;
+  created_at: number;
+  expired_at: number;
 }
 
 export interface Proposal {
@@ -530,13 +591,29 @@ export interface ProposalValue {
 export interface ChangeParamProposalValue extends ProposalValue {
   param: Types.Parameter;
 }
+export function isChangeParamProposalValue(
+  value: ProposalValue
+): value is ChangeParamProposalValue {
+  return 'param' in value;
+}
 
 export interface ContentCensorshipProposalValue extends ProposalValue {
-  perm_link: string;
+  permLink: string;
+  reason: string;
+}
+export function isContentCensorshipProposalValue(
+  value: ProposalValue
+): value is ContentCensorshipProposalValue {
+  return 'permLink' in value && 'reason' in value;
 }
 
 export interface ProtocolUpgradeProposalValue extends ProposalValue {
   link: string;
+}
+export function isProtocolUpgradeProposalValue(
+  value: ProposalValue
+): value is ProtocolUpgradeProposalValue {
+  return 'link' in value;
 }
 
 // tx detail type
@@ -569,8 +646,8 @@ export const DETAILTYPE = {
 const _TIMECONST = {
   HoursPerYear: 8766,
   MinutesPerYear: 8766 * 60,
-  MinutesPerMonth: 8766 * 60 / 12,
-  BalanceHistoryIntervalTime: 8766 * 60 / 12 * 60
+  MinutesPerMonth: (8766 * 60) / 12,
+  BalanceHistoryIntervalTime: ((8766 * 60) / 12) * 60
 };
 
 // internally used

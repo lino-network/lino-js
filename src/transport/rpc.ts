@@ -1,13 +1,11 @@
-//@ts-ignore
-import ByteBuffer from 'bytebuffer';
 import fetch from 'cross-fetch';
-import * as JsonRpc2 from './jsonrpc2';
+import { JsonRpcResponse, isJsonRpcSuccess } from './jsonrpc2';
 
-export interface IResultABCIQuery {
-  response: IResponseQuery;
+export interface ResultABCIQuery {
+  response: ResponseQuery;
 }
 
-export interface IResponseQuery {
+export interface ResponseQuery {
   code: number;
   log: string;
   info: string;
@@ -52,7 +50,7 @@ export class Rpc {
     this._nodeUrl = nodeUrl;
   }
 
-  abciQuery(path: string, key: string, opts = DefaultABCIQueryOptions): Promise<IResultABCIQuery> {
+  abciQuery(path: string, key: string, opts = DefaultABCIQueryOptions): Promise<ResultABCIQuery> {
     return fetch(this._nodeUrl, {
       headers: { 'Content-Type': 'text/json' },
       body: JSON.stringify({
@@ -68,20 +66,14 @@ export class Rpc {
       method: 'POST',
       mode: 'cors'
     })
-      .then((response: any) => response.json())
-      .then(
-        (
-          data:
-            | JsonRpc2.JsonRpcSuccess<IResultABCIQuery>
-            | JsonRpc2.JsonRpcFailure<IResultABCIQuery>
-        ) => {
-          if ('result' in data) {
-            return data.result as IResultABCIQuery;
-          } else {
-            throw data.error;
-          }
+      .then(response => response.json())
+      .then((data: JsonRpcResponse<ResultABCIQuery>) => {
+        if ('result' in data) {
+          return data.result as ResultABCIQuery;
+        } else {
+          throw data.error;
         }
-      );
+      });
   }
 
   broadcastTxCommit(tx: string): Promise<ResultBroadcastTxCommit> {
@@ -98,20 +90,14 @@ export class Rpc {
       method: 'POST',
       mode: 'cors'
     })
-      .then((response: any) => response.json())
-      .then(
-        (
-          data:
-            | JsonRpc2.JsonRpcSuccess<ResultBroadcastTxCommit>
-            | JsonRpc2.JsonRpcFailure<ResultBroadcastTxCommit>
-        ) => {
-          if ('result' in data) {
-            return data.result as ResultBroadcastTxCommit;
-          } else {
-            throw data.error;
-          }
+      .then(response => response.json())
+      .then((data: JsonRpcResponse<ResultBroadcastTxCommit>) => {
+        if (isJsonRpcSuccess(data)) {
+          return data.result as ResultBroadcastTxCommit;
+        } else {
+          throw data.error;
         }
-      );
+      });
   }
 
   block(height: number): Promise<ResultBlock> {
@@ -128,9 +114,9 @@ export class Rpc {
       method: 'POST',
       mode: 'cors'
     })
-      .then((response: any) => response.json())
-      .then((data: JsonRpc2.JsonRpcSuccess<ResultBlock> | JsonRpc2.JsonRpcFailure<ResultBlock>) => {
-        if ('result' in data) {
+      .then(response => response.json())
+      .then((data: JsonRpcResponse<ResultBlock>) => {
+        if (isJsonRpcSuccess(data)) {
           return data.result as ResultBlock;
         } else {
           throw data.error;

@@ -1,6 +1,7 @@
 lib/
 .rpt2_cache/*
-
+.vscode/
+package-lock.json
 # Logs
 logs
 *.log
