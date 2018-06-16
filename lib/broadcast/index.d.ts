@@ -21,7 +21,7 @@ export default class Broadcast {
     validatorDeposit(username: string, deposit: string, validator_public_key: string, link: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     validatorWithdraw(username: string, amount: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     ValidatorRevoke(username: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
-    vote(voter: string, proposal_id: string, result: boolean, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    voteProposal(voter: string, proposal_id: string, result: boolean, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     voterDeposit(username: string, deposit: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     voterWithdraw(username: string, amount: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     voterRevoke(username: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
@@ -43,6 +43,7 @@ export default class Broadcast {
     changeBandwidthParam(creator: string, parameter: Types.BandwidthParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     changeAccountParam(creator: string, parameter: Types.AccountParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     deletePostContent(creator: string, postAuthor: string, postID: string, reason: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    upgradeProtocol(creator: string, link: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     _broadcastTransaction(msg: object, msgType: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
 }
 export interface RegisterMsg {
@@ -193,6 +194,10 @@ export interface DeletePostContentMsg {
     creator: string;
     permLink: string;
     reason: string;
+}
+export interface UpgradeProtocolMsg {
+    creator: string;
+    link: string;
 }
 export interface ChangeGlobalAllocationParamMsg {
     creator: string;
