@@ -598,13 +598,13 @@ export function isChangeParamProposalValue(
 }
 
 export interface ContentCensorshipProposalValue extends ProposalValue {
-  perm_link: string;
+  permLink: string;
   reason: string;
 }
 export function isContentCensorshipProposalValue(
   value: ProposalValue
 ): value is ContentCensorshipProposalValue {
-  return 'perm_link' in value;
+  return 'permLink' in value && 'reason' in value;
 }
 
 export interface ProtocolUpgradeProposalValue extends ProposalValue {
