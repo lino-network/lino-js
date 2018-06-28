@@ -8,9 +8,18 @@ export interface Int128 {
   Hi: number;
 }
 
+export interface MathInt {
+  neg: boolean;
+  abs: number[];
+}
+
+export interface MathRat {
+  a: MathInt;
+  b: MathInt;
+}
+
 export interface Rat {
-  num: number;
-  denom: number;
+  rat: MathRat;
 }
 
 export interface IDToURLMapping {
