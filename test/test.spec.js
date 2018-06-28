@@ -1,4 +1,4 @@
-const NODE_URL = 'http://18.188.188.164:46657/';
+const NODE_URL = 'http://127.0.0.1:26657/';
 const testTxPrivHex = 'E1B0F79A20C25E4115AB6C421D457BFD2B7B545094718CBF27ADF6923BEF19F01580990DD2';
 const zhimaoTx = 'E1B0F79A207965259AFE06EEC9528BC4F692D0F5DE5B97BCF68B8BAF2D1A6C1D0057F58079';
 const testValidatorPubHex =
@@ -10,7 +10,7 @@ function addSuite(envName) {
   describe('LINO', function() {
     const linoClient = new LINO({
       nodeUrl: NODE_URL,
-      chainId: 'test-chain-z0QKeL'
+      chainId: 'test-chain-ktAdj8'
     });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
@@ -33,13 +33,14 @@ function addSuite(envName) {
       });
 
       it('getValidator', function() {
-        return query.getValidator('Lino').then(v => {
+        return query.getValidator('lino').then(v => {
           debug('getValidator', v);
           expect(v).to.have.all.keys(
             'ABCIValidator',
             'username',
             'deposit',
             'absent_commit',
+            'byzantine_commit',
             'produced_blocks',
             'link'
           );

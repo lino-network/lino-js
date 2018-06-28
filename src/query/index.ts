@@ -192,7 +192,6 @@ export default class Query {
     return this._transport
       .query<Delegation>(Keys.getDelegationKey(voter, delegator), VoteKVStoreKey)
       .then(result => {
-        result.delegatee = voter;
         return result;
       });
   }
@@ -207,21 +206,21 @@ export default class Query {
     return this._transport.query<Vote>(Keys.getVoteKey(proposalID, voter), VoteKVStoreKey);
   }
 
-  getDelegateeList(delegatorName: string): Promise<DelegateeList> {
-    const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-    return this._transport.query<DelegateeList>(
-      Keys.getDelegateeListKey(delegatorName),
-      VoteKVStoreKey
-    );
-  }
+  // getDelegateeList(delegatorName: string): Promise<DelegateeList> {
+  //   const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
+  //   return this._transport.query<DelegateeList>(
+  //     Keys.getDelegateeListKey(delegatorName),
+  //     VoteKVStoreKey
+  //   );
+  // }
 
-  getAllDelegation(delegatorName: string): Promise<Delegation[]> {
-    return this.getDelegateeList(delegatorName).then(list =>
-      Promise.all(
-        (list.delegatee_list || []).map(delegatee => this.getDelegation(delegatee, delegatorName))
-      )
-    );
-  }
+  // getAllDelegation(delegatorName: string): Promise<Delegation[]> {
+  //   return this.getDelegateeList(delegatorName).then(list =>
+  //     Promise.all(
+  //       (list.delegatee_list || []).map(delegatee => this.getDelegation(delegatee, delegatorName))
+  //     )
+  //   );
+  // }
   // developer related query
   getDeveloper(developerName: string): Promise<Developer> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
@@ -363,16 +362,14 @@ export default class Query {
 }
 
 // validator related struct
-export interface AllValidators {
-  oncall_validators: string[];
-  all_validators: string[];
-  pre_block_validators: string[];
-  lowest_power: Types.Coin;
-  lowest_validator: string;
+export interface PubKey {
+  type: string;
+  data: string;
 }
 
 export interface ABCIValidator {
-  pub_key: string;
+  address: string;
+  pub_key: PubKey;
   power: number;
 }
 
@@ -381,8 +378,17 @@ export interface Validator {
   username: string;
   deposit: Types.Coin;
   absent_commit: number;
+  byzantine_commit: number;
   produced_blocks: number;
   link: string;
+}
+
+export interface AllValidators {
+  oncall_validators: string[];
+  all_validators: string[];
+  pre_block_validators: string[];
+  lowest_power: Types.Coin;
+  lowest_validator: string;
 }
 
 // vote related struct
@@ -394,18 +400,13 @@ export interface Voter {
 
 export interface Vote {
   voter: string;
-  result: boolean;
   voting_power: Types.Coin;
+  result: boolean;
 }
 
 export interface Delegation {
   delegator: string;
-  delegatee: string;
   amount: Types.Coin;
-}
-
-export interface DelegateeList {
-  delegatee_list?: string[];
 }
 
 // post related
@@ -417,25 +418,31 @@ export interface Comment {
 
 export interface View {
   username: string;
-  created: number;
+  last_view_at: number;
   times: number;
 }
 
 export interface Like {
   username: string;
   weight: number;
-  created: number;
+  created_at: number;
 }
 
 export interface Donation {
   amount: Types.Coin;
   created: number;
+  donation_type: number;
+}
+
+export interface Donations {
+  username: string;
+  donation_list: Donation[];
 }
 
 export interface ReportOrUpvote {
   username: string;
   stake: Types.Coin;
-  created: number;
+  created_at: number;
   is_report: boolean;
 }
 
@@ -452,18 +459,19 @@ export interface PostInfo {
 }
 
 export interface PostMeta {
-  created: number;
-  last_update: number;
-  last_activity: number;
+  created_at: number;
+  last_updated_at: number;
+  last_activity_at: number;
   allow_replies: boolean;
+  is_deleted: boolean;
   total_like_count: number;
   total_donate_count: number;
   total_like_weight: number;
   total_dislike_weight: number;
   total_report_stake: Types.Coin;
   total_upvote_stake: Types.Coin;
-  reward: Types.Coin;
-  is_deleted: boolean;
+  total_view_count: number;
+  total_reward: Types.Coin;
   redistribution_split_rate: Types.Rat;
 }
 
