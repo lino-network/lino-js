@@ -5,8 +5,8 @@ import { Coin, SDKCoin } from '../common';
 
 // TODO: for int64, maybe we should do extra check in proper place, or use string
 export interface StdFee {
-  Amount: SDKCoin[];
-  Gas: number;
+  amount: SDKCoin[];
+  gas: number;
 }
 
 export interface StdSignature {
@@ -53,25 +53,20 @@ export interface InternalPrivKey {
 
 // return a new zero fee object
 export const getZeroFee: () => StdFee = () => ({
-  Amount: [],
-  Gas: 0
+  amount: [],
+  gas: 0
 });
 
 export function encodeTx(
-  msg: any,
-  msgType: string,
+  stdMsg: StdMsg,
   rawPubKey: string,
   rawSigDER: string,
   seq: number
 ): string {
-  const stdMsg: StdMsg = {
-    type: msgType,
-    value: encodeMsg(msg)
-  };
-
   const stdSig: StdSignature = {
     pub_key: convertToInternalPubKey(rawPubKey, _TYPE.PubKeySecp256k1),
     signature: convertToInternalSig(rawSigDER, _TYPE.SignatureKeySecp256k1),
+    account_number: 0,
     sequence: seq
   };
 
@@ -117,14 +112,14 @@ export function encodeMsg(msg: any): any {
 
   return encodedMsg;
 }
-export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
+export function encodeSignMsg(stdMsg: StdMsg, chainId: string, seq: number): any {
   const fee = getZeroFee();
-  const converted = convertMsg(msg);
   const stdSignMsg: StdSignMsg = {
     chain_id: chainId,
+    account_numbers: [],
     sequences: [seq],
     fee_bytes: ByteBuffer.btoa(JSON.stringify(fee)),
-    msg_bytes: ByteBuffer.btoa(JSON.stringify(converted)),
+    msg_bytes: ByteBuffer.btoa(JSON.stringify(stdMsg)),
     alt_bytes: null
   };
 

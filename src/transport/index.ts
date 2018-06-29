@@ -1,6 +1,6 @@
 import ByteBuffer from 'bytebuffer';
 import { ec as EC } from 'elliptic';
-import { decodePrivKey, encodeSignMsg, encodeTx } from './encoder';
+import { decodePrivKey, encodeSignMsg, encodeTx, convertMsg, StdMsg, encodeMsg } from './encoder';
 import { ResultBlock, ResultBroadcastTxCommit, Rpc } from './rpc';
 
 export interface ITransport {
@@ -36,7 +36,6 @@ export class Transport implements ITransport {
     // check resp
     const path = `/store/${storeName}/key`;
     return this._rpc.abciQuery(path, key).then(result => {
-      console.log(result);
       if (!result.response || !result.response.value) {
         throw new Error('Query failed: Empty result');
       }
@@ -63,13 +62,21 @@ export class Transport implements ITransport {
     // private key from hex
     var ec = new EC('secp256k1');
     var key = ec.keyFromPrivate(decodePrivKey(privKeyHex), 'hex');
+
+    // XXX: side effect on msg
+    convertMsg(msg);
+    const stdMsg: StdMsg = {
+      type: msgType,
+      value: encodeMsg(msg)
+    };
+
     // signmsg
-    const signMsgHash = encodeSignMsg(msg, this._chainId, seq);
+    const signMsgHash = encodeSignMsg(stdMsg, this._chainId, seq);
     // sign to get signature
     const sig = key.sign(signMsgHash, { canonical: true });
     const sigDERHex = sig.toDER('hex');
     // build tx
-    const tx = encodeTx(msg, msgType, key.getPublic(true, 'hex'), sigDERHex, seq);
+    const tx = encodeTx(stdMsg, key.getPublic(true, 'hex'), sigDERHex, seq);
 
     // return broadcast
     return this._rpc.broadcastTxCommit(tx).then(result => {
