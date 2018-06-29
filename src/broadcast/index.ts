@@ -19,6 +19,7 @@ export default class Broadcast {
     username: string,
     masterPubKeyHex: string,
     transactionPubKeyHex: string,
+    micropaymentPubKeyHex: string,
     postPubKeyHex: string,
     referrerPrivKeyHex: string,
     seq: number
@@ -29,6 +30,7 @@ export default class Broadcast {
       new_username: username,
       new_master_public_key: decodePubKey(masterPubKeyHex),
       new_transaction_public_key: decodePubKey(transactionPubKeyHex),
+      new_micropayment_public_key: decodePubKey(micropaymentPubKeyHex),
       new_post_public_key: decodePubKey(postPubKeyHex)
     };
     return this._broadcastTransaction(msg, _MSGTYPE.RegisterMsgType, referrerPrivKeyHex, seq);
@@ -85,16 +87,18 @@ export default class Broadcast {
   recover(
     username: string,
     new_master_public_key: string,
-    new_post_public_key: string,
     new_transaction_public_key: string,
+    new_micropayment_public_key: string,
+    new_post_public_key: string,
     privKeyHex: string,
     seq: number
   ) {
     const msg: RecoverMsg = {
       username,
       new_master_public_key,
-      new_post_public_key,
-      new_transaction_public_key
+      new_transaction_public_key,
+      new_micropayment_public_key,
+      new_post_public_key
     };
     return this._broadcastTransaction(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
   }
@@ -166,6 +170,7 @@ export default class Broadcast {
     post_id: string,
     from_app: string,
     memo: string,
+    is_micropayment: boolean,
     privKeyHex: string,
     seq: number
   ) {
@@ -175,7 +180,8 @@ export default class Broadcast {
       author,
       post_id,
       from_app,
-      memo
+      memo,
+      is_micropayment
     };
     return this._broadcastTransaction(msg, _MSGTYPE.DonateMsgType, privKeyHex, seq);
   }
@@ -281,21 +287,6 @@ export default class Broadcast {
   }
 
   // vote related
-  voteProposal(
-    voter: string,
-    proposal_id: string,
-    result: boolean,
-    privKeyHex: string,
-    seq: number
-  ) {
-    const msg: VoteMsg = {
-      voter,
-      proposal_id,
-      result
-    };
-    return this._broadcastTransaction(msg, _MSGTYPE.VoteProposalMsgType, privKeyHex, seq);
-  }
-
   voterDeposit(username: string, deposit: string, privKeyHex: string, seq: number) {
     const msg: VoterDepositMsg = {
       username,
@@ -372,22 +363,40 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.DeveloperRevokeMsgType, privKeyHex, seq);
   }
 
-  grantDeveloper(
+  grantPermission(
     username: string,
     authenticate_app: string,
     validity_period: number,
     grant_level: number,
+    times: number,
     privKeyHex: string,
     seq: number
   ) {
-    const msg: GrantDeveloperMsg = {
+    const msg: GrantPermissionMsg = {
       username,
       authenticate_app,
       validity_period,
-      grant_level
+      grant_level,
+      times
     };
 
-    return this._broadcastTransaction(msg, _MSGTYPE.GrantDeveloperMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.GrantPermissionMsg, privKeyHex, seq);
+  }
+
+  revokePermission(
+    username: string,
+    public_key: string,
+    grant_level: number,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: RevokePermissionMsg = {
+      username: username,
+      public_key: decodePubKey(public_key),
+      grant_level: grant_level
+    };
+
+    return this._broadcastTransaction(msg, _MSGTYPE.RevokePermissionMsg, privKeyHex, seq);
   }
 
   // infra related
@@ -401,6 +410,21 @@ export default class Broadcast {
   }
 
   // proposal related
+  voteProposal(
+    voter: string,
+    proposal_id: string,
+    result: boolean,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: VoteProposalMsg = {
+      voter,
+      proposal_id,
+      result
+    };
+    return this._broadcastTransaction(msg, _MSGTYPE.VoteProposalMsgType, privKeyHex, seq);
+  }
+
   changeGlobalAllocationParam(
     creator: string,
     parameter: Types.GlobalAllocationParam,
@@ -551,6 +575,20 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeAccountParamMsgType, privKeyHex, seq);
   }
 
+  changePostParam(
+    creator: string,
+    parameter: Types.PostParam,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: ChangePostParamMsg = {
+      creator,
+      parameter
+    };
+
+    return this._broadcastTransaction(msg, _MSGTYPE.ChangePostParamMsgType, privKeyHex, seq);
+  }
+
   deletePostContent(
     creator: string,
     postAuthor: string,
@@ -559,10 +597,10 @@ export default class Broadcast {
     privKeyHex: string,
     seq: number
   ) {
-    const permLink = postAuthor.concat('#').concat(postID);
+    const permlink = postAuthor.concat('#').concat(postID);
     const msg: DeletePostContentMsg = {
       creator,
-      permLink,
+      permlink,
       reason
     };
 
@@ -594,6 +632,7 @@ export interface RegisterMsg {
   new_username: string;
   new_master_public_key: string;
   new_transaction_public_key: string;
+  new_micropayment_public_key: string;
   new_post_public_key: string;
 }
 
@@ -621,8 +660,9 @@ export interface ClaimMsg {
 export interface RecoverMsg {
   username: string;
   new_master_public_key: string;
-  new_post_public_key: string;
   new_transaction_public_key: string;
+  new_micropayment_public_key: string;
+  new_post_public_key: string;
 }
 
 export interface UpdateAccountMsg {
@@ -658,6 +698,7 @@ export interface DonateMsg {
   post_id: string;
   from_app: string;
   memo: string;
+  is_micropayment: boolean;
 }
 
 export interface ReportOrUpvoteMsg {
@@ -710,12 +751,6 @@ export interface VoterDepositMsg {
   deposit: string;
 }
 
-export interface VoteMsg {
-  voter: string;
-  proposal_id: string;
-  result: boolean;
-}
-
 export interface VoterWithdrawMsg {
   username: string;
   amount: string;
@@ -752,10 +787,17 @@ export interface DeveloperRevokeMsg {
   username: string;
 }
 
-export interface GrantDeveloperMsg {
+export interface GrantPermissionMsg {
   username: string;
   authenticate_app: string;
   validity_period: number;
+  grant_level: number;
+  times: number;
+}
+
+export interface RevokePermissionMsg {
+  username: string;
+  public_key: string;
   grant_level: number;
 }
 
@@ -768,8 +810,14 @@ export interface ProviderReportMsg {
 // proposal related messages
 export interface DeletePostContentMsg {
   creator: string;
-  permLink: string;
+  permlink: string;
   reason: string;
+}
+
+export interface VoteProposalMsg {
+  voter: string;
+  proposal_id: string;
+  result: boolean;
 }
 
 export interface UpgradeProtocolMsg {
@@ -827,6 +875,11 @@ export interface ChangeAccountParamMsg {
   parameter: Types.AccountParam;
 }
 
+export interface ChangePostParamMsg {
+  creator: string;
+  parameter: Types.PostParam;
+}
+
 const _MSGTYPE = {
   RegisterMsgType: '87780FA5DE6848',
   TransferMsgType: '27F576CAFBB260',
@@ -848,7 +901,6 @@ const _MSGTYPE = {
   ValidatorWithdrawMsgType: '32E51EDD228920',
   ValidatorRevokeMsgType: '0E2B2E4A3441E0',
 
-  VoteProposalMsgType: '3126D3663EE938',
   VoterDepositMsgType: '9E6F93EDF45140',
   VoterWithdrawMsgType: '68E1FB898955A0',
   VoterRevokeMsgType: 'D8C93E26BD1E58',
@@ -858,10 +910,12 @@ const _MSGTYPE = {
 
   DeveloperRegisterMsgType: '4A2EC4E5253D78',
   DeveloperRevokeMsgType: '94C5F456C3BAF8',
-  GrantDeveloperMsgType: '1CF286AA038278',
+  GrantPermissionMsg: '1CF286AA038278',  // this might not be correct
+  RevokePermissionMsg: '',
 
   ProviderReportMsgType: '108D925A05BE70',
 
+  VoteProposalMsgType: '3126D3663EE938',
   DeletePostContentMsgType: '7E63F5F154D2C8',
   UpgradeProtocolMsgType: '862664E4E9F8A0',
   ChangeGlobalAllocationParamMsgType: 'A9F46C097B5F50',
@@ -874,4 +928,5 @@ const _MSGTYPE = {
   ChangeCoinDayParamMsgType: 'FDFDD1B911C0F0',
   ChangeBandwidthParamMsgType: '6425F4408B8C48',
   ChangeAccountParamMsgType: '1FED1384B17F40'
+  ChangePostParamMsgType: '',
 };
