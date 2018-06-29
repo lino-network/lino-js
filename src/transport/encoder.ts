@@ -1,17 +1,18 @@
 import ByteBuffer from 'bytebuffer';
 import { encode } from 'punycode';
 import shajs from 'sha.js';
-import { Coin } from '../common';
+import { Coin, SDKCoin } from '../common';
 
 // TODO: for int64, maybe we should do extra check in proper place, or use string
 export interface StdFee {
-  Amount: number[];
+  Amount: SDKCoin[];
   Gas: number;
 }
 
 export interface StdSignature {
   pub_key: InternalPubKey;
   signature: InternalPrivKey;
+  account_number: number;
   sequence: number;
 }
 
@@ -28,6 +29,7 @@ export interface StdTx {
 
 export interface StdSignMsg {
   chain_id: string;
+  account_numbers: number[];
   sequences: number[];
   fee_bytes: string;
   msg_bytes: string;

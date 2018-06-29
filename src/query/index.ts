@@ -1,6 +1,7 @@
 import ByteBuffer from 'bytebuffer';
 import * as Types from '../common';
 import { ITransport } from '../transport';
+import { decodePubKey } from '../transport/encoder';
 import { InternalPubKey, StdTx, convertToRawPubKey, encodePubKey } from '../transport/encoder';
 import { ResultBlock } from '../transport/rpc';
 import * as Util from '../util/index';
@@ -13,14 +14,43 @@ export default class Query {
     this._transport = transport;
   }
 
-  doesUsernameMatchPrivKey(username: string, privKeyHex: string): Promise<boolean> {
+  doesUsernameMatchMasterPrivKey(username: string, masterPrivKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
       if (info == null) {
         return false;
       }
-      return Util.isKeyMatch(privKeyHex, info.master_key);
+      return Util.isKeyMatch(masterPrivKeyHex, info.master_key);
     });
   }
+
+  doesUsernameMatchTxPrivKey(username: string, txPrivKeyHex: string): Promise<boolean> {
+    return this.getAccountInfo(username).then(info => {
+      if (info == null) {
+        return false;
+      }
+      return Util.isKeyMatch(txPrivKeyHex, info.transaction_key);
+    });
+  }
+
+  doesUsernameMatchMicropaymentPrivKey(username: string, micropaymentPrivKeyHex: string): Promise<boolean> {
+    return this.getAccountInfo(username).then(info => {
+      if (info == null) {
+        return false;
+      }
+      return Util.isKeyMatch(micropaymentPrivKeyHex, info.micropayment_key);
+    });
+  }
+
+  doesUsernameMatchPostPrivKey(username: string, postPrivKeyHex: string): Promise<boolean> {
+    return this.getAccountInfo(username).then(info => {
+      if (info == null) {
+        return false;
+      }
+      return Util.isKeyMatch(postPrivKeyHex, info.post_key);
+    });
+  }
+
+
   // validator related query
   getAllValidators(): Promise<AllValidators> {
     const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
@@ -85,30 +115,17 @@ export default class Query {
           created_at: info.created_at,
           master_key: encodePubKey(convertToRawPubKey(info.master_key)),
           transaction_key: encodePubKey(convertToRawPubKey(info.transaction_key)),
+          micropayment_key: encodePubKey(convertToRawPubKey(info.micropayment_key)),
           post_key: encodePubKey(convertToRawPubKey(info.post_key))
         };
         return res;
       });
   }
 
-  getGrantList(username: string): Promise<GrantKeyList> {
+  getGrantPubKey(username: string, pubKeyHex: string): Promise<GrantPubKey> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport
-      .query<GrantKeyListInternal>(Keys.getGrantKeyListKey(username), AccountKVStoreKey)
-      .then(result => {
-        var newList: GrantPubKey[] = new Array(result.grant_public_key_list.length);
-        for (var i = 0; i < result.grant_public_key_list.length; i++) {
-          newList[i].expires_at = result.grant_public_key_list[i].expires_at;
-          newList[i].username = result.grant_public_key_list[i].username;
-          newList[i].public_key = encodePubKey(
-            convertToRawPubKey(result.grant_public_key_list[i].public_key)
-          );
-        }
-        var newResult: GrantKeyList = {
-          grant_public_key_list: newList
-        };
-        return newResult;
-      });
+    const publicKey = decodePubKey(pubKeyHex);
+    return this._transport.query<GrantPubKey>(Keys.getgrantPubKeyKey(username, publicKey), AccountKVStoreKey);
   }
 
   getReward(username: string): Promise<Reward> {
@@ -141,49 +158,55 @@ export default class Query {
   }
 
   // post related query
-  getPostComment(author: string, postID: string, commentPostKey: string): Promise<Comment> {
+  getPostComment(author: string, postID: string, commentPermlink: string): Promise<Comment> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
-    const PostKey = Keys.getPostKey(author, postID);
+    const Permlink = Keys.getPermlink(author, postID);
     return this._transport.query<Comment>(
-      Keys.getPostCommentKey(PostKey, commentPostKey),
+      Keys.getPostCommentKey(Permlink, commentPermlink),
       PostKVStoreKey
     );
   }
 
   getPostView(author: string, postID: string, viewUser: string): Promise<View> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
-    const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<View>(Keys.getPostViewKey(PostKey, viewUser), PostKVStoreKey);
+    const Permlink = Keys.getPermlink(author, postID);
+    return this._transport.query<View>(Keys.getPostViewKey(Permlink, viewUser), PostKVStoreKey);
   }
 
-  getPostDonation(author: string, postID: string, donateUser: string): Promise<Donation> {
+  getPostDonations(author: string, postID: string, donateUser: string): Promise<Donations> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
-    const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<Donation>(
-      Keys.getPostDonationKey(PostKey, donateUser),
+    const Permlink = Keys.getPermlink(author, postID);
+    return this._transport.query<Donations>(
+      Keys.getPostDonationsKey(Permlink, donateUser),
       PostKVStoreKey
     );
   }
 
   getPostReportOrUpvote(author: string, postID: string, user: string): Promise<ReportOrUpvote> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
-    const PostKey = Keys.getPostKey(author, postID);
+    const Permlink = Keys.getPermlink(author, postID);
     return this._transport.query<ReportOrUpvote>(
-      Keys.getPostCommentKey(PostKey, user),
+      Keys.getPostReportOrUpvoteKey(Permlink, user),
       PostKVStoreKey
     );
   }
 
+  getPostLike(author: string, postID: string, likeUser: string): Promise<Like> {
+    const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
+    const Permlink = Keys.getPermlink(author, postID);
+    return this._transport.query<Like>(Keys.getPostLikeKey(Permlink, likeUser), PostKVStoreKey);
+  }
+
   getPostInfo(author: string, postID: string): Promise<PostInfo> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
-    const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<PostInfo>(Keys.getPostInfoKey(PostKey), PostKVStoreKey);
+    const Permlink = Keys.getPermlink(author, postID);
+    return this._transport.query<PostInfo>(Keys.getPostInfoKey(Permlink), PostKVStoreKey);
   }
 
   getPostMeta(author: string, postID: string): Promise<PostMeta> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
-    const PostKey = Keys.getPostKey(author, postID);
-    return this._transport.query<PostMeta>(Keys.getPostMetaKey(PostKey), PostKVStoreKey);
+    const Permlink = Keys.getPermlink(author, postID);
+    return this._transport.query<PostMeta>(Keys.getPostMetaKey(Permlink), PostKVStoreKey);
   }
 
   // vote related query
@@ -206,21 +229,6 @@ export default class Query {
     return this._transport.query<Vote>(Keys.getVoteKey(proposalID, voter), VoteKVStoreKey);
   }
 
-  // getDelegateeList(delegatorName: string): Promise<DelegateeList> {
-  //   const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-  //   return this._transport.query<DelegateeList>(
-  //     Keys.getDelegateeListKey(delegatorName),
-  //     VoteKVStoreKey
-  //   );
-  // }
-
-  // getAllDelegation(delegatorName: string): Promise<Delegation[]> {
-  //   return this.getDelegateeList(delegatorName).then(list =>
-  //     Promise.all(
-  //       (list.delegatee_list || []).map(delegatee => this.getDelegation(delegatee, delegatorName))
-  //     )
-  //   );
-  // }
   // developer related query
   getDeveloper(developerName: string): Promise<Developer> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
@@ -342,6 +350,11 @@ export default class Query {
   getAccountParam(): Promise<Types.AccountParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.AccountParam>(Keys.getAccountParamKey(), ParamKVStoreKey);
+  }
+
+  getPostParam(): Promise<Types.PostParam> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.PostParam>(Keys.getPostParamKey(), ParamKVStoreKey);
   }
 
   // block related
@@ -497,31 +510,12 @@ export interface InfraProviderList {
 }
 
 // account related
-export interface BalanceHistory {
-  details: Detail[];
-}
-
-export interface Detail {
-  detail_type: number;
-  from: string;
-  to: string;
-  amount: Types.Coin;
-  created_at: number;
-  memo: string;
-}
-
-export interface AccountMeta {
-  sequence: number;
-  last_activity: number;
-  transaction_capacity: Types.Coin;
-  json_meta: string;
-}
-
 export interface AccountInfo {
   username: string;
   created_at: number;
   master_key: string;
   transaction_key: string;
+  micropayment_key: string;
   post_key: string;
 }
 
@@ -539,14 +533,29 @@ export interface FrozenMoney {
   interval: number;
 }
 
-export interface GrantKeyList {
-  grant_public_key_list: GrantPubKey[];
-}
-
 export interface GrantPubKey {
   username: string;
-  public_key: string;
+  permission: number;
+  left_times: number;
+  created_at: number;
   expires_at: number;
+}
+
+export interface AccountMeta {
+  sequence: number;
+  last_activity_at: number;
+  transaction_capacity: Types.Coin;
+  json_meta: string;
+}
+
+export interface FollowerMeta {
+  created_at: number;
+  follower_name: string;
+}
+
+export interface FollowingMeta {
+  created_at: number;
+  following_name: string;
 }
 
 export interface Reward {
@@ -560,14 +569,17 @@ export interface Relationship {
   donation_times: number;
 }
 
-export interface FollowerMeta {
-  created_at: number;
-  follower_name: string;
+export interface BalanceHistory {
+  details: Detail[];
 }
 
-export interface FollowingMeta {
+export interface Detail {
+  detail_type: number;
+  from: string;
+  to: string;
+  amount: Types.Coin;
   created_at: number;
-  following_name: string;
+  memo: string;
 }
 
 // proposal related
@@ -659,20 +671,11 @@ const _TIMECONST = {
 };
 
 // internally used
-interface GrantKeyListInternal {
-  grant_public_key_list: GrantPubKeyInternal[];
-}
-
-interface GrantPubKeyInternal {
-  username: string;
-  public_key: InternalPubKey;
-  expires_at: number;
-}
-
 interface AccountInfoInternal {
   username: string;
   created_at: number;
   master_key: InternalPubKey;
   transaction_key: InternalPubKey;
+  micropayment_key: InternalPubKey;
   post_key: InternalPubKey;
 }
