@@ -575,12 +575,7 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeAccountParamMsgType, privKeyHex, seq);
   }
 
-  changePostParam(
-    creator: string,
-    parameter: Types.PostParam,
-    privKeyHex: string,
-    seq: number
-  ) {
+  changePostParam(creator: string, parameter: Types.PostParam, privKeyHex: string, seq: number) {
     const msg: ChangePostParamMsg = {
       creator,
       parameter
@@ -910,7 +905,7 @@ const _MSGTYPE = {
 
   DeveloperRegisterMsgType: '4A2EC4E5253D78',
   DeveloperRevokeMsgType: '94C5F456C3BAF8',
-  GrantPermissionMsg: '1CF286AA038278',  // this might not be correct
+  GrantPermissionMsg: '1CF286AA038278', // this might not be correct
   RevokePermissionMsg: '',
 
   ProviderReportMsgType: '108D925A05BE70',
@@ -927,6 +922,6 @@ const _MSGTYPE = {
   ChangeValidatorParamMsgType: '2E975DC3A10710',
   ChangeCoinDayParamMsgType: 'FDFDD1B911C0F0',
   ChangeBandwidthParamMsgType: '6425F4408B8C48',
-  ChangeAccountParamMsgType: '1FED1384B17F40'
-  ChangePostParamMsgType: '',
+  ChangeAccountParamMsgType: '1FED1384B17F40',
+  ChangePostParamMsgType: ''
 };

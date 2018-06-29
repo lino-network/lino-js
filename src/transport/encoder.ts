@@ -72,6 +72,7 @@ export function encodeTx(
   const stdSig: StdSignature = {
     pub_key: convertToInternalPubKey(rawPubKey, _TYPE.PubKeySecp256k1),
     signature: convertToInternalSig(rawSigDER, _TYPE.SignatureKeySecp256k1),
+    account_number: 0,
     sequence: seq
   };
 
@@ -122,6 +123,7 @@ export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
   const converted = convertMsg(msg);
   const stdSignMsg: StdSignMsg = {
     chain_id: chainId,
+    account_numbers: [],
     sequences: [seq],
     fee_bytes: ByteBuffer.btoa(JSON.stringify(fee)),
     msg_bytes: ByteBuffer.btoa(JSON.stringify(converted)),
