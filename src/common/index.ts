@@ -8,8 +8,6 @@ export interface SDKCoin {
   amount: number;
 }
 
-// TODO: type SDKCoins []SDKCoin
-
 export interface Int128 {
   Lo: number;
   Hi: number;
