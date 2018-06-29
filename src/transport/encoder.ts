@@ -5,8 +5,8 @@ import { Coin, SDKCoin } from '../common';
 
 // TODO: for int64, maybe we should do extra check in proper place, or use string
 export interface StdFee {
-  Amount: SDKCoin[];
-  Gas: number;
+  amount: SDKCoin[];
+  gas: number;
 }
 
 export interface StdSignature {
@@ -53,8 +53,8 @@ export interface InternalPrivKey {
 
 // return a new zero fee object
 export const getZeroFee: () => StdFee = () => ({
-  Amount: [],
-  Gas: 0
+  amount: [],
+  gas: 0
 });
 
 export function encodeTx(
@@ -118,15 +118,20 @@ export function encodeMsg(msg: any): any {
 
   return encodedMsg;
 }
-export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
+export function encodeSignMsg(msg: any, msgType: string, chainId: string, seq: number): any {
   const fee = getZeroFee();
   const converted = convertMsg(msg);
+  const stdMsg: StdMsg = {
+    type: msgType,
+    value: encodeMsg(converted)
+  };
+
   const stdSignMsg: StdSignMsg = {
     chain_id: chainId,
     account_numbers: [],
     sequences: [seq],
     fee_bytes: ByteBuffer.btoa(JSON.stringify(fee)),
-    msg_bytes: ByteBuffer.btoa(JSON.stringify(converted)),
+    msg_bytes: ByteBuffer.btoa(JSON.stringify(stdMsg)),
     alt_bytes: null
   };
 

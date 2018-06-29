@@ -63,7 +63,7 @@ export class Transport implements ITransport {
     var ec = new EC('secp256k1');
     var key = ec.keyFromPrivate(decodePrivKey(privKeyHex), 'hex');
     // signmsg
-    const signMsgHash = encodeSignMsg(msg, this._chainId, seq);
+    const signMsgHash = encodeSignMsg(msg, msgType, this._chainId, seq);
     // sign to get signature
     const sig = key.sign(signMsgHash, { canonical: true });
     const sigDERHex = sig.toDER('hex');

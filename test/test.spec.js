@@ -193,10 +193,12 @@ function addSuite(envName) {
             return seq;
           })
           .then(seq => {
-            return broadcast.transfer('lino', 'zhimao', '1', 'hi', testTxPrivHex, seq).then(v => {
-              debug('transfer', v);
-              expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-            });
+            return broadcast
+              .transfer('lino', 'zhimao', '10000', 'memo1', testTxPrivHex, seq)
+              .then(v => {
+                debug('transfer', v);
+                expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+              });
           });
       });
 
