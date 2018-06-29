@@ -36,7 +36,6 @@ export class Transport implements ITransport {
     // check resp
     const path = `/store/${storeName}/key`;
     return this._rpc.abciQuery(path, key).then(result => {
-      console.log(result);
       if (!result.response || !result.response.value) {
         throw new Error('Query failed: Empty result');
       }

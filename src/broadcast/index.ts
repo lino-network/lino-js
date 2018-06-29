@@ -81,7 +81,7 @@ export default class Broadcast {
       username,
       json_meta
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.UpdateAccountMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.UpdateAccMsgType, privKeyHex, seq);
   }
 
   recover(
@@ -268,7 +268,7 @@ export default class Broadcast {
       validator_public_key: decodePubKey(validator_public_key),
       link: link
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.ValidatorDepositMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.ValDepositMsgType, privKeyHex, seq);
   }
 
   validatorWithdraw(username: string, amount: string, privKeyHex: string, seq: number) {
@@ -276,14 +276,14 @@ export default class Broadcast {
       username,
       amount
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.ValidatorWithdrawMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.ValWithdrawMsgType, privKeyHex, seq);
   }
 
   ValidatorRevoke(username: string, privKeyHex: string, seq: number) {
     const msg: ValidatorRevokeMsg = {
       username
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.ValidatorRevokeMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.ValRevokeMsgType, privKeyHex, seq);
   }
 
   // vote related
@@ -292,7 +292,7 @@ export default class Broadcast {
       username,
       deposit
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.VoterDepositMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.VoteDepositMsgType, privKeyHex, seq);
   }
 
   voterWithdraw(username: string, amount: string, privKeyHex: string, seq: number) {
@@ -300,14 +300,14 @@ export default class Broadcast {
       username,
       amount
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.VoterWithdrawMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.VoteWithdrawMsgType, privKeyHex, seq);
   }
 
   voterRevoke(username: string, privKeyHex: string, seq: number) {
     const msg: VoterRevokeMsg = {
       username
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.VoterRevokeMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.VoteRevokeMsgType, privKeyHex, seq);
   }
 
   delegate(delegator: string, voter: string, amount: string, privKeyHex: string, seq: number) {
@@ -333,7 +333,7 @@ export default class Broadcast {
       amount
     };
 
-    return this._broadcastTransaction(msg, _MSGTYPE.DelegatorWithdrawMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.DelegateWithdrawMsgType, privKeyHex, seq);
   }
 
   revokeDelegation(delegator: string, voter: string, privKeyHex: string, seq: number) {
@@ -342,7 +342,7 @@ export default class Broadcast {
       voter
     };
 
-    return this._broadcastTransaction(msg, _MSGTYPE.RevokeDelegationMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.DelegateRevokeMsgType, privKeyHex, seq);
   }
 
   // developer related
@@ -352,7 +352,7 @@ export default class Broadcast {
       deposit
     };
 
-    return this._broadcastTransaction(msg, _MSGTYPE.DeveloperRegisterMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.DevRegisterMsgType, privKeyHex, seq);
   }
 
   developerRevoke(username: string, privKeyHex: string, seq: number) {
@@ -360,7 +360,7 @@ export default class Broadcast {
       username
     };
 
-    return this._broadcastTransaction(msg, _MSGTYPE.DeveloperRevokeMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.DevRevokeMsgType, privKeyHex, seq);
   }
 
   grantPermission(
@@ -380,7 +380,7 @@ export default class Broadcast {
       times
     };
 
-    return this._broadcastTransaction(msg, _MSGTYPE.GrantPermissionMsg, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.GrantPermissionMsgType, privKeyHex, seq);
   }
 
   revokePermission(
@@ -396,7 +396,7 @@ export default class Broadcast {
       grant_level: grant_level
     };
 
-    return this._broadcastTransaction(msg, _MSGTYPE.RevokePermissionMsg, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.RevokePermissionMsgType, privKeyHex, seq);
   }
 
   // infra related
@@ -436,12 +436,7 @@ export default class Broadcast {
       parameter
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ChangeGlobalAllocationParamMsgType,
-      privKeyHex,
-      seq
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ChangeGlobalAllocationMsgType, privKeyHex, seq);
   }
 
   changeEvaluateOfContentValueParam(
@@ -455,12 +450,7 @@ export default class Broadcast {
       parameter
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ChangeEvaluateOfContentValueParamMsgType,
-      privKeyHex,
-      seq
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ChangeEvaluationMsgType, privKeyHex, seq);
   }
 
   changeInfraInternalAllocationParam(
@@ -474,12 +464,7 @@ export default class Broadcast {
       parameter
     };
 
-    return this._broadcastTransaction(
-      msg,
-      _MSGTYPE.ChangeInfraInternalAllocationParamMsgType,
-      privKeyHex,
-      seq
-    );
+    return this._broadcastTransaction(msg, _MSGTYPE.ChangeInfraAllocationMsgType, privKeyHex, seq);
   }
 
   changeVoteParam(creator: string, parameter: Types.VoteParam, privKeyHex: string, seq: number) {
@@ -876,52 +861,50 @@ export interface ChangePostParamMsg {
 }
 
 const _MSGTYPE = {
-  RegisterMsgType: '87780FA5DE6848',
-  TransferMsgType: '27F576CAFBB260',
-  FollowMsgType: 'A3CE0B6106CDB0',
-  UnfollowMsgType: '84F010638F0200',
-  ClaimMsgType: 'DD1B3C312CF7D8',
-  RecoverMsgType: 'EC3915F542E0F8',
-  UpdateAccountMsgType: '688B831F24C188',
-
-  CreatePostMsgType: '72231043BC1800',
-  LikeMsgType: 'CAB2644828BCC0',
-  DonateMsgType: '9B3E2278234D08',
-  ReportOrUpvoteMsgType: '768472FB2FC620',
-  DeletePostMsgType: '3479D4D590AC68',
-  ViewMsgType: '2BCB43CBC8F6B0',
-  UpdatePostMsgType: 'CD493C6F19B7B0',
-
-  ValidatorDepositMsgType: '917127FC7429D8',
-  ValidatorWithdrawMsgType: '32E51EDD228920',
-  ValidatorRevokeMsgType: '0E2B2E4A3441E0',
-
-  VoterDepositMsgType: '9E6F93EDF45140',
-  VoterWithdrawMsgType: '68E1FB898955A0',
-  VoterRevokeMsgType: 'D8C93E26BD1E58',
-  DelegateMsgType: '6F216E33C5CF98',
-  DelegatorWithdrawMsgType: 'A77E9D3A6EA3D8',
-  RevokeDelegationMsgType: 'C4D544FE5C83B0',
-
-  DeveloperRegisterMsgType: '4A2EC4E5253D78',
-  DeveloperRevokeMsgType: '94C5F456C3BAF8',
-  GrantPermissionMsg: '1CF286AA038278', // this might not be correct
-  RevokePermissionMsg: '',
-
-  ProviderReportMsgType: '108D925A05BE70',
-
-  VoteProposalMsgType: '3126D3663EE938',
-  DeletePostContentMsgType: '7E63F5F154D2C8',
-  UpgradeProtocolMsgType: '862664E4E9F8A0',
-  ChangeGlobalAllocationParamMsgType: 'A9F46C097B5F50',
-  ChangeEvaluateOfContentValueParamMsgType: '8A59091B1DCEF0',
-  ChangeInfraInternalAllocationParamMsgType: 'D7296C8C03B1C8',
-  ChangeVoteParamMsgType: 'DE608FB7F2ACF8',
-  ChangeProposalParamMsgType: '4293B70D3658F0',
-  ChangeDeveloperParamMsgType: 'E9222357A97CE0',
-  ChangeValidatorParamMsgType: '2E975DC3A10710',
-  ChangeCoinDayParamMsgType: 'FDFDD1B911C0F0',
-  ChangeBandwidthParamMsgType: '6425F4408B8C48',
-  ChangeAccountParamMsgType: '1FED1384B17F40',
-  ChangePostParamMsgType: ''
+  RegisterMsgType: '26DC9A48ED0600',
+  FollowMsgType: '65AF26BE5D3F10',
+  UnfollowMsgType: '9F04229AEA85D0',
+  TransferMsgType: '11D7DAB23CF4A8',
+  ClaimMsgType: 'E43B69C1242DD0',
+  RecoverMsgType: 'D8D1DD8D6DB638',
+  UpdateAccMsgType: '192B669B73B200',
+  DevRegisterMsgType: '488B85517B6738',
+  DevRevokeMsgType: 'B026042592D150',
+  GrantPermissionMsgType: 'B04543BA3A3848',
+  RevokePermissionMsgType: '5049F8880933C0',
+  CreatePostMsgType: '7984D42EEAC938',
+  UpdatePostMsgType: 'F93EAFE05DF8C0',
+  DeletePostMsgType: '056DC956AF53F8',
+  LikeMsgType: '2E9853FBC76B08',
+  DonateMsgType: '0371D9D8F05838',
+  ViewMsgType: '8ED05B78979A40',
+  ReportOrUpvoteMsgType: 'DD37A36073BE20',
+  VoteDepositMsgType: '9E3BB59C845D58',
+  VoteRevokeMsgType: '5D06CAFB44F630',
+  VoteWithdrawMsgType: '56190993CE3378',
+  DelegateMsgType: 'E7EF5D457166A0',
+  DelegateWithdrawMsgType: 'B90BE271224BE8',
+  DelegateRevokeMsgType: '85AB3EB261DF80',
+  ValDepositMsgType: 'DD1A6F7DB18808',
+  ValWithdrawMsgType: 'FCF3D85CFC69F0',
+  ValRevokeMsgType: '027606935C70E0',
+  VoteProposalMsgType: '9914E2FD1D1800',
+  DeletePostContentMsgType: '80612B567A8F98',
+  UpgradeProtocolMsgType: '8B53D94BF77490',
+  ChangeGlobalAllocationMsgType: 'FC2A866293F188',
+  ChangeEvaluationMsgType: '288E22F5EC6268',
+  ChangeInfraAllocationMsgType: '4F6C325C2ACA58',
+  ChangeVoteParamMsgType: 'BB11A22EFA6098',
+  ChangeProposalParamMsgType: '49AB71A6D3CB78',
+  ChangeDeveloperParamMsgType: '5BBFF6FE8C9110',
+  ChangeValidatorParamMsgType: '28FAB3D4621AD0',
+  ChangeCoinDayParamMsgType: '34DEDA997171F0',
+  ChangeBandwidthParamMsgType: '1F779099D3A7A0',
+  ChangeAccountParamMsgType: 'B4E93F3241E950',
+  ChangePostParamMsgType: 'D294B618DB0588',
+  ProviderReportMsgType: '6090FEC9F690B8',
+  EventRewardMsgType: 'A34081928A6048',
+  EventReturnMsgType: 'F37028A132AD10',
+  EventCpeMsgType: '51F05B75A00E98',
+  EventDpeMsgType: '90647BC86FCAC8'
 };
