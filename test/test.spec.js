@@ -235,13 +235,15 @@ function addSuite(envName) {
         expect(res).to.equal(false);
       });
 
-      it.skip('use derive priv key', function() {
+      it('use derive priv key', function() {
         const randomMasterPrivKey = UTILS.genPrivKeyHex();
         const derivedTxPrivKey = UTILS.derivePrivKey(randomMasterPrivKey);
-        const derivedPostPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
+        const derivedMicroPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
+        const derivedPostPrivKey = UTILS.derivePrivKey(derivedMicroPrivKey);
 
         const masterPubKey = UTILS.pubKeyFromPrivate(randomMasterPrivKey);
         const txPubKey = UTILS.pubKeyFromPrivate(derivedTxPrivKey);
+        const microPubKey = UTILS.pubKeyFromPrivate(derivedMicroPrivKey);
         const postPubKey = UTILS.pubKeyFromPrivate(derivedPostPrivKey);
 
         return query
@@ -255,9 +257,10 @@ function addSuite(envName) {
               .register(
                 'lino',
                 '20000000',
-                'zhimao',
+                'zhimao2',
                 masterPubKey,
                 txPubKey,
+                microPubKey,
                 postPubKey,
                 testTxPrivHex,
                 seq
@@ -268,53 +271,53 @@ function addSuite(envName) {
               });
           });
 
-        return query.getSeqNumber('zhimao').then(seq => {
-          return broadcast
-            .deletePostContent('zhimao', 'zhimao', 'id', 'violence', zhimaoTx, seq)
-            .then(v => {
-              debug('make delete content proposal', v);
-              expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-            });
-        });
+        // return query.getSeqNumber('zhimao').then(seq => {
+        //   return broadcast
+        //     .deletePostContent('zhimao', 'zhimao', 'id', 'violence', zhimaoTx, seq)
+        //     .then(v => {
+        //       debug('make delete content proposal', v);
+        //       expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+        //     });
+        // });
 
-        return query.getSeqNumber('zhimao').then(seq => {
-          let map = new Map();
-          map.set('A', '1');
-          map.set('B', '2');
+        // return query.getSeqNumber('zhimao').then(seq => {
+        //   let map = new Map();
+        //   map.set('A', '1');
+        //   map.set('B', '2');
 
-          return broadcast
-            .createPost(
-              'zhimao',
-              'id',
-              'mytitle',
-              'dummycontent',
-              '',
-              '',
-              '',
-              '',
-              '0.5',
-              map,
-              zhimaoTx,
-              seq
-            )
-            .then(v => {
-              debug('createPost', v);
-              expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-            });
-        });
+        //   return broadcast
+        //     .createPost(
+        //       'zhimao',
+        //       'id',
+        //       'mytitle',
+        //       'dummycontent',
+        //       '',
+        //       '',
+        //       '',
+        //       '',
+        //       '0.5',
+        //       map,
+        //       zhimaoTx,
+        //       seq
+        //     )
+        //     .then(v => {
+        //       debug('createPost', v);
+        //       expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+        //     });
+        // });
 
-        return query.getSeqNumber('lino').then(seq => {
-          return query.getGlobalAllocationParam().then(param => {
-            param.content_creator_allocation.num = 70;
-            param.developer_allocation.num = 5;
-            return broadcast
-              .changeGlobalAllocationParam('lino', param, testTxPrivHex, seq)
-              .then(v => {
-                debug('changeGlobalAllocationParam', v);
-                expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-              });
-          });
-        });
+        // return query.getSeqNumber('lino').then(seq => {
+        //   return query.getGlobalAllocationParam().then(param => {
+        //     param.content_creator_allocation.num = 70;
+        //     param.developer_allocation.num = 5;
+        //     return broadcast
+        //       .changeGlobalAllocationParam('lino', param, testTxPrivHex, seq)
+        //       .then(v => {
+        //         debug('changeGlobalAllocationParam', v);
+        //         expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+        //       });
+        //   });
+        // });
       });
     });
   });

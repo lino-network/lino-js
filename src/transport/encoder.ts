@@ -58,17 +58,11 @@ export const getZeroFee: () => StdFee = () => ({
 });
 
 export function encodeTx(
-  msg: any,
-  msgType: string,
+  stdMsg: StdMsg,
   rawPubKey: string,
   rawSigDER: string,
   seq: number
 ): string {
-  const stdMsg: StdMsg = {
-    type: msgType,
-    value: encodeMsg(msg)
-  };
-
   const stdSig: StdSignature = {
     pub_key: convertToInternalPubKey(rawPubKey, _TYPE.PubKeySecp256k1),
     signature: convertToInternalSig(rawSigDER, _TYPE.SignatureKeySecp256k1),
@@ -118,14 +112,8 @@ export function encodeMsg(msg: any): any {
 
   return encodedMsg;
 }
-export function encodeSignMsg(msg: any, msgType: string, chainId: string, seq: number): any {
+export function encodeSignMsg(stdMsg: StdMsg, chainId: string, seq: number): any {
   const fee = getZeroFee();
-  const converted = convertMsg(msg);
-  const stdMsg: StdMsg = {
-    type: msgType,
-    value: encodeMsg(converted)
-  };
-
   const stdSignMsg: StdSignMsg = {
     chain_id: chainId,
     account_numbers: [],
