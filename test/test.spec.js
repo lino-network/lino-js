@@ -36,16 +36,26 @@ async function runBroadcast(query, willSuccess, f) {
   }
   running = true;
   let old_seq = await query.getSeqNumber('lino');
-  let rst = await f();
-  if (willSuccess) {
-    while (true) {
-      await sleep(Math.floor(Math.random() * 100));
-      let new_seq = await query.getSeqNumber('lino');
-      if (new_seq > old_seq) {
-        break;
+  console.log('>>>  start process with old seq', old_seq);
+
+  let rst;
+  try {
+    rst = await f();
+    if (willSuccess) {
+      while (true) {
+        await sleep(Math.floor(Math.random() * 100));
+        let new_seq = await query.getSeqNumber('lino');
+        if (new_seq > old_seq) {
+          console.log('>>>  finish with: ', new_seq);
+          break;
+        }
       }
     }
+  } catch (e) {
+    running = false;
+    throw e;
   }
+
   running = false;
   return rst;
 }
@@ -292,7 +302,7 @@ function addSuite(envName) {
       it('createPost', function() {
         let username = 'wbkbuypsnz';
         let txKey = 'E1B0F79A20CCBC9810F86AC9880B29688F96A417DE005761FA228CF358D6D1F16C9C905145';
-        return runBroadcast(query, true, () => {
+        return runBroadcast(query, false, () => {
           return query.getSeqNumber(username).then(seq => {
             let map = new Map();
             map.set('A', '1');
@@ -318,6 +328,34 @@ function addSuite(envName) {
               });
           });
         });
+      });
+
+      it('changeParameter', function() {
+        return runBroadcast(query, true, () => {
+          return query.getSeqNumber('lino').then(seq => {
+            return query.getGlobalAllocationParam().then(param => {
+              param.content_creator_allocation.num = 70;
+              param.developer_allocation.num = 5;
+              return broadcast
+                .changeGlobalAllocationParam('lino', param, testTxPrivHex, seq)
+                .then(v => {
+                  debug('changeGlobalAllocationParam', v);
+                  expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+                });
+            });
+          });
+        });
+      });
+
+      it.skip('some other', function() {
+        // return query.getSeqNumber('zhimao').then(seq => {
+        //   return broadcast
+        //     .deletePostContent('zhimao', 'zhimao', 'id', 'violence', zhimaoTx, seq)
+        //     .then(v => {
+        //       debug('make delete content proposal', v);
+        //       expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+        //     });
+        // });
       });
 
       it('throws error if fail', function() {
@@ -353,29 +391,6 @@ function addSuite(envName) {
       it('invalid username', function() {
         const res = UTILS.isValidUsername('-register');
         expect(res).to.equal(false);
-      });
-
-      it('some other', function() {
-        // return query.getSeqNumber('zhimao').then(seq => {
-        //   return broadcast
-        //     .deletePostContent('zhimao', 'zhimao', 'id', 'violence', zhimaoTx, seq)
-        //     .then(v => {
-        //       debug('make delete content proposal', v);
-        //       expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-        //     });
-        // });
-        // return query.getSeqNumber('lino').then(seq => {
-        //   return query.getGlobalAllocationParam().then(param => {
-        //     param.content_creator_allocation.num = 70;
-        //     param.developer_allocation.num = 5;
-        //     return broadcast
-        //       .changeGlobalAllocationParam('lino', param, testTxPrivHex, seq)
-        //       .then(v => {
-        //         debug('changeGlobalAllocationParam', v);
-        //         expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-        //       });
-        //   });
-        // });
       });
     });
   });
