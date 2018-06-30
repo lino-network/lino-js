@@ -34,18 +34,17 @@ async function runBroadcast(query, willSuccess, f) {
     await sleep(Math.floor(Math.random() * 10));
   }
   running = true;
-  let old_seq = query.getSeqNumber('lino');
+  let old_seq = await query.getSeqNumber('lino');
   let rst = await f();
-  sleep(2000);
-  // if (willSuccess) {
-  //   while (true) {
-  //     await sleep(Math.floor(Math.random() * 100));
-  //     let new_seq = await query.getSeqNumber('lino');
-  //     if (new_seq > old_seq) {
-  //       break;
-  //     }
-  //   }
-  // }
+  if (willSuccess) {
+    while (true) {
+      await sleep(Math.floor(Math.random() * 100));
+      let new_seq = await query.getSeqNumber('lino');
+      if (new_seq > old_seq) {
+        break;
+      }
+    }
+  }
   running = false;
   return rst;
 }
