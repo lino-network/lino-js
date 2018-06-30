@@ -4,6 +4,53 @@ const zhimaoTx = 'E1B0F79A207965259AFE06EEC9528BC4F692D0F5DE5B97BCF68B8BAF2D1A6C
 const testValidatorPubHex =
   '1624DE6220e008041ccafcc76788099b990531697ff4bf8eb2d1fabe204ee5fe0fc2c7c3f6';
 
+// test utils
+function makeid(len) {
+  let text = '';
+  let possible = 'abcdefghijklmnopqrstuvwxyz';
+
+  for (let i = 0; i < len; i++)
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
+}
+
+function getUnixTime() {
+  return +new Date();
+}
+
+// XXX(yumin): this is bad, but I don't want to spend more time on this.
+// a fake mutex.
+let running = false;
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function runBroadcast(query, willSuccess, f) {
+  // good luck.
+  await sleep(Math.floor(Math.random() * 1000));
+  while (running) {
+    await sleep(Math.floor(Math.random() * 10));
+  }
+  running = true;
+  let old_seq = query.getSeqNumber('lino');
+  let rst = await f();
+  sleep(2000);
+  // if (willSuccess) {
+  //   while (true) {
+  //     await sleep(Math.floor(Math.random() * 100));
+  //     let new_seq = await query.getSeqNumber('lino');
+  //     if (new_seq > old_seq) {
+  //       break;
+  //     }
+  //   }
+  // }
+  running = false;
+  return rst;
+}
+
+// testsuite
 function addSuite(envName) {
   const { LINO, UTILS } = lino;
 
@@ -175,44 +222,42 @@ function addSuite(envName) {
     describe('broadcast', function() {
       const query = linoClient.query;
       const broadcast = linoClient.broadcast;
-
-      const masterPrivKey = UTILS.genPrivKeyHex();
-      const txPrivKey = UTILS.genPrivKeyHex();
-      const postPrivKey = UTILS.genPrivKeyHex();
-
-      const masterPubKey = UTILS.pubKeyFromPrivate(masterPrivKey);
-      const txPubKey = UTILS.pubKeyFromPrivate(txPrivKey);
-      const postPubKey = UTILS.pubKeyFromPrivate(postPrivKey);
+      this.timeout(10000);
 
       it('transfer', function() {
-        return query
-          .getSeqNumber('lino')
-          .then(seq => {
-            debug('query seq number before transfer', seq);
-            expect(seq).to.be.a('number');
-            return seq;
-          })
-          .then(seq => {
-            return broadcast
-              .transfer('lino', 'zhimao', '10000', 'memo1', testTxPrivHex, seq)
-              .then(v => {
-                debug('transfer', v);
-                expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-              });
-          });
+        return runBroadcast(query, true, () => {
+          return query
+            .getSeqNumber('lino')
+            .then(seq => {
+              debug('query seq number before transfer', seq);
+              debug(getUnixTime());
+              expect(seq).to.be.a('number');
+              return seq;
+            })
+            .then(seq => {
+              return broadcast
+                .transfer('lino', 'zhimao', '10000', 'memo1', testTxPrivHex, seq)
+                .then(v => {
+                  debug('transfer', v);
+                  expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+                });
+            });
+        });
       });
 
       it('throws error if fail', function() {
         return query.getSeqNumber('lino').then(seq => {
           debug('query seq number before transfer', seq);
           expect(seq).to.be.a('number');
-          return broadcast
-            .transfer('lino', 'middle-man', 'INVALID_AMOUNT', 'hi', testTxPrivHex, seq)
-            .catch(err => {
-              debug('transfer error', err);
-              expect(err).to.have.all.keys('code', 'type');
-              expect(err).to.be.an.instanceOf(lino.BroadcastError);
-            });
+          return runBroadcast(query, false, () => {
+            return broadcast
+              .transfer('lino', 'middle-man', 'INVALID_AMOUNT', 'hi', testTxPrivHex, seq)
+              .catch(err => {
+                debug('transfer error', err);
+                expect(err).to.have.all.keys('code', 'type');
+                expect(err).to.be.an.instanceOf(lino.BroadcastError);
+              });
+          });
         });
       });
     });
@@ -220,6 +265,7 @@ function addSuite(envName) {
     describe('UTILS', function() {
       const query = linoClient.query;
       const broadcast = linoClient.broadcast;
+      this.timeout(10000);
 
       it('generate private key', function() {
         expect(UTILS.genPrivKeyHex()).to.exist;
@@ -235,7 +281,7 @@ function addSuite(envName) {
         expect(res).to.equal(false);
       });
 
-      it('use derive priv key', function() {
+      it('register', function() {
         const randomMasterPrivKey = UTILS.genPrivKeyHex();
         const derivedTxPrivKey = UTILS.derivePrivKey(randomMasterPrivKey);
         const derivedMicroPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
@@ -246,30 +292,35 @@ function addSuite(envName) {
         const microPubKey = UTILS.pubKeyFromPrivate(derivedMicroPrivKey);
         const postPubKey = UTILS.pubKeyFromPrivate(derivedPostPrivKey);
 
-        return query
-          .getSeqNumber('lino')
-          .then(seq => {
-            expect(seq).to.be.a('number');
-            return seq;
-          })
-          .then(seq => {
-            return broadcast
-              .register(
-                'lino',
-                '20000000',
-                'zhimao2',
-                masterPubKey,
-                txPubKey,
-                microPubKey,
-                postPubKey,
-                testTxPrivHex,
-                seq
-              )
-              .then(v => {
-                debug('register', v);
-                expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-              });
-          });
+        const userName = makeid(5);
+        debug('register: ', userName);
+
+        return runBroadcast(query, false, () => {
+          return query
+            .getSeqNumber('lino')
+            .then(seq => {
+              expect(seq).to.be.a('number');
+              return seq;
+            })
+            .then(seq => {
+              return broadcast
+                .register(
+                  'lino',
+                  '10',
+                  userName,
+                  masterPubKey,
+                  txPubKey,
+                  microPubKey,
+                  postPubKey,
+                  testTxPrivHex,
+                  seq
+                )
+                .then(v => {
+                  debug('register', v);
+                  expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+                });
+            });
+        });
 
         // return query.getSeqNumber('zhimao').then(seq => {
         //   return broadcast
