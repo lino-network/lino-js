@@ -164,7 +164,6 @@ export function convertMsg(msg: any): any {
   if ('new_micropayment_public_key' in msg) {
     var buffer = ByteBuffer.fromHex(msg.new_micropayment_public_key);
     encodedMsg.new_micropayment_public_key = getByteArray(buffer);
-    console.log('fuck me');
   }
 
   return encodedMsg;
