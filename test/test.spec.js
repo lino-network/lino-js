@@ -235,9 +235,51 @@ function addSuite(envName) {
             })
             .then(seq => {
               return broadcast
-                .transfer('lino', 'zhimao', '10000', 'memo1', testTxPrivHex, seq)
+                .transfer('lino', 'zhimao', '10', 'memo1', testTxPrivHex, seq)
                 .then(v => {
                   debug('transfer', v);
+                  expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+                });
+            });
+        });
+      });
+
+      it('register', function() {
+        const randomMasterPrivKey = UTILS.genPrivKeyHex();
+        const derivedTxPrivKey = UTILS.derivePrivKey(randomMasterPrivKey);
+        const derivedMicroPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
+        const derivedPostPrivKey = UTILS.derivePrivKey(derivedMicroPrivKey);
+
+        const masterPubKey = UTILS.pubKeyFromPrivate(randomMasterPrivKey);
+        const txPubKey = UTILS.pubKeyFromPrivate(derivedTxPrivKey);
+        const microPubKey = UTILS.pubKeyFromPrivate(derivedMicroPrivKey);
+        const postPubKey = UTILS.pubKeyFromPrivate(derivedPostPrivKey);
+
+        const userName = makeid(10);
+        debug('register: ', userName);
+
+        return runBroadcast(query, true, () => {
+          return query
+            .getSeqNumber('lino')
+            .then(seq => {
+              expect(seq).to.be.a('number');
+              return seq;
+            })
+            .then(seq => {
+              return broadcast
+                .register(
+                  'lino',
+                  '10',
+                  userName,
+                  masterPubKey,
+                  txPubKey,
+                  microPubKey,
+                  postPubKey,
+                  testTxPrivHex,
+                  seq
+                )
+                .then(v => {
+                  debug('register', v);
                   expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
                 });
             });
@@ -264,7 +306,6 @@ function addSuite(envName) {
     describe('UTILS', function() {
       const query = linoClient.query;
       const broadcast = linoClient.broadcast;
-      this.timeout(10000);
 
       it('generate private key', function() {
         expect(UTILS.genPrivKeyHex()).to.exist;
@@ -280,47 +321,7 @@ function addSuite(envName) {
         expect(res).to.equal(false);
       });
 
-      it('register', function() {
-        const randomMasterPrivKey = UTILS.genPrivKeyHex();
-        const derivedTxPrivKey = UTILS.derivePrivKey(randomMasterPrivKey);
-        const derivedMicroPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
-        const derivedPostPrivKey = UTILS.derivePrivKey(derivedMicroPrivKey);
-
-        const masterPubKey = UTILS.pubKeyFromPrivate(randomMasterPrivKey);
-        const txPubKey = UTILS.pubKeyFromPrivate(derivedTxPrivKey);
-        const microPubKey = UTILS.pubKeyFromPrivate(derivedMicroPrivKey);
-        const postPubKey = UTILS.pubKeyFromPrivate(derivedPostPrivKey);
-
-        const userName = makeid(5);
-        debug('register: ', userName);
-
-        return runBroadcast(query, false, () => {
-          return query
-            .getSeqNumber('lino')
-            .then(seq => {
-              expect(seq).to.be.a('number');
-              return seq;
-            })
-            .then(seq => {
-              return broadcast
-                .register(
-                  'lino',
-                  '10',
-                  userName,
-                  masterPubKey,
-                  txPubKey,
-                  microPubKey,
-                  postPubKey,
-                  testTxPrivHex,
-                  seq
-                )
-                .then(v => {
-                  debug('register', v);
-                  expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-                });
-            });
-        });
-
+      it('some other', function() {
         // return query.getSeqNumber('zhimao').then(seq => {
         //   return broadcast
         //     .deletePostContent('zhimao', 'zhimao', 'id', 'violence', zhimaoTx, seq)
@@ -329,12 +330,10 @@ function addSuite(envName) {
         //       expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
         //     });
         // });
-
         // return query.getSeqNumber('zhimao').then(seq => {
         //   let map = new Map();
         //   map.set('A', '1');
         //   map.set('B', '2');
-
         //   return broadcast
         //     .createPost(
         //       'zhimao',
@@ -355,7 +354,6 @@ function addSuite(envName) {
         //       expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
         //     });
         // });
-
         // return query.getSeqNumber('lino').then(seq => {
         //   return query.getGlobalAllocationParam().then(param => {
         //     param.content_creator_allocation.num = 70;
