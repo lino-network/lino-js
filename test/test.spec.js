@@ -187,6 +187,20 @@ function addSuite(envName) {
         });
       });
 
+      it('getBalanceHistoryFromTo', function() {
+        return query.getBalanceHistoryFromTo('lino', 0, 20).then(v => {
+          debug('getBalanceHistoryFromTo', v);
+          expect(v).to.have.all.keys('details');
+        });
+      });
+
+      it('getRecentBalanceHistory', function() {
+        return query.getRecentBalanceHistory('lino', 10).then(v => {
+          debug('getRecentBalanceHistory', v);
+          expect(v).to.have.all.keys('details');
+        });
+      });
+
       it('getProposal', function() {
         return query.getProposal('1').then(v => {
           debug('getProposal', v);
@@ -302,6 +316,7 @@ function addSuite(envName) {
       it('createPost', function() {
         let username = 'wbkbuypsnz';
         let txKey = 'E1B0F79A20CCBC9810F86AC9880B29688F96A417DE005761FA228CF358D6D1F16C9C905145';
+        let postId = makeid(20);
         return runBroadcast(query, false, () => {
           return query.getSeqNumber(username).then(seq => {
             let map = new Map();
@@ -310,7 +325,7 @@ function addSuite(envName) {
             return broadcast
               .createPost(
                 username,
-                'id',
+                postId,
                 'mytitle',
                 'dummycontent',
                 '',
