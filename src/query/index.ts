@@ -14,6 +14,12 @@ export default class Query {
     this._transport = transport;
   }
 
+  /**
+   * doesUsernameMatchMasterPrivKey returns true if a user has the master private key.
+   * 
+   * @param username 
+   * @param masterPrivKeyHex 
+   */
   doesUsernameMatchMasterPrivKey(username: string, masterPrivKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
       if (info == null) {
@@ -23,6 +29,12 @@ export default class Query {
     });
   }
 
+  /**
+   * doesUsernameMatchTxPrivKey returns true if a user has the transaction private key.
+   * 
+   * @param username 
+   * @param txPrivKeyHex 
+   */
   doesUsernameMatchTxPrivKey(username: string, txPrivKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
       if (info == null) {
@@ -32,6 +44,12 @@ export default class Query {
     });
   }
 
+  /**
+   * doesUsernameMatchMicropaymentPrivKey returns true if a user has the micropayment private key.
+   * 
+   * @param username 
+   * @param micropaymentPrivKeyHex 
+   */
   doesUsernameMatchMicropaymentPrivKey(username: string, micropaymentPrivKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
       if (info == null) {
@@ -41,6 +59,12 @@ export default class Query {
     });
   }
 
+  /**
+   * doesUsernameMatchPostPrivKey returns true if a user has the post private key.
+   * 
+   * @param username 
+   * @param postPrivKeyHex 
+   */
   doesUsernameMatchPostPrivKey(username: string, postPrivKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
       if (info == null) {
@@ -52,23 +76,45 @@ export default class Query {
 
 
   // validator related query
+
+  /**
+   * getAllValidators returns all oncall validators from blockchain.
+   */
   getAllValidators(): Promise<AllValidators> {
     const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
     return this._transport.query<AllValidators>(Keys.getValidatorListKey(), ValidatorKVStoreKey);
   }
 
+  /**
+   * getValidator returns validator info given a validator name from blockchain.
+   * 
+   * @param username: the validator username
+   */
   getValidator(username: string): Promise<Validator> {
     const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
     return this._transport.query<Validator>(Keys.getValidatorKey(username), ValidatorKVStoreKey);
   }
 
   // account related query
+
+  /**
+   * getSeqNumber returns the next sequence number of a user which should
+   * be used for broadcast.
+   *
+   * @param username 
+   */
   getSeqNumber(username: string): Promise<number> {
     return this.getAccountMeta(username).then(meta => {
       return meta.sequence;
     });
   }
 
+  /**
+   * getAllBalanceHistory returns all transaction history related to
+   * a user's account balance, in reverse-chronological order.
+   * 
+   * @param username 
+   */
   getAllBalanceHistory(username: string): Promise<BalanceHistory> {
     return this.getAccountBank(username).then(bank => {
       let numberOfbundle = bank.number_of_transaction / 100;
@@ -87,6 +133,12 @@ export default class Query {
     });
   }
 
+  /**
+   * getBalanceHistoryBundle returns all balance history in a certain bucket.
+   * 
+   * @param username 
+   * @param index 
+   */
   getBalanceHistoryBundle(username: string, index: number): Promise<BalanceHistory> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.query<BalanceHistory>(
@@ -95,16 +147,31 @@ export default class Query {
     );
   }
 
+  /**
+   * getAccountMeta returns account meta info for a specific user.
+   * 
+   * @param username 
+   */
   getAccountMeta(username: string): Promise<AccountMeta> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.query<AccountMeta>(Keys.getAccountMetaKey(username), AccountKVStoreKey);
   }
 
+  /**
+   * getAccountBank returns account bank info for a specific user.
+   * 
+   * @param username 
+   */
   getAccountBank(username: string): Promise<AccountBank> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.query<AccountBank>(Keys.getAccountBankKey(username), AccountKVStoreKey);
   }
 
+  /**
+   * getAccountInfo returns account info for a specific user.
+   * 
+   * @param username 
+   */
   getAccountInfo(username: string): Promise<AccountInfo> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport
@@ -122,17 +189,35 @@ export default class Query {
       });
   }
 
+  /**
+   * getGrantPubKey returns the specific granted pubkey info of a user
+   * that has given to the pubKey.
+   * 
+   * @param username 
+   * @param pubKeyHex 
+   */
   getGrantPubKey(username: string, pubKeyHex: string): Promise<GrantPubKey> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     const publicKey = decodePubKey(pubKeyHex);
     return this._transport.query<GrantPubKey>(Keys.getgrantPubKeyKey(username, publicKey), AccountKVStoreKey);
   }
 
+  /**
+   * getReward returns rewards of a user.
+   * 
+   * @param username 
+   */
   getReward(username: string): Promise<Reward> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.query<Reward>(Keys.getRewardKey(username), AccountKVStoreKey);
   }
 
+  /**
+   * getRelationship returns the donation times of two users.
+   * 
+   * @param me 
+   * @param other 
+   */
   getRelationship(me: string, other: string): Promise<Relationship> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.query<Relationship>(
@@ -141,6 +226,12 @@ export default class Query {
     );
   }
 
+  /**
+   * getFollowerMeta returns the follower meta of two users.
+   * 
+   * @param me 
+   * @param myFollower 
+   */
   getFollowerMeta(me: string, myFollower: string): Promise<FollowerMeta> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.query<FollowerMeta>(
@@ -149,6 +240,12 @@ export default class Query {
     );
   }
 
+  /**
+   * getFollowingMeta returns the following meta of two users.
+   * 
+   * @param me 
+   * @param myFollowing 
+   */
   getFollowingMeta(me: string, myFollowing: string): Promise<FollowingMeta> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.query<FollowingMeta>(
@@ -158,6 +255,15 @@ export default class Query {
   }
 
   // post related query
+  
+  /**
+   * getPostComment returns a specific comment of a post given the post permlink
+   * and comment permlink.
+   * 
+   * @param author 
+   * @param postID 
+   * @param commentPermlink 
+   */
   getPostComment(author: string, postID: string, commentPermlink: string): Promise<Comment> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
@@ -167,12 +273,26 @@ export default class Query {
     );
   }
 
+  /**
+   * getPostView returns a view of a post performed by a user.
+   * 
+   * @param author 
+   * @param postID 
+   * @param viewUser 
+   */
   getPostView(author: string, postID: string, viewUser: string): Promise<View> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
     return this._transport.query<View>(Keys.getPostViewKey(Permlink, viewUser), PostKVStoreKey);
   }
 
+  /**
+   * getPostDonations returns all donations that a user has given to a post.
+   * 
+   * @param author 
+   * @param postID 
+   * @param donateUser 
+   */
   getPostDonations(author: string, postID: string, donateUser: string): Promise<Donations> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
@@ -182,6 +302,13 @@ export default class Query {
     );
   }
 
+  /**
+   * getPostReportOrUpvote returns report or upvote that a user has given to a post.
+   * 
+   * @param author 
+   * @param postID 
+   * @param user 
+   */
   getPostReportOrUpvote(author: string, postID: string, user: string): Promise<ReportOrUpvote> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
@@ -191,18 +318,37 @@ export default class Query {
     );
   }
 
+  /**
+   * getPostLike returns like that a user has given to a post.
+   * 
+   * @param author 
+   * @param postID 
+   * @param likeUser 
+   */
   getPostLike(author: string, postID: string, likeUser: string): Promise<Like> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
     return this._transport.query<Like>(Keys.getPostLikeKey(Permlink, likeUser), PostKVStoreKey);
   }
 
+  /**
+   * getPostInfo returns post info given a permlink(author#postID).
+   * 
+   * @param author 
+   * @param postID 
+   */
   getPostInfo(author: string, postID: string): Promise<PostInfo> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
     return this._transport.query<PostInfo>(Keys.getPostInfoKey(Permlink), PostKVStoreKey);
   }
 
+  /**
+   * getPostMeta returns post meta given a permlink.
+   * 
+   * @param author 
+   * @param postID 
+   */
   getPostMeta(author: string, postID: string): Promise<PostMeta> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
@@ -210,6 +356,14 @@ export default class Query {
   }
 
   // vote related query
+
+  /**
+   * GetDelegation returns the delegation relationship between
+   * a voter and a delegator from blockchain.
+   * 
+   * @param voter 
+   * @param delegator 
+   */
   getDelegation(voter: string, delegator: string): Promise<Delegation> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
     return this._transport
@@ -219,17 +373,34 @@ export default class Query {
       });
   }
 
+  /**
+   * getVoter returns voter info given a voter name from blockchain.
+   * 
+   * @param voterName 
+   */
   getVoter(voterName: string): Promise<Voter> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
     return this._transport.query<Voter>(Keys.getVoterKey(voterName), VoteKVStoreKey);
   }
 
+  /**
+   * getVote returns a vote performed by a voter for a given proposal.
+   * 
+   * @param proposalID 
+   * @param voter 
+   */
   getVote(proposalID: string, voter: string): Promise<Vote> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
     return this._transport.query<Vote>(Keys.getVoteKey(proposalID, voter), VoteKVStoreKey);
   }
 
   // developer related query
+
+  /**
+   * getDeveloper returns a specific developer info from blockchain
+   * 
+   * @param developerName 
+   */
   getDeveloper(developerName: string): Promise<Developer> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
     return this._transport.query<Developer>(
@@ -238,12 +409,21 @@ export default class Query {
     );
   }
 
+  /**
+   * getDevelopers returns a list of all developers.
+   */
   getDevelopers(): Promise<DeveloperList> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
     return this._transport.query<DeveloperList>(Keys.getDeveloperListKey(), DeveloperKVStoreKey);
   }
 
   // infra related query
+
+  /**
+   * getInfraProvider returns the infra provider info such as usage.
+   * 
+   * @param providerName 
+   */
   getInfraProvider(providerName: string): Promise<InfraProvider> {
     const InfraKVStoreKey = Keys.KVSTOREKEYS.InfraKVStoreKey;
     return this._transport.query<InfraProvider>(
@@ -252,6 +432,9 @@ export default class Query {
     );
   }
 
+  /**
+   * getInfraProviders returns a list of all infra providers.
+   */
   getInfraProviders(): Promise<InfraProviderList> {
     const InfraKVStoreKey = Keys.KVSTOREKEYS.InfraKVStoreKey;
     return this._transport.query<InfraProviderList>(
@@ -261,22 +444,38 @@ export default class Query {
   }
 
   // proposal related query
+
+  /**
+   * GetProposalList returns a list of all proposals, including onging
+   * proposals and past ones.
+   */
   getProposalList(): Promise<ProposalList> {
     const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
     return this._transport.query<ProposalList>(Keys.getProposalListKey(), ProposalKVStoreKey);
   }
 
+  /**
+   * getProposal returns proposal info of a specific proposalID.
+   * 
+   * @param proposalID 
+   */
   getProposal(proposalID: string): Promise<Proposal> {
     const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
     return this._transport.query<Proposal>(Keys.getProposalKey(proposalID), ProposalKVStoreKey);
   }
 
+  /**
+   * getOngoingProposal returns all ongoing proposals.
+   */
   getOngoingProposal(): Promise<Proposal[]> {
     return this.getProposalList().then(list =>
       Promise.all((list.ongoing_proposal || []).map(p => this.getProposal(p)))
     );
   }
 
+  /**
+   * getExpiredProposal returns all past proposals.
+   */
   getExpiredProposal(): Promise<Proposal[]> {
     return this.getProposalList().then(list =>
       Promise.all((list.past_proposal || []).map(p => this.getProposal(p)))
@@ -284,6 +483,10 @@ export default class Query {
   }
 
   // param related query
+
+  /**
+   * getEvaluateOfContentValueParam returns the EvaluateOfContentValueParam.
+   */
   getEvaluateOfContentValueParam(): Promise<Types.EvaluateOfContentValueParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.EvaluateOfContentValueParam>(
@@ -292,6 +495,9 @@ export default class Query {
     );
   }
 
+  /**
+   * getGlobalAllocationParam returns the GlobalAllocationParam.
+   */
   getGlobalAllocationParam(): Promise<Types.GlobalAllocationParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.GlobalAllocationParam>(
@@ -300,6 +506,9 @@ export default class Query {
     );
   }
 
+  /**
+   * getInfraInternalAllocationParam returns the InfraInternalAllocationParam.
+   */
   getInfraInternalAllocationParam(): Promise<Types.InfraInternalAllocationParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.InfraInternalAllocationParam>(
@@ -308,6 +517,9 @@ export default class Query {
     );
   }
 
+  /**
+   * getDeveloperParam returns the DeveloperParam.
+   */
   getDeveloperParam(): Promise<Types.DeveloperParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.DeveloperParam>(
@@ -316,16 +528,25 @@ export default class Query {
     );
   }
 
+  /**
+   * getVoteParam returns the VoteParam.
+   */
   getVoteParam(): Promise<Types.VoteParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.VoteParam>(Keys.getVoteParamKey(), ParamKVStoreKey);
   }
 
+  /**
+   * getProposalParam returns the ProposalParam.
+   */
   getProposalParam(): Promise<Types.ProposalParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.ProposalParam>(Keys.getProposalParamKey(), ParamKVStoreKey);
   }
 
+  /**
+   * getValidatorParam returns the ValidatorParam.
+   */
   getValidatorParam(): Promise<Types.ValidatorParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.ValidatorParam>(
@@ -334,11 +555,17 @@ export default class Query {
     );
   }
 
+  /**
+   * getCoinDayParam returns the CoinDayParam.
+   */
   getCoinDayParam(): Promise<Types.CoinDayParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.CoinDayParam>(Keys.getCoinDayParamKey(), ParamKVStoreKey);
   }
 
+  /**
+   * getBandwidthParam returns the BandwidthParam.
+   */
   getBandwidthParam(): Promise<Types.BandwidthParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.BandwidthParam>(
@@ -347,21 +574,37 @@ export default class Query {
     );
   }
 
+  /**
+   * getAccountParam returns the AccountParam.
+   */
   getAccountParam(): Promise<Types.AccountParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.AccountParam>(Keys.getAccountParamKey(), ParamKVStoreKey);
   }
 
+  /**
+   * getPostParam returns the PostParam.
+   */
   getPostParam(): Promise<Types.PostParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.PostParam>(Keys.getPostParamKey(), ParamKVStoreKey);
   }
 
   // block related
+  
+  /**
+   * getBlock returns a block at a certain height from blockchain.
+   * 
+   * @param height 
+   */
   getBlock(height: number): Promise<ResultBlock> {
     return this._transport.block(height);
   }
 
+  /**
+   * getTxsInBlock returns all transactions in a block at a certain height from blockchain.
+   * @param height 
+   */
   getTxsInBlock(height: number): Promise<StdTx[]> {
     return this._transport
       .block(height)
