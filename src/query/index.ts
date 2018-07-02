@@ -50,7 +50,10 @@ export default class Query {
    * @param username 
    * @param micropaymentPrivKeyHex 
    */
-  doesUsernameMatchMicropaymentPrivKey(username: string, micropaymentPrivKeyHex: string): Promise<boolean> {
+  doesUsernameMatchMicropaymentPrivKey(
+    username: string,
+    micropaymentPrivKeyHex: string
+  ): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
       if (info == null) {
         return false;
@@ -73,7 +76,6 @@ export default class Query {
       return Util.isKeyMatch(postPrivKeyHex, info.post_key);
     });
   }
-
 
   // validator related query
 
@@ -199,7 +201,10 @@ export default class Query {
   getGrantPubKey(username: string, pubKeyHex: string): Promise<GrantPubKey> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     const publicKey = decodePubKey(pubKeyHex);
-    return this._transport.query<GrantPubKey>(Keys.getgrantPubKeyKey(username, publicKey), AccountKVStoreKey);
+    return this._transport.query<GrantPubKey>(
+      Keys.getgrantPubKeyKey(username, publicKey),
+      AccountKVStoreKey
+    );
   }
 
   /**
@@ -614,6 +619,78 @@ export default class Query {
             ? v.block.data.txs.map(tx => JSON.parse(ByteBuffer.atob(tx)))
             : []
       );
+  }
+
+  // GetBalanceHistoryFromTo returns a list of transaction history in the range of [from, to],
+  // that if to is larger than the number of tx, tx will be replaced by the larget tx number,
+  // related to a user's account balance, in reverse-chronological order.
+  async getBalanceHistoryFromTo(
+    username: string,
+    from: number,
+    to: number
+  ): Promise<BalanceHistory> {
+    if (!this.isValidNat(from) || !this.isValidNat(to) || from > to) {
+      throw new Error(`GetBalanceHistoryFromTo: from [${from}] or to [${to}] is invalid`);
+    }
+
+    let accountBank = await this.getAccountBank(username);
+    let numTx = accountBank.number_of_transaction;
+    let maxTxNo = numTx - 1;
+    let rst: BalanceHistory = { details: [] };
+
+    if (numTx == 0) {
+      return rst;
+    }
+
+    if (from > maxTxNo) {
+      throw new Error(`GetBalanceHistoryFromTo: [${from}] is larger than total num of tx`);
+    }
+    if (to > maxTxNo) {
+      to = maxTxNo;
+    }
+
+    // number of banlance history is wanted
+    let numHistory = to - from + 1;
+    let targetBucketOfTo = Math.floor(to / 100);
+    let bucketSlot = targetBucketOfTo;
+
+    // The index of 'to' in the target bucket
+    let indexOfTo = to % 100;
+
+    while (bucketSlot >= 0 && numHistory > 0) {
+      console.log('sending bucketSlot: ', bucketSlot);
+      let history = await this.getBalanceHistoryBundle(username, bucketSlot);
+      let startIndex = bucketSlot == targetBucketOfTo ? indexOfTo : history.details.length - 1;
+
+      for (let i = startIndex; i >= 0 && numHistory > 0; i--) {
+        rst.details.push(history.details[i]);
+        numHistory--;
+      }
+      bucketSlot--;
+    }
+
+    return rst;
+  }
+
+  // GetRecentBalanceHistory returns a certain number of recent transaction history
+  // related to a user's account balance, in reverse-chronological order.
+  async getRecentBalanceHistory(username: string, numHistory: number): Promise<BalanceHistory> {
+    if (!this.isValidNat(numHistory)) {
+      throw new Error(`GetRecentBalanceHistory: numHistory is invalid: ${numHistory}`);
+    }
+    let accountBank = await this.getAccountBank(username);
+    let maxTxNo = accountBank.number_of_transaction - 1;
+    return this.getBalanceHistoryFromTo(username, Math.max(0, maxTxNo - numHistory + 1), maxTxNo);
+  }
+
+  // @return false negative or larger than safe int.
+  isValidNat(num: number): boolean {
+    // XXX(yumin): js's MAX_SAFE_INTEGER is less than 2^64.
+    // TODO(yumin): use bigint to support large seq number.
+    if (num < 0 || num > Number.MAX_SAFE_INTEGER) {
+      return false;
+    }
+    return true;
   }
 }
 
