@@ -392,22 +392,21 @@ export default class Query {
 
     let accountBank = await this.getAccountBank(username);
     let numTx = accountBank.number_of_transaction;
+    let maxTxNo = numTx - 1;
     let rst: BalanceHistory = { details: [] };
 
     if (numTx == 0) {
       return rst;
     }
 
-    if (from > numTx) {
+    if (from > maxTxNo) {
       throw new Error(`GetBalanceHistoryFromTo: [${from}] is larger than total num of tx`);
     }
-    if (to > numTx) {
-      // TODO(yumin): check with Jason, does it start with 0 or 1?
-      to = numTx - 1;
+    if (to > maxTxNo) {
+      to = maxTxNo;
     }
 
     // number of banlance history is wanted
-    // TODO(yumin): check with Jason, inconsistent with golib, which use to - 1.
     let numHistory = to - from + 1;
     let targetBucketOfTo = Math.floor(to / 100);
     let bucketSlot = targetBucketOfTo;
@@ -430,6 +429,8 @@ export default class Query {
     return rst;
   }
 
+  // GetRecentBalanceHistory returns a certain number of recent transaction history
+  // related to a user's account balance, in reverse-chronological order.
   async getRecentBalanceHistory(username: string, numHistory: number): Promise<BalanceHistory> {
     if (!this.isValidNat(numHistory)) {
       throw new Error(`GetRecentBalanceHistory: numHistory is invalid: ${numHistory}`);
