@@ -1,6 +1,7 @@
 const NODE_URL = 'http://127.0.0.1:26657/';
 const testTxPrivHex = 'E1B0F79A20B1B66F263A295015BFC4805F979DD3028C29E04C911C5F941CFFA03D97862E3E';
-const zhimaoTx = 'E1B0F79A207965259AFE06EEC9528BC4F692D0F5DE5B97BCF68B8BAF2D1A6C1D0057F58079';
+const zhimaoTx =
+  'A32889124042B7EC409FDA30BB1164122A85CC216CA1DBD6A56066B841AE6F4C9CAAE1C2E554F9F0E0BCCF033A67D43D97BDDCCE4E0EE187A45438009D11801F2405268821';
 const testValidatorPubHex =
   '1624DE6220e008041ccafcc76788099b990531697ff4bf8eb2d1fabe204ee5fe0fc2c7c3f6';
 
@@ -35,16 +36,26 @@ async function runBroadcast(query, willSuccess, f) {
   }
   running = true;
   let old_seq = await query.getSeqNumber('lino');
-  let rst = await f();
-  if (willSuccess) {
-    while (true) {
-      await sleep(Math.floor(Math.random() * 100));
-      let new_seq = await query.getSeqNumber('lino');
-      if (new_seq > old_seq) {
-        break;
+  console.log('>>>  start process with old seq', old_seq);
+
+  let rst;
+  try {
+    rst = await f();
+    if (willSuccess) {
+      while (true) {
+        await sleep(Math.floor(Math.random() * 100));
+        let new_seq = await query.getSeqNumber('lino');
+        if (new_seq > old_seq) {
+          console.log('>>>  finish with: ', new_seq);
+          break;
+        }
       }
     }
+  } catch (e) {
+    running = false;
+    throw e;
   }
+
   running = false;
   return rst;
 }
@@ -235,49 +246,13 @@ function addSuite(envName) {
             })
             .then(seq => {
               return broadcast
-                .transfer('lino', 'zhimao', '10000', 'memo1', testTxPrivHex, seq)
+                .transfer('lino', 'zhimao', '10', 'memo1', testTxPrivHex, seq)
                 .then(v => {
                   debug('transfer', v);
                   expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
                 });
             });
         });
-      });
-
-      it('throws error if fail', function() {
-        return query.getSeqNumber('lino').then(seq => {
-          debug('query seq number before transfer', seq);
-          expect(seq).to.be.a('number');
-          return runBroadcast(query, false, () => {
-            return broadcast
-              .transfer('lino', 'middle-man', 'INVALID_AMOUNT', 'hi', testTxPrivHex, seq)
-              .catch(err => {
-                debug('transfer error', err);
-                expect(err).to.have.all.keys('code', 'type');
-                expect(err).to.be.an.instanceOf(lino.BroadcastError);
-              });
-          });
-        });
-      });
-    });
-
-    describe('UTILS', function() {
-      const query = linoClient.query;
-      const broadcast = linoClient.broadcast;
-      this.timeout(10000);
-
-      it('generate private key', function() {
-        expect(UTILS.genPrivKeyHex()).to.exist;
-      });
-
-      it('private key match pub key', function() {
-        const match = UTILS.isKeyMatch(testTxPrivHex, UTILS.pubKeyFromPrivate(testTxPrivHex));
-        expect(match).to.equal(true);
-      });
-
-      it('invalid username', function() {
-        const res = UTILS.isValidUsername('-register');
-        expect(res).to.equal(false);
       });
 
       it('register', function() {
@@ -291,10 +266,12 @@ function addSuite(envName) {
         const microPubKey = UTILS.pubKeyFromPrivate(derivedMicroPrivKey);
         const postPubKey = UTILS.pubKeyFromPrivate(derivedPostPrivKey);
 
-        const userName = makeid(5);
+        const userName = makeid(10);
         debug('register: ', userName);
+        debug('MasterKey: ', randomMasterPrivKey);
+        debug('txPrivKey: ', derivedTxPrivKey);
 
-        return runBroadcast(query, false, () => {
+        return runBroadcast(query, true, () => {
           return query
             .getSeqNumber('lino')
             .then(seq => {
@@ -320,7 +297,57 @@ function addSuite(envName) {
                 });
             });
         });
+      });
 
+      it('createPost', function() {
+        let username = 'wbkbuypsnz';
+        let txKey = 'E1B0F79A20CCBC9810F86AC9880B29688F96A417DE005761FA228CF358D6D1F16C9C905145';
+        return runBroadcast(query, false, () => {
+          return query.getSeqNumber(username).then(seq => {
+            let map = new Map();
+            map.set('A', '1');
+            map.set('B', '2');
+            return broadcast
+              .createPost(
+                username,
+                'id',
+                'mytitle',
+                'dummycontent',
+                '',
+                '',
+                '',
+                '',
+                '0.5',
+                map,
+                txKey,
+                seq
+              )
+              .then(v => {
+                debug('createPost', v);
+                expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+              });
+          });
+        });
+      });
+
+      it('changeParameter', function() {
+        return runBroadcast(query, true, () => {
+          return query.getSeqNumber('lino').then(seq => {
+            return query.getGlobalAllocationParam().then(param => {
+              param.content_creator_allocation.num = 70;
+              param.developer_allocation.num = 5;
+              return broadcast
+                .changeGlobalAllocationParam('lino', param, testTxPrivHex, seq)
+                .then(v => {
+                  debug('changeGlobalAllocationParam', v);
+                  expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+                });
+            });
+          });
+        });
+      });
+
+      it.skip('some other', function() {
         // return query.getSeqNumber('zhimao').then(seq => {
         //   return broadcast
         //     .deletePostContent('zhimao', 'zhimao', 'id', 'violence', zhimaoTx, seq)
@@ -329,45 +356,41 @@ function addSuite(envName) {
         //       expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
         //     });
         // });
+      });
 
-        // return query.getSeqNumber('zhimao').then(seq => {
-        //   let map = new Map();
-        //   map.set('A', '1');
-        //   map.set('B', '2');
+      it('throws error if fail', function() {
+        return query.getSeqNumber('lino').then(seq => {
+          debug('query seq number before transfer', seq);
+          expect(seq).to.be.a('number');
+          return runBroadcast(query, false, () => {
+            return broadcast
+              .transfer('lino', 'middle-man', 'INVALID_AMOUNT', 'hi', testTxPrivHex, seq)
+              .catch(err => {
+                debug('transfer error', err);
+                expect(err).to.have.all.keys('code', 'type');
+                expect(err).to.be.an.instanceOf(lino.BroadcastError);
+              });
+          });
+        });
+      });
+    });
 
-        //   return broadcast
-        //     .createPost(
-        //       'zhimao',
-        //       'id',
-        //       'mytitle',
-        //       'dummycontent',
-        //       '',
-        //       '',
-        //       '',
-        //       '',
-        //       '0.5',
-        //       map,
-        //       zhimaoTx,
-        //       seq
-        //     )
-        //     .then(v => {
-        //       debug('createPost', v);
-        //       expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-        //     });
-        // });
+    describe('UTILS', function() {
+      const query = linoClient.query;
+      const broadcast = linoClient.broadcast;
 
-        // return query.getSeqNumber('lino').then(seq => {
-        //   return query.getGlobalAllocationParam().then(param => {
-        //     param.content_creator_allocation.num = 70;
-        //     param.developer_allocation.num = 5;
-        //     return broadcast
-        //       .changeGlobalAllocationParam('lino', param, testTxPrivHex, seq)
-        //       .then(v => {
-        //         debug('changeGlobalAllocationParam', v);
-        //         expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-        //       });
-        //   });
-        // });
+      it('generate private key', function() {
+        expect(UTILS.genPrivKeyHex()).to.exist;
+      });
+
+      it('private key match pub key', function() {
+        const match = UTILS.isKeyMatch(testTxPrivHex, UTILS.pubKeyFromPrivate(testTxPrivHex));
+        expect(match).to.equal(true);
+      });
+
+      it('invalid username', function() {
+        const res = UTILS.isValidUsername('-register');
+        expect(res).to.equal(false);
       });
     });
   });

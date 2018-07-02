@@ -110,6 +110,13 @@ export function encodeMsg(msg: any): any {
     );
   }
 
+  if ('new_micropayment_public_key' in msg) {
+    encodedMsg.new_micropayment_public_key = convertToInternalPubKey(
+      msg.new_micropayment_public_key,
+      _TYPE.PubKeySecp256k1
+    );
+  }
+
   return encodedMsg;
 }
 export function encodeSignMsg(stdMsg: StdMsg, chainId: string, seq: number): any {
@@ -124,6 +131,8 @@ export function encodeSignMsg(stdMsg: StdMsg, chainId: string, seq: number): any
   };
 
   const jsonStr = JSON.stringify(stdSignMsg);
+  console.log('TX string: ', jsonStr);
+
   const signMsgHash = shajs('sha256')
     .update(jsonStr)
     .digest();
@@ -151,6 +160,12 @@ export function convertMsg(msg: any): any {
     var buffer = ByteBuffer.fromHex(msg.validator_public_key);
     encodedMsg.validator_public_key = getByteArray(buffer);
   }
+
+  if ('new_micropayment_public_key' in msg) {
+    var buffer = ByteBuffer.fromHex(msg.new_micropayment_public_key);
+    encodedMsg.new_micropayment_public_key = getByteArray(buffer);
+  }
+
   return encodedMsg;
 }
 
