@@ -211,7 +211,7 @@ function addSuite(envName) {
       });
 
       it('getVote', function() {
-        return query.getVote('2', 'zhimao').then(v => {
+        return query.getVote('1', 'lino').then(v => {
           debug('getVote', v);
           expect(v).to.have.all.keys('voter', 'result', 'voting_power');
         });
@@ -357,6 +357,17 @@ function addSuite(envName) {
                   debug('changeGlobalAllocationParam', v);
                   expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
                 });
+            });
+          });
+        });
+      });
+
+      it('voteProposal', function() {
+        return runBroadcast(query, true, () => {
+          return query.getSeqNumber('lino').then(seq => {
+            return broadcast.voteProposal('lino', '1', true, testTxPrivHex, seq).then(v => {
+              debug('voteProposal', v);
+              expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
             });
           });
         });
