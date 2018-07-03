@@ -3,14 +3,28 @@ export interface Coin {
   amount: Int128;
 }
 
+export interface SDKCoin {
+  denom: string;
+  amount: number;
+}
+
 export interface Int128 {
   Lo: number;
   Hi: number;
 }
 
+export interface MathInt {
+  neg: boolean;
+  abs: number[];
+}
+
+export interface MathRat {
+  a: MathInt;
+  b: MathInt;
+}
+
 export interface Rat {
-  num: number;
-  denom: number;
+  rat: MathRat;
 }
 
 export interface IDToURLMapping {
@@ -183,4 +197,11 @@ export interface AccountParam {
 }
 export function isAccountParam(param: object): param is AccountParam {
   return 'minimum_balance' in param && 'register_fee' in param;
+}
+
+export interface PostParam {
+  micropayment_limitation: Coin;
+}
+export function isPostParam(param: object): param is PostParam {
+  return 'micropayment_limitation' in param;
 }

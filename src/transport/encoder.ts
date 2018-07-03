@@ -1,17 +1,18 @@
 import ByteBuffer from 'bytebuffer';
 import { encode } from 'punycode';
 import shajs from 'sha.js';
-import { Coin } from '../common';
+import { Coin, SDKCoin } from '../common';
 
 // TODO: for int64, maybe we should do extra check in proper place, or use string
 export interface StdFee {
-  Amount: number[];
-  Gas: number;
+  amount: SDKCoin[];
+  gas: number;
 }
 
 export interface StdSignature {
   pub_key: InternalPubKey;
   signature: InternalPrivKey;
+  account_number: number;
   sequence: number;
 }
 
@@ -28,6 +29,7 @@ export interface StdTx {
 
 export interface StdSignMsg {
   chain_id: string;
+  account_numbers: number[];
   sequences: number[];
   fee_bytes: string;
   msg_bytes: string;
@@ -51,25 +53,20 @@ export interface InternalPrivKey {
 
 // return a new zero fee object
 export const getZeroFee: () => StdFee = () => ({
-  Amount: [],
-  Gas: 0
+  amount: [],
+  gas: 0
 });
 
 export function encodeTx(
-  msg: any,
-  msgType: string,
+  stdMsg: StdMsg,
   rawPubKey: string,
   rawSigDER: string,
   seq: number
 ): string {
-  const stdMsg: StdMsg = {
-    type: msgType,
-    value: encodeMsg(msg)
-  };
-
   const stdSig: StdSignature = {
     pub_key: convertToInternalPubKey(rawPubKey, _TYPE.PubKeySecp256k1),
     signature: convertToInternalSig(rawSigDER, _TYPE.SignatureKeySecp256k1),
+    account_number: 0,
     sequence: seq
   };
 
@@ -113,20 +110,29 @@ export function encodeMsg(msg: any): any {
     );
   }
 
+  if ('new_micropayment_public_key' in msg) {
+    encodedMsg.new_micropayment_public_key = convertToInternalPubKey(
+      msg.new_micropayment_public_key,
+      _TYPE.PubKeySecp256k1
+    );
+  }
+
   return encodedMsg;
 }
-export function encodeSignMsg(msg: any, chainId: string, seq: number): any {
+export function encodeSignMsg(stdMsg: StdMsg, chainId: string, seq: number): any {
   const fee = getZeroFee();
-  const converted = convertMsg(msg);
   const stdSignMsg: StdSignMsg = {
     chain_id: chainId,
+    account_numbers: [],
     sequences: [seq],
     fee_bytes: ByteBuffer.btoa(JSON.stringify(fee)),
-    msg_bytes: ByteBuffer.btoa(JSON.stringify(converted)),
+    msg_bytes: ByteBuffer.btoa(JSON.stringify(stdMsg)),
     alt_bytes: null
   };
 
   const jsonStr = JSON.stringify(stdSignMsg);
+  console.log('TX string: ', jsonStr);
+
   const signMsgHash = shajs('sha256')
     .update(jsonStr)
     .digest();
@@ -154,6 +160,12 @@ export function convertMsg(msg: any): any {
     var buffer = ByteBuffer.fromHex(msg.validator_public_key);
     encodedMsg.validator_public_key = getByteArray(buffer);
   }
+
+  if ('new_micropayment_public_key' in msg) {
+    var buffer = ByteBuffer.fromHex(msg.new_micropayment_public_key);
+    encodedMsg.new_micropayment_public_key = getByteArray(buffer);
+  }
+
   return encodedMsg;
 }
 

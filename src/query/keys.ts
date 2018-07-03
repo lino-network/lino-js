@@ -15,14 +15,14 @@ namespace Keys {
     ProposalKVStoreKey: 'proposal'
   };
   const _KEYS = {
-    validatorListSubstore: '01',
     validatorSubstore: '00',
+    validatorListSubstore: '01',
 
     delegationSubstore: '00',
     voterSubstore: '01',
     voteSubstore: '02',
     referenceListSubStore: '03',
-    delegateeListSubStore: '04',
+    delegateeSubStore: '04',
 
     proposalSubstore: '00',
     proposalListSubStore: '01',
@@ -41,8 +41,8 @@ namespace Keys {
     accountRewardSubstore: '05',
     accountPendingStakeQueueSubstore: '06',
     accountRelationshipSubstore: '07',
-    accountGrantListSubstore: '08',
-    accountBalanceHistorySubstore: '09',
+    accountBalanceHistorySubstore: '08',
+    accountGrantPubKeySubstore: '09',
 
     postInfoSubStore: '00',
     postMetaSubStore: '01',
@@ -62,18 +62,19 @@ namespace Keys {
     coinDayParamSubStore: '07',
     bandwidthParamSubStore: '08',
     accountParamSubstore: '09',
+    postParamSubStore: '10',
 
     sep: ByteBuffer.fromUTF8('/').toHex()
   };
 
   // validator related
-  export function getValidatorListKey(): string {
-    return _KEYS.validatorListSubstore;
-  }
-
   export function getValidatorKey(accKey: string): string {
     const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
     return _KEYS.validatorSubstore.concat(accKeyHex);
+  }
+
+  export function getValidatorListKey(): string {
+    return _KEYS.validatorListSubstore;
   }
 
   // vote related
@@ -87,14 +88,14 @@ namespace Keys {
     return getVotePrefix(proposalID).concat(voterHex);
   }
 
-  export function getDelegatorPrefix(me: string): string {
+  export function getDelegationPrefix(me: string): string {
     const meHex = ByteBuffer.fromUTF8(me).toHex();
     return _KEYS.delegationSubstore.concat(meHex).concat(_KEYS.sep);
   }
 
   export function getDelegationKey(me: string, myDelegator: string): string {
     const myDelegatorHex = ByteBuffer.fromUTF8(myDelegator).toHex();
-    return getDelegatorPrefix(me).concat(myDelegatorHex);
+    return getDelegationPrefix(me).concat(myDelegatorHex);
   }
 
   export function getVoterKey(me: string): string {
@@ -102,9 +103,14 @@ namespace Keys {
     return _KEYS.voterSubstore.concat(meHex);
   }
 
-  export function getDelegateeListKey(me: string): string {
+  export function getDelegateePrefix(me: string): string {
     const meHex = ByteBuffer.fromUTF8(me).toHex();
-    return _KEYS.delegateeListSubStore.concat(meHex);
+    return _KEYS.delegateeSubStore.concat(meHex).concat(_KEYS.sep);
+  }
+
+  export function getDelegateeKey(me: string, myDelegatee: string): string {
+    const myDelegateeHex = ByteBuffer.fromUTF8(myDelegatee).toHex();
+    return getDelegateePrefix(me).concat(myDelegateeHex);
   }
 
   // developer related
@@ -143,26 +149,6 @@ namespace Keys {
     return _KEYS.accountMetaSubstore.concat(accKeyHex);
   }
 
-  export function getGrantKeyListKey(accKey: string): string {
-    const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
-    return _KEYS.accountGrantListSubstore.concat(accKeyHex);
-  }
-
-  export function getRewardKey(accKey: string): string {
-    const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
-    return _KEYS.accountRewardSubstore.concat(accKeyHex);
-  }
-
-  export function getRelationshipPrefix(me: string): string {
-    const meHex = ByteBuffer.fromUTF8(me).toHex();
-    return _KEYS.accountRelationshipSubstore.concat(meHex).concat(_KEYS.sep);
-  }
-
-  export function getRelationshipKey(me: string, other: string): string {
-    const otherHex = ByteBuffer.fromUTF8(other).toHex();
-    return getRelationshipPrefix(me).concat(otherHex);
-  }
-
   export function getFollowerPrefix(me: string): string {
     const meHex = ByteBuffer.fromUTF8(me).toHex();
     return _KEYS.accountFollowerSubstore.concat(meHex).concat(_KEYS.sep);
@@ -183,79 +169,115 @@ namespace Keys {
     return getFollowingPrefix(me).concat(myFollowingHex);
   }
 
+  export function getRewardKey(accKey: string): string {
+    const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
+    return _KEYS.accountRewardSubstore.concat(accKeyHex);
+  }
+
+  export function getRelationshipPrefix(me: string): string {
+    const meHex = ByteBuffer.fromUTF8(me).toHex();
+    return _KEYS.accountRelationshipSubstore.concat(meHex).concat(_KEYS.sep);
+  }
+
+  export function getRelationshipKey(me: string, other: string): string {
+    const otherHex = ByteBuffer.fromUTF8(other).toHex();
+    return getRelationshipPrefix(me).concat(otherHex);
+  }
+
   export function getBalanceHistoryPrefix(me: string): string {
     const meHex = ByteBuffer.fromUTF8(me).toHex();
     return _KEYS.accountBalanceHistorySubstore.concat(meHex).concat(_KEYS.sep);
   }
 
-  export function getBalanceHistoryKey(me: string, atWhen: string): string {
-    const atWhenHex = ByteBuffer.fromUTF8(atWhen).toHex();
-    return getBalanceHistoryPrefix(me).concat(atWhenHex);
+  export function getBalanceHistoryKey(me: string, bucketSlot: string): string {
+    const bucketSlotHex = ByteBuffer.fromUTF8(bucketSlot).toHex();
+    return getBalanceHistoryPrefix(me).concat(bucketSlotHex);
+  }
+
+  export function getGrantPubKeyPrefix(me: string): string {
+    const meHex = ByteBuffer.fromUTF8(me).toHex();
+    return _KEYS.accountGrantPubKeySubstore.concat(meHex).concat(_KEYS.sep);
+  }
+
+  // TODO: should the pubKey be string or crypto.PubKey?
+  export function getgrantPubKeyKey(me: string, pubKey: string): string {
+    const pubKeyHex = ByteBuffer.fromUTF8(pubKey).toHex();
+    return getGrantPubKeyPrefix(me).concat(pubKeyHex);
   }
 
   // post related
-  export function getPostInfoKey(postKey: string): string {
-    const postKeyHex = ByteBuffer.fromUTF8(postKey).toHex();
-    return _KEYS.postInfoSubStore.concat(postKeyHex);
-  }
-
-  export function getPostKey(author: string, postID: string): string {
+  export function getPermlink(author: string, postID: string): string {
     return author.concat('#').concat(postID);
   }
 
-  export function getPostMetaKey(postKey: string): string {
-    const postKeyHex = ByteBuffer.fromUTF8(postKey).toHex();
-    return _KEYS.postMetaSubStore.concat(postKeyHex);
+  export function getPostInfoPrefix(me: string): string {
+    const meHex = ByteBuffer.fromUTF8(me).toHex();
+    return _KEYS.postInfoSubStore.concat(meHex);
   }
 
-  export function getPostLikePrefix(postKey: string): string {
-    const postKeyHex = ByteBuffer.fromUTF8(postKey).toHex();
-    return _KEYS.postLikeSubStore.concat(postKeyHex).concat(_KEYS.sep);
+  export function getPostInfoKey(permlink: string): string {
+    const permlinkHex = ByteBuffer.fromUTF8(permlink).toHex();
+    return _KEYS.postInfoSubStore.concat(permlinkHex);
   }
 
-  export function getPostLikeKey(postKey: string, likeUser: string): string {
+  export function getPostMetaPrefix(me: string): string {
+    const meHex = ByteBuffer.fromUTF8(me).toHex();
+    return _KEYS.postMetaSubStore.concat(meHex);
+  }
+
+  export function getPostMetaKey(permlink: string): string {
+    const permlinkHex = ByteBuffer.fromUTF8(permlink).toHex();
+    return _KEYS.postMetaSubStore.concat(permlinkHex);
+  }
+
+  export function getPostLikePrefix(permlink: string): string {
+    const permlinkHex = ByteBuffer.fromUTF8(permlink).toHex();
+    return _KEYS.postLikeSubStore.concat(permlinkHex).concat(_KEYS.sep);
+  }
+
+  export function getPostLikeKey(permlink: string, likeUser: string): string {
     const likeUserHex = ByteBuffer.fromUTF8(likeUser).toHex();
-    return getPostLikePrefix(postKey).concat(likeUserHex);
+    return getPostLikePrefix(permlink).concat(likeUserHex);
   }
 
-  export function getPostReportOrUpvotePrefix(postKey: string): string {
-    const postKeyHex = ByteBuffer.fromUTF8(postKey).toHex();
-    return _KEYS.postReportOrUpvoteSubStore.concat(postKeyHex).concat(_KEYS.sep);
+  export function getPostReportOrUpvotePrefix(permlink: string): string {
+    const permlinkHex = ByteBuffer.fromUTF8(permlink).toHex();
+    return _KEYS.postReportOrUpvoteSubStore.concat(permlinkHex).concat(_KEYS.sep);
   }
 
-  export function getPostReportOrUpvoteKey(postKey: string, user: string): string {
+  export function getPostReportOrUpvoteKey(permlink: string, user: string): string {
     const userHex = ByteBuffer.fromUTF8(user).toHex();
-    return getPostReportOrUpvotePrefix(postKey).concat(userHex);
+    return getPostReportOrUpvotePrefix(permlink).concat(userHex);
   }
 
-  export function getPostViewPrefix(postKey: string): string {
-    const postKeyHex = ByteBuffer.fromUTF8(postKey).toHex();
-    return _KEYS.postViewsSubStore.concat(postKeyHex).concat(_KEYS.sep);
+  export function getPostViewPrefix(permlink: string): string {
+    const permlinkHex = ByteBuffer.fromUTF8(permlink).toHex();
+    return _KEYS.postViewsSubStore.concat(permlinkHex).concat(_KEYS.sep);
   }
 
-  export function getPostViewKey(postKey: string, viewUser: string): string {
+  export function getPostViewKey(permlink: string, viewUser: string): string {
     const viewUserHex = ByteBuffer.fromUTF8(viewUser).toHex();
-    return getPostViewPrefix(postKey).concat(viewUserHex);
+    return getPostViewPrefix(permlink).concat(viewUserHex);
   }
 
-  export function getPostCommentPrefix(postKey: string): string {
-    const postKeyHex = ByteBuffer.fromUTF8(postKey).toHex();
-    return _KEYS.postCommentSubStore.concat(postKeyHex).concat(_KEYS.sep);
+  export function getPostCommentPrefix(permlink: string): string {
+    const permlinkHex = ByteBuffer.fromUTF8(permlink).toHex();
+    return _KEYS.postCommentSubStore.concat(permlinkHex).concat(_KEYS.sep);
   }
 
-  export function getPostCommentKey(postKey: string, commentPostKey: string): string {
-    const commentPostKeyHex = ByteBuffer.fromUTF8(commentPostKey).toHex();
-    return getPostCommentPrefix(postKey).concat(commentPostKeyHex);
+  export function getPostCommentKey(permlink: string, commentPermlink: string): string {
+    const commentPermlinkHex = ByteBuffer.fromUTF8(commentPermlink).toHex();
+    return getPostCommentPrefix(permlink).concat(commentPermlinkHex);
   }
 
-  export function getPostDonationPrefix(postKey: string): string {
-    const postKeyHex = ByteBuffer.fromUTF8(postKey).toHex();
-    return _KEYS.postDonationsSubStore.concat(postKeyHex).concat(_KEYS.sep);
+  export function getPostDonationsPrefix(permlink: string): string {
+    const permlinkHex = ByteBuffer.fromUTF8(permlink).toHex();
+    return _KEYS.postDonationsSubStore.concat(permlinkHex).concat(_KEYS.sep);
   }
 
-  export function getPostDonationKey(postKey: string, donateUser: string): string {
+  export function getPostDonationsKey(permlink: string, donateUser: string): string {
     const donateUserHex = ByteBuffer.fromUTF8(donateUser).toHex();
-    return getPostDonationPrefix(postKey).concat(donateUserHex);
+    return getPostDonationsPrefix(permlink).concat(donateUserHex);
   }
 
   // proposal related
@@ -307,6 +329,10 @@ namespace Keys {
 
   export function getAccountParamKey(): string {
     return _KEYS.accountParamSubstore;
+  }
+
+  export function getPostParamKey(): string {
+    return _KEYS.postParamSubStore;
   }
 }
 

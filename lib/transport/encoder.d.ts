@@ -1,10 +1,12 @@
+import { SDKCoin } from '../common';
 export interface StdFee {
-    Amount: number[];
-    Gas: number;
+    amount: SDKCoin[];
+    gas: number;
 }
 export interface StdSignature {
     pub_key: InternalPubKey;
     signature: InternalPrivKey;
+    account_number: number;
     sequence: number;
 }
 export interface StdMsg {
@@ -18,6 +20,7 @@ export interface StdTx {
 }
 export interface StdSignMsg {
     chain_id: string;
+    account_numbers: number[];
     sequences: number[];
     fee_bytes: string;
     msg_bytes: string;
@@ -36,9 +39,9 @@ export interface InternalPrivKey {
     value: string;
 }
 export declare const getZeroFee: () => StdFee;
-export declare function encodeTx(msg: any, msgType: string, rawPubKey: string, rawSigDER: string, seq: number): string;
+export declare function encodeTx(stdMsg: StdMsg, rawPubKey: string, rawSigDER: string, seq: number): string;
 export declare function encodeMsg(msg: any): any;
-export declare function encodeSignMsg(msg: any, chainId: string, seq: number): any;
+export declare function encodeSignMsg(stdMsg: StdMsg, chainId: string, seq: number): any;
 export declare function convertMsg(msg: any): any;
 export declare function decodePrivKey(privKeyHex: string): string;
 export declare function decodePubKey(pubKeyHex: string): string;
