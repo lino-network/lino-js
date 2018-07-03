@@ -6,7 +6,9 @@
   "main": "lib/lino-js.cjs.js",
   "module": "lib/lino-js.esm.js",
   "browser": "lib/lino-js.umd.js",
-  "files": ["lib"],
+  "files": [
+    "lib"
+  ],
   "dependencies": {
     "buffer": "^5.1.0",
     "bytebuffer": "^5.0.1",
@@ -58,7 +60,10 @@
     "pretest": "npm run build"
   },
   "lint-staged": {
-    "*.{js,json,md},{src,test}/**/*.{ts,js,json,md}": ["prettier --write", "git add"]
+    "*.{js,json,md},{src,test}/**/*.{ts,js,json,md}": [
+      "prettier --write",
+      "git add"
+    ]
   },
   "repository": {
     "type": "git",

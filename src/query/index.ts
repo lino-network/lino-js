@@ -14,11 +14,32 @@ export default class Query {
     this._transport = transport;
   }
 
+  getAllFollowingMeta(username: string): Promise<FollowingMeta[]> {
+    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
+
+    return this._transport
+      .querySubspace<Types.SDKKVPair>(Keys.getFollowingPrefix(username), AccountKVStoreKey)
+      .then(resKVs => {
+        console.log('>>> getAllFollowingMeta resKVs: ', resKVs);
+
+        let rst: FollowingMeta[] = [];
+
+        for (let i = 0; i < resKVs.length; i++) {
+          const jsonStr = ByteBuffer.atob(resKVs[i]);
+          let m = JSON.parse(jsonStr);
+
+          rst.push(m);
+        }
+
+        return rst;
+      });
+  }
+
   /**
    * doesUsernameMatchMasterPrivKey returns true if a user has the master private key.
-   * 
-   * @param username 
-   * @param masterPrivKeyHex 
+   *
+   * @param username
+   * @param masterPrivKeyHex
    */
   doesUsernameMatchMasterPrivKey(username: string, masterPrivKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
@@ -31,9 +52,9 @@ export default class Query {
 
   /**
    * doesUsernameMatchTxPrivKey returns true if a user has the transaction private key.
-   * 
-   * @param username 
-   * @param txPrivKeyHex 
+   *
+   * @param username
+   * @param txPrivKeyHex
    */
   doesUsernameMatchTxPrivKey(username: string, txPrivKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
@@ -46,9 +67,9 @@ export default class Query {
 
   /**
    * doesUsernameMatchMicropaymentPrivKey returns true if a user has the micropayment private key.
-   * 
-   * @param username 
-   * @param micropaymentPrivKeyHex 
+   *
+   * @param username
+   * @param micropaymentPrivKeyHex
    */
   doesUsernameMatchMicropaymentPrivKey(
     username: string,
@@ -64,9 +85,9 @@ export default class Query {
 
   /**
    * doesUsernameMatchPostPrivKey returns true if a user has the post private key.
-   * 
-   * @param username 
-   * @param postPrivKeyHex 
+   *
+   * @param username
+   * @param postPrivKeyHex
    */
   doesUsernameMatchPostPrivKey(username: string, postPrivKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
@@ -89,7 +110,7 @@ export default class Query {
 
   /**
    * getValidator returns validator info given a validator name from blockchain.
-   * 
+   *
    * @param username: the validator username
    */
   getValidator(username: string): Promise<Validator> {
@@ -103,7 +124,7 @@ export default class Query {
    * getSeqNumber returns the next sequence number of a user which should
    * be used for broadcast.
    *
-   * @param username 
+   * @param username
    */
   getSeqNumber(username: string): Promise<number> {
     return this.getAccountMeta(username).then(meta => {
@@ -114,8 +135,8 @@ export default class Query {
   /**
    * getAllBalanceHistory returns all transaction history related to
    * a user's account balance, in reverse-chronological order.
-   * 
-   * @param username 
+   *
+   * @param username
    */
   getAllBalanceHistory(username: string): Promise<BalanceHistory> {
     return this.getAccountBank(username).then(bank => {
@@ -137,9 +158,9 @@ export default class Query {
 
   /**
    * getBalanceHistoryBundle returns all balance history in a certain bucket.
-   * 
-   * @param username 
-   * @param index 
+   *
+   * @param username
+   * @param index
    */
   getBalanceHistoryBundle(username: string, index: number): Promise<BalanceHistory> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
@@ -151,8 +172,8 @@ export default class Query {
 
   /**
    * getAccountMeta returns account meta info for a specific user.
-   * 
-   * @param username 
+   *
+   * @param username
    */
   getAccountMeta(username: string): Promise<AccountMeta> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
@@ -161,8 +182,8 @@ export default class Query {
 
   /**
    * getAccountBank returns account bank info for a specific user.
-   * 
-   * @param username 
+   *
+   * @param username
    */
   getAccountBank(username: string): Promise<AccountBank> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
@@ -171,8 +192,8 @@ export default class Query {
 
   /**
    * getAccountInfo returns account info for a specific user.
-   * 
-   * @param username 
+   *
+   * @param username
    */
   getAccountInfo(username: string): Promise<AccountInfo> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
@@ -194,9 +215,9 @@ export default class Query {
   /**
    * getGrantPubKey returns the specific granted pubkey info of a user
    * that has given to the pubKey.
-   * 
-   * @param username 
-   * @param pubKeyHex 
+   *
+   * @param username
+   * @param pubKeyHex
    */
   getGrantPubKey(username: string, pubKeyHex: string): Promise<GrantPubKey> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
@@ -209,8 +230,8 @@ export default class Query {
 
   /**
    * getReward returns rewards of a user.
-   * 
-   * @param username 
+   *
+   * @param username
    */
   getReward(username: string): Promise<Reward> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
@@ -219,9 +240,9 @@ export default class Query {
 
   /**
    * getRelationship returns the donation times of two users.
-   * 
-   * @param me 
-   * @param other 
+   *
+   * @param me
+   * @param other
    */
   getRelationship(me: string, other: string): Promise<Relationship> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
@@ -233,9 +254,9 @@ export default class Query {
 
   /**
    * getFollowerMeta returns the follower meta of two users.
-   * 
-   * @param me 
-   * @param myFollower 
+   *
+   * @param me
+   * @param myFollower
    */
   getFollowerMeta(me: string, myFollower: string): Promise<FollowerMeta> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
@@ -247,9 +268,9 @@ export default class Query {
 
   /**
    * getFollowingMeta returns the following meta of two users.
-   * 
-   * @param me 
-   * @param myFollowing 
+   *
+   * @param me
+   * @param myFollowing
    */
   getFollowingMeta(me: string, myFollowing: string): Promise<FollowingMeta> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
@@ -260,14 +281,14 @@ export default class Query {
   }
 
   // post related query
-  
+
   /**
    * getPostComment returns a specific comment of a post given the post permlink
    * and comment permlink.
-   * 
-   * @param author 
-   * @param postID 
-   * @param commentPermlink 
+   *
+   * @param author
+   * @param postID
+   * @param commentPermlink
    */
   getPostComment(author: string, postID: string, commentPermlink: string): Promise<Comment> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
@@ -280,10 +301,10 @@ export default class Query {
 
   /**
    * getPostView returns a view of a post performed by a user.
-   * 
-   * @param author 
-   * @param postID 
-   * @param viewUser 
+   *
+   * @param author
+   * @param postID
+   * @param viewUser
    */
   getPostView(author: string, postID: string, viewUser: string): Promise<View> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
@@ -293,10 +314,10 @@ export default class Query {
 
   /**
    * getPostDonations returns all donations that a user has given to a post.
-   * 
-   * @param author 
-   * @param postID 
-   * @param donateUser 
+   *
+   * @param author
+   * @param postID
+   * @param donateUser
    */
   getPostDonations(author: string, postID: string, donateUser: string): Promise<Donations> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
@@ -309,10 +330,10 @@ export default class Query {
 
   /**
    * getPostReportOrUpvote returns report or upvote that a user has given to a post.
-   * 
-   * @param author 
-   * @param postID 
-   * @param user 
+   *
+   * @param author
+   * @param postID
+   * @param user
    */
   getPostReportOrUpvote(author: string, postID: string, user: string): Promise<ReportOrUpvote> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
@@ -325,10 +346,10 @@ export default class Query {
 
   /**
    * getPostLike returns like that a user has given to a post.
-   * 
-   * @param author 
-   * @param postID 
-   * @param likeUser 
+   *
+   * @param author
+   * @param postID
+   * @param likeUser
    */
   getPostLike(author: string, postID: string, likeUser: string): Promise<Like> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
@@ -338,9 +359,9 @@ export default class Query {
 
   /**
    * getPostInfo returns post info given a permlink(author#postID).
-   * 
-   * @param author 
-   * @param postID 
+   *
+   * @param author
+   * @param postID
    */
   getPostInfo(author: string, postID: string): Promise<PostInfo> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
@@ -350,9 +371,9 @@ export default class Query {
 
   /**
    * getPostMeta returns post meta given a permlink.
-   * 
-   * @param author 
-   * @param postID 
+   *
+   * @param author
+   * @param postID
    */
   getPostMeta(author: string, postID: string): Promise<PostMeta> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
@@ -365,9 +386,9 @@ export default class Query {
   /**
    * GetDelegation returns the delegation relationship between
    * a voter and a delegator from blockchain.
-   * 
-   * @param voter 
-   * @param delegator 
+   *
+   * @param voter
+   * @param delegator
    */
   getDelegation(voter: string, delegator: string): Promise<Delegation> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
@@ -380,8 +401,8 @@ export default class Query {
 
   /**
    * getVoter returns voter info given a voter name from blockchain.
-   * 
-   * @param voterName 
+   *
+   * @param voterName
    */
   getVoter(voterName: string): Promise<Voter> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
@@ -390,9 +411,9 @@ export default class Query {
 
   /**
    * getVote returns a vote performed by a voter for a given proposal.
-   * 
-   * @param proposalID 
-   * @param voter 
+   *
+   * @param proposalID
+   * @param voter
    */
   getVote(proposalID: string, voter: string): Promise<Vote> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
@@ -403,8 +424,8 @@ export default class Query {
 
   /**
    * getDeveloper returns a specific developer info from blockchain
-   * 
-   * @param developerName 
+   *
+   * @param developerName
    */
   getDeveloper(developerName: string): Promise<Developer> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
@@ -426,8 +447,8 @@ export default class Query {
 
   /**
    * getInfraProvider returns the infra provider info such as usage.
-   * 
-   * @param providerName 
+   *
+   * @param providerName
    */
   getInfraProvider(providerName: string): Promise<InfraProvider> {
     const InfraKVStoreKey = Keys.KVSTOREKEYS.InfraKVStoreKey;
@@ -461,8 +482,8 @@ export default class Query {
 
   /**
    * getProposal returns proposal info of a specific proposalID.
-   * 
-   * @param proposalID 
+   *
+   * @param proposalID
    */
   getProposal(proposalID: string): Promise<Proposal> {
     const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
@@ -596,11 +617,11 @@ export default class Query {
   }
 
   // block related
-  
+
   /**
    * getBlock returns a block at a certain height from blockchain.
-   * 
-   * @param height 
+   *
+   * @param height
    */
   getBlock(height: number): Promise<ResultBlock> {
     return this._transport.block(height);
@@ -608,7 +629,7 @@ export default class Query {
 
   /**
    * getTxsInBlock returns all transactions in a block at a certain height from blockchain.
-   * @param height 
+   * @param height
    */
   getTxsInBlock(height: number): Promise<StdTx[]> {
     return this._transport

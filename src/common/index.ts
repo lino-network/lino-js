@@ -8,6 +8,11 @@ export interface SDKCoin {
   amount: number;
 }
 
+export interface SDKKVPair {
+  key: string;
+  value: string;
+}
+
 export interface Int128 {
   Lo: number;
   Hi: number;
