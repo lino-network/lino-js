@@ -57,9 +57,7 @@ export class Transport implements ITransport {
         throw new Error('QuerySubspace failed: Empty result');
       }
 
-      // console.log('>>> querySubspace result.value: ', result.response.value);
       const resValStr = ByteBuffer.atob(result.response.value);
-      // console.log('>>> querySubspace jsonStr: ', jsonStr);
       let resKVs = JSON.parse(resValStr);
 
       let rst: T[] = [];

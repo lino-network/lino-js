@@ -778,9 +778,15 @@ export default class Query {
       );
   }
 
-  // GetBalanceHistoryFromTo returns a list of transaction history in the range of [from, to],
-  // that if to is larger than the number of tx, tx will be replaced by the larget tx number,
-  // related to a user's account balance, in reverse-chronological order.
+  /**
+   * getBalanceHistoryFromTo returns a list of transaction history in the range of [from, to],
+   * that if to is larger than the number of tx, tx will be replaced by the larget tx number,
+   * related to a user's account balance, in reverse-chronological order.
+   *
+   * @param username: user name
+   * @param from: the start index of the balance history, inclusively
+   * @param to: the end index of the balance history, inclusively
+   */
   async getBalanceHistoryFromTo(
     username: string,
     from: number,
@@ -829,8 +835,16 @@ export default class Query {
     return rst;
   }
 
-  // GetRecentBalanceHistory returns a certain number of recent transaction history
-  // related to a user's account balance, in reverse-chronological order.
+  //
+  //
+
+  /**
+   * getRecentBalanceHistory returns a certain number of recent transaction history
+   * related to a user's account balance, in reverse-chronological order.
+   *
+   * @param username: user name
+   * @param numHistory: the number of balance history are wanted
+   */
   async getRecentBalanceHistory(username: string, numHistory: number): Promise<BalanceHistory> {
     if (!this.isValidNat(numHistory)) {
       throw new Error(`GetRecentBalanceHistory: numHistory is invalid: ${numHistory}`);
