@@ -835,9 +835,6 @@ export default class Query {
     return rst;
   }
 
-  //
-  //
-
   /**
    * getRecentBalanceHistory returns a certain number of recent transaction history
    * related to a user's account balance, in reverse-chronological order.
