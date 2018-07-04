@@ -51,18 +51,28 @@ export class Transport implements ITransport {
     // get transport's node and do ABCIQuery
     // rpc client do rpc call
     // check resp
-    const path = `/store/${storeName}/subspace`;
+    const path = `/store/${storeName}/subspace-js`;
     return this._rpc.abciQuery(path, subspace).then(result => {
       if (!result.response || !result.response.value) {
-        throw new Error('Query failed: Empty result');
+        throw new Error('QuerySubspace failed: Empty result');
       }
 
-      console.log('>>> querySubspace result.value: ', result.response.value);
-      const jsonStr = ByteBuffer.atob(result.response.value);
+      // console.log('>>> querySubspace result.value: ', result.response.value);
+      const resValStr = ByteBuffer.atob(result.response.value);
+      // console.log('>>> querySubspace jsonStr: ', jsonStr);
+      let resKVs = JSON.parse(resValStr);
 
-      console.log('>>> querySubspace jsonStr: ', jsonStr);
+      let rst: T[] = [];
+      for (let i = 0; i < resKVs.length; i++) {
+        const keyStr = ByteBuffer.atob(resKVs[i].key);
 
-      return JSON.parse(jsonStr) as T[];
+        const jsonValueStr = ByteBuffer.atob(resKVs[i].value);
+        let value = JSON.parse(jsonValueStr);
+
+        rst.push(value);
+      }
+
+      return rst;
     });
   }
 
