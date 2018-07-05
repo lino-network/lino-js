@@ -5,6 +5,7 @@ import { ResultBlock, ResultBroadcastTxCommit, Rpc } from './rpc';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T>;
+  querySubspace<T>(subspace: string, storeName: string): Promise<T[]>;
   block(height: number): Promise<ResultBlock>;
   signBuildBroadcast(
     msg: any,
@@ -42,6 +43,34 @@ export class Transport implements ITransport {
 
       const jsonStr = ByteBuffer.atob(result.response.value);
       return JSON.parse(jsonStr) as T;
+    });
+  }
+
+  querySubspace<T>(subspace: string, storeName: string): Promise<T[]> {
+    // transport: get path and key for ABCIQuery and return result
+    // get transport's node and do ABCIQuery
+    // rpc client do rpc call
+    // check resp
+    const path = `/store/${storeName}/subspace-js`;
+    return this._rpc.abciQuery(path, subspace).then(result => {
+      if (!result.response || !result.response.value) {
+        throw new Error('QuerySubspace failed: Empty result');
+      }
+
+      const resValStr = ByteBuffer.atob(result.response.value);
+      let resKVs = JSON.parse(resValStr);
+
+      let rst: T[] = [];
+      for (let i = 0; i < resKVs.length; i++) {
+        const keyStr = ByteBuffer.atob(resKVs[i].key);
+
+        const jsonValueStr = ByteBuffer.atob(resKVs[i].value);
+        let value = JSON.parse(jsonValueStr);
+
+        rst.push(value);
+      }
+
+      return rst;
     });
   }
 

@@ -208,6 +208,19 @@ export default class Query {
   }
 
   /**
+   * getAllGrantPubKeys returns a list of all granted public keys of a user.
+   *
+   * @param username
+   */
+  getAllGrantPubKeys(username: string): Promise<GrantPubKey[]> {
+    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
+    return this._transport.querySubspace<GrantPubKey>(
+      Keys.getGrantPubKeyPrefix(username),
+      AccountKVStoreKey
+    );
+  }
+
+  /**
    * getReward returns rewards of a user.
    *
    * @param username
@@ -232,6 +245,19 @@ export default class Query {
   }
 
   /**
+   * getAllRelationships returns all donation relationship of a user.
+   *
+   * @param username
+   */
+  getAllRelationships(username: string): Promise<Relationship[]> {
+    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
+    return this._transport.querySubspace<Relationship>(
+      Keys.getRelationshipPrefix(username),
+      AccountKVStoreKey
+    );
+  }
+
+  /**
    * getFollowerMeta returns the follower meta of two users.
    *
    * @param me
@@ -246,6 +272,19 @@ export default class Query {
   }
 
   /**
+   * getAllFollowerMeta returns all follower meta of a user.
+   *
+   * @param username
+   */
+  getAllFollowerMeta(username: string): Promise<FollowerMeta[]> {
+    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
+    return this._transport.querySubspace<FollowerMeta>(
+      Keys.getFollowerPrefix(username),
+      AccountKVStoreKey
+    );
+  }
+
+  /**
    * getFollowingMeta returns the following meta of two users.
    *
    * @param me
@@ -255,6 +294,19 @@ export default class Query {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.query<FollowingMeta>(
       Keys.getFollowingKey(me, myFollowing),
+      AccountKVStoreKey
+    );
+  }
+
+  /**
+   * getAllFollowingMeta returns all following meta of a user.
+   *
+   * @param username
+   */
+  getAllFollowingMeta(username: string): Promise<FollowingMeta[]> {
+    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
+    return this._transport.querySubspace<FollowingMeta>(
+      Keys.getFollowingPrefix(username),
       AccountKVStoreKey
     );
   }
@@ -279,6 +331,21 @@ export default class Query {
   }
 
   /**
+   * getPostAllComments returns all comments that a post has.
+   *
+   * @param author
+   * @param postID
+   */
+  getPostAllComments(author: string, postID: string): Promise<Comment[]> {
+    const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
+    const Permlink = Keys.getPermlink(author, postID);
+    return this._transport.querySubspace<Comment>(
+      Keys.getPostCommentPrefix(Permlink),
+      PostKVStoreKey
+    );
+  }
+
+  /**
    * getPostView returns a view of a post performed by a user.
    *
    * @param author
@@ -289,6 +356,18 @@ export default class Query {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
     return this._transport.query<View>(Keys.getPostViewKey(Permlink, viewUser), PostKVStoreKey);
+  }
+
+  /**
+   * getPostAllViews returns all views that a post has.
+   *
+   * @param author
+   * @param postID
+   */
+  getPostAllViews(author: string, postID: string): Promise<View[]> {
+    const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
+    const Permlink = Keys.getPermlink(author, postID);
+    return this._transport.querySubspace<View>(Keys.getPostViewPrefix(Permlink), PostKVStoreKey);
   }
 
   /**
@@ -303,6 +382,21 @@ export default class Query {
     const Permlink = Keys.getPermlink(author, postID);
     return this._transport.query<Donations>(
       Keys.getPostDonationsKey(Permlink, donateUser),
+      PostKVStoreKey
+    );
+  }
+
+  /**
+   * getPostAllDonations returns all donations that a post has received.
+   *
+   * @param author
+   * @param postID
+   */
+  getPostAllDonations(author: string, postID: string): Promise<Donations[]> {
+    const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
+    const Permlink = Keys.getPermlink(author, postID);
+    return this._transport.querySubspace<Donations>(
+      Keys.getPostDonationsPrefix(Permlink),
       PostKVStoreKey
     );
   }
@@ -324,6 +418,21 @@ export default class Query {
   }
 
   /**
+   * getPostAllReportOrUpvotes returns all reports or upvotes that a post has received.
+   *
+   * @param author
+   * @param postID
+   */
+  getPostAllReportOrUpvotes(author: string, postID: string): Promise<ReportOrUpvote[]> {
+    const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
+    const Permlink = Keys.getPermlink(author, postID);
+    return this._transport.querySubspace<ReportOrUpvote>(
+      Keys.getPostReportOrUpvotePrefix(Permlink),
+      PostKVStoreKey
+    );
+  }
+
+  /**
    * getPostLike returns like that a user has given to a post.
    *
    * @param author
@@ -334,6 +443,18 @@ export default class Query {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
     return this._transport.query<Like>(Keys.getPostLikeKey(Permlink, likeUser), PostKVStoreKey);
+  }
+
+  /**
+   * getPostAllLikes returns all likes that a post has received.
+   *
+   * @param author
+   * @param postID
+   */
+  getPostAllLikes(author: string, postID: string): Promise<Like[]> {
+    const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
+    const Permlink = Keys.getPermlink(author, postID);
+    return this._transport.querySubspace<Like>(Keys.getPostLikePrefix(Permlink), PostKVStoreKey);
   }
 
   /**
@@ -379,6 +500,32 @@ export default class Query {
   }
 
   /**
+   * getVoterAllDelegation returns all delegations that are delegated to a voter.
+   *
+   * @param voter
+   */
+  getVoterAllDelegation(voter: string): Promise<Delegation[]> {
+    const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
+    return this._transport.querySubspace<Delegation>(
+      Keys.getDelegationPrefix(voter),
+      VoteKVStoreKey
+    );
+  }
+
+  /**
+   * getDelegatorAllDelegation returns all delegations that a delegator has delegated to.
+   *
+   * @param delegatorName
+   */
+  getDelegatorAllDelegation(delegatorName: string): Promise<Delegation[]> {
+    const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
+    return this._transport.querySubspace<Delegation>(
+      Keys.getDelegateePrefix(delegatorName),
+      VoteKVStoreKey
+    );
+  }
+
+  /**
    * getVoter returns voter info given a voter name from blockchain.
    *
    * @param voterName
@@ -397,6 +544,16 @@ export default class Query {
   getVote(proposalID: string, voter: string): Promise<Vote> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
     return this._transport.query<Vote>(Keys.getVoteKey(proposalID, voter), VoteKVStoreKey);
+  }
+
+  /**
+   * getProposalAllVotes returns all votes of a given proposal.
+   *
+   * @param proposalID
+   */
+  getProposalAllVotes(proposalID: string): Promise<Vote[]> {
+    const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
+    return this._transport.querySubspace<Vote>(Keys.getVotePrefix(proposalID), VoteKVStoreKey);
   }
 
   // developer related query
@@ -621,9 +778,15 @@ export default class Query {
       );
   }
 
-  // GetBalanceHistoryFromTo returns a list of transaction history in the range of [from, to],
-  // that if to is larger than the number of tx, tx will be replaced by the larget tx number,
-  // related to a user's account balance, in reverse-chronological order.
+  /**
+   * getBalanceHistoryFromTo returns a list of transaction history in the range of [from, to],
+   * that if to is larger than the number of tx, tx will be replaced by the larget tx number,
+   * related to a user's account balance, in reverse-chronological order.
+   *
+   * @param username: user name
+   * @param from: the start index of the balance history, inclusively
+   * @param to: the end index of the balance history, inclusively
+   */
   async getBalanceHistoryFromTo(
     username: string,
     from: number,
@@ -672,8 +835,13 @@ export default class Query {
     return rst;
   }
 
-  // GetRecentBalanceHistory returns a certain number of recent transaction history
-  // related to a user's account balance, in reverse-chronological order.
+  /**
+   * getRecentBalanceHistory returns a certain number of recent transaction history
+   * related to a user's account balance, in reverse-chronological order.
+   *
+   * @param username: user name
+   * @param numHistory: the number of balance history are wanted
+   */
   async getRecentBalanceHistory(username: string, numHistory: number): Promise<BalanceHistory> {
     if (!this.isValidNat(numHistory)) {
       throw new Error(`GetRecentBalanceHistory: numHistory is invalid: ${numHistory}`);

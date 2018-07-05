@@ -91,6 +91,12 @@ export default class Query {
      */
     getGrantPubKey(username: string, pubKeyHex: string): Promise<GrantPubKey>;
     /**
+     * getAllGrantPubKeys returns a list of all granted public keys of a user.
+     *
+     * @param username
+     */
+    getAllGrantPubKeys(username: string): Promise<GrantPubKey[]>;
+    /**
      * getReward returns rewards of a user.
      *
      * @param username
@@ -104,6 +110,12 @@ export default class Query {
      */
     getRelationship(me: string, other: string): Promise<Relationship>;
     /**
+     * getAllRelationships returns all donation relationship of a user.
+     *
+     * @param username
+     */
+    getAllRelationships(username: string): Promise<Relationship[]>;
+    /**
      * getFollowerMeta returns the follower meta of two users.
      *
      * @param me
@@ -111,12 +123,24 @@ export default class Query {
      */
     getFollowerMeta(me: string, myFollower: string): Promise<FollowerMeta>;
     /**
+     * getAllFollowerMeta returns all follower meta of a user.
+     *
+     * @param username
+     */
+    getAllFollowerMeta(username: string): Promise<FollowerMeta[]>;
+    /**
      * getFollowingMeta returns the following meta of two users.
      *
      * @param me
      * @param myFollowing
      */
     getFollowingMeta(me: string, myFollowing: string): Promise<FollowingMeta>;
+    /**
+     * getAllFollowingMeta returns all following meta of a user.
+     *
+     * @param username
+     */
+    getAllFollowingMeta(username: string): Promise<FollowingMeta[]>;
     /**
      * getPostComment returns a specific comment of a post given the post permlink
      * and comment permlink.
@@ -127,6 +151,13 @@ export default class Query {
      */
     getPostComment(author: string, postID: string, commentPermlink: string): Promise<Comment>;
     /**
+     * getPostAllComments returns all comments that a post has.
+     *
+     * @param author
+     * @param postID
+     */
+    getPostAllComments(author: string, postID: string): Promise<Comment[]>;
+    /**
      * getPostView returns a view of a post performed by a user.
      *
      * @param author
@@ -134,6 +165,13 @@ export default class Query {
      * @param viewUser
      */
     getPostView(author: string, postID: string, viewUser: string): Promise<View>;
+    /**
+     * getPostAllViews returns all views that a post has.
+     *
+     * @param author
+     * @param postID
+     */
+    getPostAllViews(author: string, postID: string): Promise<View[]>;
     /**
      * getPostDonations returns all donations that a user has given to a post.
      *
@@ -143,6 +181,13 @@ export default class Query {
      */
     getPostDonations(author: string, postID: string, donateUser: string): Promise<Donations>;
     /**
+     * getPostAllDonations returns all donations that a post has received.
+     *
+     * @param author
+     * @param postID
+     */
+    getPostAllDonations(author: string, postID: string): Promise<Donations[]>;
+    /**
      * getPostReportOrUpvote returns report or upvote that a user has given to a post.
      *
      * @param author
@@ -151,6 +196,13 @@ export default class Query {
      */
     getPostReportOrUpvote(author: string, postID: string, user: string): Promise<ReportOrUpvote>;
     /**
+     * getPostAllReportOrUpvotes returns all reports or upvotes that a post has received.
+     *
+     * @param author
+     * @param postID
+     */
+    getPostAllReportOrUpvotes(author: string, postID: string): Promise<ReportOrUpvote[]>;
+    /**
      * getPostLike returns like that a user has given to a post.
      *
      * @param author
@@ -158,6 +210,13 @@ export default class Query {
      * @param likeUser
      */
     getPostLike(author: string, postID: string, likeUser: string): Promise<Like>;
+    /**
+     * getPostAllLikes returns all likes that a post has received.
+     *
+     * @param author
+     * @param postID
+     */
+    getPostAllLikes(author: string, postID: string): Promise<Like[]>;
     /**
      * getPostInfo returns post info given a permlink(author#postID).
      *
@@ -181,6 +240,18 @@ export default class Query {
      */
     getDelegation(voter: string, delegator: string): Promise<Delegation>;
     /**
+     * getVoterAllDelegation returns all delegations that are delegated to a voter.
+     *
+     * @param voter
+     */
+    getVoterAllDelegation(voter: string): Promise<Delegation[]>;
+    /**
+     * getDelegatorAllDelegation returns all delegations that a delegator has delegated to.
+     *
+     * @param delegatorName
+     */
+    getDelegatorAllDelegation(delegatorName: string): Promise<Delegation[]>;
+    /**
      * getVoter returns voter info given a voter name from blockchain.
      *
      * @param voterName
@@ -193,6 +264,12 @@ export default class Query {
      * @param voter
      */
     getVote(proposalID: string, voter: string): Promise<Vote>;
+    /**
+     * getProposalAllVotes returns all votes of a given proposal.
+     *
+     * @param proposalID
+     */
+    getProposalAllVotes(proposalID: string): Promise<Vote[]>;
     /**
      * getDeveloper returns a specific developer info from blockchain
      *
@@ -287,7 +364,23 @@ export default class Query {
      * @param height
      */
     getTxsInBlock(height: number): Promise<StdTx[]>;
+    /**
+     * getBalanceHistoryFromTo returns a list of transaction history in the range of [from, to],
+     * that if to is larger than the number of tx, tx will be replaced by the larget tx number,
+     * related to a user's account balance, in reverse-chronological order.
+     *
+     * @param username: user name
+     * @param from: the start index of the balance history, inclusively
+     * @param to: the end index of the balance history, inclusively
+     */
     getBalanceHistoryFromTo(username: string, from: number, to: number): Promise<BalanceHistory>;
+    /**
+     * getRecentBalanceHistory returns a certain number of recent transaction history
+     * related to a user's account balance, in reverse-chronological order.
+     *
+     * @param username: user name
+     * @param numHistory: the number of balance history are wanted
+     */
     getRecentBalanceHistory(username: string, numHistory: number): Promise<BalanceHistory>;
     isValidNat(num: number): boolean;
 }
