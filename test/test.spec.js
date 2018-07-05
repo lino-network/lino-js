@@ -1,9 +1,14 @@
-const NODE_URL = 'http://127.0.0.1:26657/';
+const NODE_URL = 'http://18.188.188.164:26657';
 const testTxPrivHex = 'E1B0F79A20B1B66F263A295015BFC4805F979DD3028C29E04C911C5F941CFFA03D97862E3E';
+
 const zhimaoTx =
   'A32889124042B7EC409FDA30BB1164122A85CC216CA1DBD6A56066B841AE6F4C9CAAE1C2E554F9F0E0BCCF033A67D43D97BDDCCE4E0EE187A45438009D11801F2405268821';
 const testValidatorPubHex =
   '1624DE6220e008041ccafcc76788099b990531697ff4bf8eb2d1fabe204ee5fe0fc2c7c3f6';
+
+const myUser = 'myuser1';
+const myUserTxPrivKey =
+  'A328891240C3EB3D287AA0D3EA41D8A016B9A602FB845EFD1F407CA65BFF0A4560AB8DFA517AC83395BC2F6AE32D5641D4A824B5B22ED6A23FC51C479A1C8BEBC7C94970DD';
 
 // test utils
 function makeid(len) {
@@ -67,7 +72,7 @@ function addSuite(envName) {
   describe('LINO', function() {
     const linoClient = new LINO({
       nodeUrl: NODE_URL,
-      chainId: 'test-chain-ktAdj8'
+      chainId: 'test-chain-BgWrtq'
     });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
@@ -86,6 +91,22 @@ function addSuite(envName) {
             'lowest_power',
             'lowest_validator'
           );
+        });
+      });
+
+      it('getFollowingMeta', function() {
+        return query.getFollowingMeta(myUser, 'lino').then(v => {
+          debug('getFollowingMeta', v);
+          expect(v).to.have.all.keys('created_at', 'following_name');
+        });
+      });
+
+      // TODO: figure out how to check the results in array
+      it.skip('getAllFollowingMeta', function() {
+        return query.getAllFollowingMeta(myUser).then(v => {
+          console.log('>>> test getAllFollowingMeta v: ', v);
+          debug('getAllFollowingMeta', v);
+          expect(v).to.have.all.keys('created_at', 'following_name');
         });
       });
 
@@ -226,12 +247,6 @@ function addSuite(envName) {
       it('getExpiredProposal', function() {
         return query.getExpiredProposal().then(v => {
           debug('getExpiredProposal', v);
-        });
-      });
-
-      it('getAllDelegation', function() {
-        return query.getAllDelegation('zhimao').then(v => {
-          debug('getAllDelegation', v);
         });
       });
 
