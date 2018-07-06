@@ -1,5 +1,6 @@
 //@ts-ignore
 import ByteBuffer from 'bytebuffer';
+import { convertToRawPubKey, encodePubKey } from '../transport/encoder';
 
 namespace Keys {
   export const KVSTOREKEYS = {
@@ -68,6 +69,19 @@ namespace Keys {
     sep: ByteBuffer.fromUTF8('/').toHex()
   };
 
+  export function getHexSubstringAfterKeySeparator(key: string): string {
+    console.log(key, key.indexOf('/'));
+    return key.substr(key.indexOf('/') + 1, key.length);
+  }
+
+  export function getSubstringAfterKeySeparator(key: string): string {
+    return key.substr(key.indexOf(_KEYS.sep) + 1, key.length);
+  }
+
+  export function getSubstringAfterSubstore(key: string): string {
+    return key.substr(2, key.length);
+  }
+
   // validator related
   export function getValidatorKey(accKey: string): string {
     const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
@@ -118,6 +132,10 @@ namespace Keys {
   export function getDeveloperKey(accKey: string): string {
     const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
     return _KEYS.developerSubstore.concat(accKeyHex);
+  }
+
+  export function getDeveloperPrefix(): string {
+    return _KEYS.developerSubstore;
   }
 
   export function getDeveloperListKey(): string {
