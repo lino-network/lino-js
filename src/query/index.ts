@@ -212,12 +212,9 @@ export default class Query {
    *
    * @param username
    */
-  getAllGrantPubKeys(username: string): Promise<GrantPubKey[]> {
+  getAllGrantPubKeys(username: string): Promise<any> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.querySubspace<GrantPubKey>(
-      Keys.getGrantPubKeyPrefix(username),
-      AccountKVStoreKey
-    );
+    return this._transport.querySubspace(Keys.getGrantPubKeyPrefix(username), AccountKVStoreKey);
   }
 
   /**
@@ -249,12 +246,9 @@ export default class Query {
    *
    * @param username
    */
-  getAllRelationships(username: string): Promise<Relationship[]> {
+  getAllRelationships(username: string): Promise<any> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.querySubspace<Relationship>(
-      Keys.getRelationshipPrefix(username),
-      AccountKVStoreKey
-    );
+    return this._transport.querySubspace(Keys.getRelationshipPrefix(username), AccountKVStoreKey);
   }
 
   /**
@@ -276,12 +270,9 @@ export default class Query {
    *
    * @param username
    */
-  getAllFollowerMeta(username: string): Promise<FollowerMeta[]> {
+  getAllFollowerMeta(username: string): Promise<any> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.querySubspace<FollowerMeta>(
-      Keys.getFollowerPrefix(username),
-      AccountKVStoreKey
-    );
+    return this._transport.querySubspace(Keys.getFollowerPrefix(username), AccountKVStoreKey);
   }
 
   /**
@@ -303,15 +294,22 @@ export default class Query {
    *
    * @param username
    */
-  getAllFollowingMeta(username: string): Promise<FollowingMeta[]> {
+  getAllFollowingMeta(username: string): Promise<any> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.querySubspace<FollowingMeta>(
-      Keys.getFollowingPrefix(username),
-      AccountKVStoreKey
-    );
+    return this._transport.querySubspace(Keys.getFollowingPrefix(username), AccountKVStoreKey);
   }
 
   // post related query
+
+  /**
+   * getAllPosts returns all posts the author created.
+   *
+   * @param author
+   */
+  getAllPosts(author: string): Promise<any> {
+    const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
+    return this._transport.querySubspace(Keys.getPostInfoPrefix(author), PostKVStoreKey);
+  }
 
   /**
    * getPostComment returns a specific comment of a post given the post permlink
@@ -336,13 +334,10 @@ export default class Query {
    * @param author
    * @param postID
    */
-  getPostAllComments(author: string, postID: string): Promise<Comment[]> {
+  getPostAllComments(author: string, postID: string): Promise<any> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
-    return this._transport.querySubspace<Comment>(
-      Keys.getPostCommentPrefix(Permlink),
-      PostKVStoreKey
-    );
+    return this._transport.querySubspace(Keys.getPostCommentPrefix(Permlink), PostKVStoreKey);
   }
 
   /**
@@ -364,10 +359,10 @@ export default class Query {
    * @param author
    * @param postID
    */
-  getPostAllViews(author: string, postID: string): Promise<View[]> {
+  getPostAllViews(author: string, postID: string): Promise<any> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
-    return this._transport.querySubspace<View>(Keys.getPostViewPrefix(Permlink), PostKVStoreKey);
+    return this._transport.querySubspace(Keys.getPostViewPrefix(Permlink), PostKVStoreKey);
   }
 
   /**
@@ -392,13 +387,10 @@ export default class Query {
    * @param author
    * @param postID
    */
-  getPostAllDonations(author: string, postID: string): Promise<Donations[]> {
+  getPostAllDonations(author: string, postID: string): Promise<any> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
-    return this._transport.querySubspace<Donations>(
-      Keys.getPostDonationsPrefix(Permlink),
-      PostKVStoreKey
-    );
+    return this._transport.querySubspace(Keys.getPostDonationsPrefix(Permlink), PostKVStoreKey);
   }
 
   /**
@@ -423,10 +415,10 @@ export default class Query {
    * @param author
    * @param postID
    */
-  getPostAllReportOrUpvotes(author: string, postID: string): Promise<ReportOrUpvote[]> {
+  getPostAllReportOrUpvotes(author: string, postID: string): Promise<any> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
-    return this._transport.querySubspace<ReportOrUpvote>(
+    return this._transport.querySubspace(
       Keys.getPostReportOrUpvotePrefix(Permlink),
       PostKVStoreKey
     );
@@ -451,10 +443,10 @@ export default class Query {
    * @param author
    * @param postID
    */
-  getPostAllLikes(author: string, postID: string): Promise<Like[]> {
+  getPostAllLikes(author: string, postID: string): Promise<any> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
-    return this._transport.querySubspace<Like>(Keys.getPostLikePrefix(Permlink), PostKVStoreKey);
+    return this._transport.querySubspace(Keys.getPostLikePrefix(Permlink), PostKVStoreKey);
   }
 
   /**
@@ -504,12 +496,9 @@ export default class Query {
    *
    * @param voter
    */
-  getVoterAllDelegation(voter: string): Promise<Delegation[]> {
+  getVoterAllDelegation(voter: string): Promise<any> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-    return this._transport.querySubspace<Delegation>(
-      Keys.getDelegationPrefix(voter),
-      VoteKVStoreKey
-    );
+    return this._transport.querySubspace(Keys.getDelegationPrefix(voter), VoteKVStoreKey);
   }
 
   /**
@@ -517,12 +506,9 @@ export default class Query {
    *
    * @param delegatorName
    */
-  getDelegatorAllDelegation(delegatorName: string): Promise<Delegation[]> {
+  getDelegatorAllDelegation(delegatorName: string): Promise<any> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-    return this._transport.querySubspace<Delegation>(
-      Keys.getDelegateePrefix(delegatorName),
-      VoteKVStoreKey
-    );
+    return this._transport.querySubspace(Keys.getDelegateePrefix(delegatorName), VoteKVStoreKey);
   }
 
   /**
@@ -551,9 +537,9 @@ export default class Query {
    *
    * @param proposalID
    */
-  getProposalAllVotes(proposalID: string): Promise<Vote[]> {
+  getProposalAllVotes(proposalID: string): Promise<any> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-    return this._transport.querySubspace<Vote>(Keys.getVotePrefix(proposalID), VoteKVStoreKey);
+    return this._transport.querySubspace(Keys.getVotePrefix(proposalID), VoteKVStoreKey);
   }
 
   // developer related query

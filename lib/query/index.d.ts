@@ -95,7 +95,7 @@ export default class Query {
      *
      * @param username
      */
-    getAllGrantPubKeys(username: string): Promise<GrantPubKey[]>;
+    getAllGrantPubKeys(username: string): Promise<any>;
     /**
      * getReward returns rewards of a user.
      *
@@ -114,7 +114,7 @@ export default class Query {
      *
      * @param username
      */
-    getAllRelationships(username: string): Promise<Relationship[]>;
+    getAllRelationships(username: string): Promise<any>;
     /**
      * getFollowerMeta returns the follower meta of two users.
      *
@@ -127,7 +127,7 @@ export default class Query {
      *
      * @param username
      */
-    getAllFollowerMeta(username: string): Promise<FollowerMeta[]>;
+    getAllFollowerMeta(username: string): Promise<any>;
     /**
      * getFollowingMeta returns the following meta of two users.
      *
@@ -140,7 +140,13 @@ export default class Query {
      *
      * @param username
      */
-    getAllFollowingMeta(username: string): Promise<FollowingMeta[]>;
+    getAllFollowingMeta(username: string): Promise<any>;
+    /**
+     * getAllPosts returns all posts the author created.
+     *
+     * @param author
+     */
+    getAllPosts(author: string): Promise<any>;
     /**
      * getPostComment returns a specific comment of a post given the post permlink
      * and comment permlink.
@@ -156,7 +162,7 @@ export default class Query {
      * @param author
      * @param postID
      */
-    getPostAllComments(author: string, postID: string): Promise<Comment[]>;
+    getPostAllComments(author: string, postID: string): Promise<any>;
     /**
      * getPostView returns a view of a post performed by a user.
      *
@@ -171,7 +177,7 @@ export default class Query {
      * @param author
      * @param postID
      */
-    getPostAllViews(author: string, postID: string): Promise<View[]>;
+    getPostAllViews(author: string, postID: string): Promise<any>;
     /**
      * getPostDonations returns all donations that a user has given to a post.
      *
@@ -186,7 +192,7 @@ export default class Query {
      * @param author
      * @param postID
      */
-    getPostAllDonations(author: string, postID: string): Promise<Donations[]>;
+    getPostAllDonations(author: string, postID: string): Promise<any>;
     /**
      * getPostReportOrUpvote returns report or upvote that a user has given to a post.
      *
@@ -201,7 +207,7 @@ export default class Query {
      * @param author
      * @param postID
      */
-    getPostAllReportOrUpvotes(author: string, postID: string): Promise<ReportOrUpvote[]>;
+    getPostAllReportOrUpvotes(author: string, postID: string): Promise<any>;
     /**
      * getPostLike returns like that a user has given to a post.
      *
@@ -216,7 +222,7 @@ export default class Query {
      * @param author
      * @param postID
      */
-    getPostAllLikes(author: string, postID: string): Promise<Like[]>;
+    getPostAllLikes(author: string, postID: string): Promise<any>;
     /**
      * getPostInfo returns post info given a permlink(author#postID).
      *
@@ -244,13 +250,13 @@ export default class Query {
      *
      * @param voter
      */
-    getVoterAllDelegation(voter: string): Promise<Delegation[]>;
+    getVoterAllDelegation(voter: string): Promise<any>;
     /**
      * getDelegatorAllDelegation returns all delegations that a delegator has delegated to.
      *
      * @param delegatorName
      */
-    getDelegatorAllDelegation(delegatorName: string): Promise<Delegation[]>;
+    getDelegatorAllDelegation(delegatorName: string): Promise<any>;
     /**
      * getVoter returns voter info given a voter name from blockchain.
      *
@@ -269,7 +275,7 @@ export default class Query {
      *
      * @param proposalID
      */
-    getProposalAllVotes(proposalID: string): Promise<Vote[]>;
+    getProposalAllVotes(proposalID: string): Promise<any>;
     /**
      * getDeveloper returns a specific developer info from blockchain
      *

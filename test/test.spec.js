@@ -256,6 +256,19 @@ function addSuite(envName) {
           expect(v).to.be.false;
         });
       });
+
+      it('getAllGrantPubKeys', function() {
+        return query.getAllGrantPubKeys('lino').then(v => {
+          debug('getAllGrantPubKeys', v);
+        });
+      });
+
+      it('getAllPosts', function() {
+        this.timeout(0);
+        return query.getAllPosts('test2').then(v => {
+          debug('getAllPosts', v);
+        });
+      });
     });
 
     describe('broadcast', function() {
