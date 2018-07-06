@@ -26,6 +26,7 @@ namespace Keys {
 
     proposalSubstore: '00',
     proposalListSubStore: '01',
+    nextProposalIDSubstore: '02',
 
     developerSubstore: '00',
     developerListSubstore: '01',
@@ -63,7 +64,6 @@ namespace Keys {
     bandwidthParamSubStore: '08',
     accountParamSubstore: '09',
     postParamSubStore: '0a',
-    proposalIDParamSubStore: '0b',
 
     sep: ByteBuffer.fromUTF8('/').toHex()
   };
@@ -291,6 +291,10 @@ namespace Keys {
     return _KEYS.proposalListSubStore;
   }
 
+  export function getNextProposalIDKey(): string {
+    return _KEYS.nextProposalIDSubstore;
+  }
+
   // param related
   export function getEvaluateOfContentValueParamKey(): string {
     return _KEYS.evaluateOfContentValueParamSubStore;
@@ -318,10 +322,6 @@ namespace Keys {
 
   export function getProposalParamKey(): string {
     return _KEYS.proposalParamSubStore;
-  }
-
-  export function getProposalIDParamKey(): string {
-    return _KEYS.proposalIDParamSubStore;
   }
 
   export function getCoinDayParamKey(): string {

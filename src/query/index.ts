@@ -215,7 +215,6 @@ export default class Query {
   getAllGrantPubKeys(username: string): Promise<any> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.querySubspace(Keys.getGrantPubKeyPrefix(username), AccountKVStoreKey);
-
   }
 
   /**
@@ -631,6 +630,14 @@ export default class Query {
     );
   }
 
+  /**
+   * getNextProposalID returns the next proposal id
+   */
+  getNextProposalID(): Promise<NextProposalID> {
+    const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
+    return this._transport.query<NextProposalID>(Keys.getNextProposalIDKey(), ProposalKVStoreKey);
+  }
+
   // param related query
 
   /**
@@ -691,17 +698,6 @@ export default class Query {
   getProposalParam(): Promise<Types.ProposalParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.ProposalParam>(Keys.getProposalParamKey(), ParamKVStoreKey);
-  }
-
-  /**
-   * getProposalIDParam returns the ProposalIDParam.
-   */
-  getProposalIDParam(): Promise<Types.ProposalIDParam> {
-    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
-    return this._transport.query<Types.ProposalIDParam>(
-      Keys.getProposalIDParamKey(),
-      ParamKVStoreKey
-    );
   }
 
   /**
@@ -1083,6 +1079,10 @@ export interface ProposalInfo {
   result: number;
   created_at: number;
   expired_at: number;
+}
+
+export interface NextProposalID {
+  next_proposal_id: number;
 }
 
 export interface Proposal {
