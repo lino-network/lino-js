@@ -102,13 +102,6 @@ export function isVoteParam(param: object): param is VoteParam {
   );
 }
 
-export interface ProposalIDParam {
-  next_proposal_id: number;
-}
-export function isProposalIDParam(param: object): param is ProposalIDParam {
-  return 'next_proposal_id' in param;
-}
-
 export interface ProposalParam {
   content_censorship_decide_hr: number;
   content_censorship_min_deposit: Coin;
