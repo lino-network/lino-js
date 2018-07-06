@@ -62,7 +62,8 @@ namespace Keys {
     coinDayParamSubStore: '07',
     bandwidthParamSubStore: '08',
     accountParamSubstore: '09',
-    postParamSubStore: '10',
+    postParamSubStore: '0a',
+    proposalIDParamSubStore: '0b',
 
     sep: ByteBuffer.fromUTF8('/').toHex()
   };
@@ -317,6 +318,10 @@ namespace Keys {
 
   export function getProposalParamKey(): string {
     return _KEYS.proposalParamSubStore;
+  }
+
+  export function getProposalIDParamKey(): string {
+    return _KEYS.proposalIDParamSubStore;
   }
 
   export function getCoinDayParamKey(): string {

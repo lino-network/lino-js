@@ -102,6 +102,13 @@ export function isVoteParam(param: object): param is VoteParam {
   );
 }
 
+export interface ProposalIDParam {
+  next_proposal_id: number;
+}
+export function isProposalIDParam(param: object): param is ProposalIDParam {
+  return 'next_proposal_id' in param;
+}
+
 export interface ProposalParam {
   next_proposal_id: number;
   content_censorship_decide_hr: number;
@@ -201,7 +208,8 @@ export function isAccountParam(param: object): param is AccountParam {
 
 export interface PostParam {
   micropayment_limitation: Coin;
+  report_or_upvote_interval: number;
 }
 export function isPostParam(param: object): param is PostParam {
-  return 'micropayment_limitation' in param;
+  return 'micropayment_limitation' in param && 'report_or_upvote_interval' in param;
 }
