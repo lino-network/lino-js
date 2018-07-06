@@ -6,7 +6,11 @@ import Keys from '../query/keys';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T>;
-  querySubspace(subspace: string, storeName: string): Promise<any>;
+  querySubspace<T = any>(
+    subspace: string,
+    storeName: string,
+    getKeyBy: GetKeyBy
+  ): Promise<ResultKV<string, T>[]>;
   block(height: number): Promise<ResultBlock>;
   signBuildBroadcast(
     msg: any,
@@ -19,6 +23,11 @@ export interface ITransport {
 export interface ITransportOptions {
   nodeUrl: string;
   chainId?: string;
+}
+
+export interface ResultKV<K, V> {
+  key: K;
+  value: V;
 }
 
 export class Transport implements ITransport {
@@ -47,7 +56,11 @@ export class Transport implements ITransport {
     });
   }
 
-  querySubspace(subspace: string, storeName: string): Promise<any> {
+  querySubspace<V>(
+    subspace: string,
+    storeName: string,
+    getKeyBy: GetKeyBy
+  ): Promise<ResultKV<string, V>[]> {
     // transport: get path and key for ABCIQuery and return result
     // get transport's node and do ABCIQuery
     // rpc client do rpc call
@@ -60,18 +73,30 @@ export class Transport implements ITransport {
 
       const resValStr = ByteBuffer.atob(result.response.value);
       let resKVs = JSON.parse(resValStr);
-
-      let rst = {};
+      let rst: ResultKV<string, V>[] = [];
       if (resKVs === null) {
         return rst;
       }
       for (let i = 0; i < resKVs.length; i++) {
-        const keyStr = ByteBuffer.atob(resKVs[i].key);
-
+        const rawKey = ByteBuffer.atob(resKVs[i].key);
+        let keyStr: string = '';
+        switch (getKeyBy) {
+          case GetKeyBy.GetHexSubstringAfterKeySeparator: {
+            keyStr = Keys.getHexSubstringAfterKeySeparator(rawKey);
+            break;
+          }
+          case GetKeyBy.GetSubstringAfterKeySeparator: {
+            keyStr = Keys.getSubstringAfterKeySeparator(rawKey);
+            break;
+          }
+          default: {
+            keyStr = rawKey;
+          }
+        }
         const jsonValueStr = ByteBuffer.atob(resKVs[i].value);
-        let value = JSON.parse(jsonValueStr);
-
-        rst[keyStr] = value;
+        let value = JSON.parse(jsonValueStr) as V;
+        let item: ResultKV<string, V> = { key: keyStr, value: value };
+        rst.push(item);
       }
 
       return rst;
@@ -134,6 +159,12 @@ export class Transport implements ITransport {
 export enum BroadCastErrorEnum {
   CheckTx,
   DeliverTx
+}
+
+export enum GetKeyBy {
+  GetSubstringAfterKeySeparator,
+  GetHexSubstringAfterKeySeparator,
+  GetSubstringAfterSubstore
 }
 
 // How to extend Error in TS2.1+:

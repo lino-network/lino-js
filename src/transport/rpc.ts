@@ -5,6 +5,11 @@ export interface ResultABCIQuery {
   response: ResponseQuery;
 }
 
+export interface ResultKV<K, V> {
+  key: K;
+  value: V;
+}
+
 export interface ResponseQuery {
   code: number;
   log: string;
