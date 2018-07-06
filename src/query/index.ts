@@ -3,7 +3,7 @@ import * as Types from '../common';
 import { ITransport, GetKeyBy } from '../transport';
 import { decodePubKey } from '../transport/encoder';
 import { InternalPubKey, StdTx, convertToRawPubKey, encodePubKey } from '../transport/encoder';
-import { ResultBlock } from '../transport/rpc';
+import { ResultBlock, ResultKV } from '../transport/rpc';
 import * as Util from '../util/index';
 import Keys from './keys';
 
@@ -212,9 +212,9 @@ export default class Query {
    *
    * @param username
    */
-  getAllGrantPubKeys(username: string): Promise<any> {
+  getAllGrantPubKeys(username: string): Promise<ResultKV<string, GrantPubKey>[]> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<GrantPubKey>(
       Keys.getGrantPubKeyPrefix(username),
       AccountKVStoreKey,
       GetKeyBy.GetHexSubstringAfterKeySeparator
@@ -250,9 +250,9 @@ export default class Query {
    *
    * @param username
    */
-  getAllRelationships(username: string): Promise<any> {
+  getAllRelationships(username: string): Promise<ResultKV<string, Relationship>[]> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<Relationship>(
       Keys.getRelationshipPrefix(username),
       AccountKVStoreKey,
       GetKeyBy.GetSubstringAfterKeySeparator
@@ -278,9 +278,9 @@ export default class Query {
    *
    * @param username
    */
-  getAllFollowerMeta(username: string): Promise<any> {
+  getAllFollowerMeta(username: string): Promise<ResultKV<string, FollowerMeta>[]> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<FollowerMeta>(
       Keys.getFollowerPrefix(username),
       AccountKVStoreKey,
       GetKeyBy.GetSubstringAfterKeySeparator
@@ -306,9 +306,9 @@ export default class Query {
    *
    * @param username
    */
-  getAllFollowingMeta(username: string): Promise<any> {
+  getAllFollowingMeta(username: string): Promise<ResultKV<string, FollowingMeta>[]> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<FollowingMeta>(
       Keys.getFollowingPrefix(username),
       AccountKVStoreKey,
       GetKeyBy.GetSubstringAfterKeySeparator
@@ -322,9 +322,9 @@ export default class Query {
    *
    * @param author
    */
-  getAllPosts(author: string): Promise<any> {
+  getAllPosts(author: string): Promise<ResultKV<string, PostInfo>[]> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<PostInfo>(
       Keys.getPostInfoPrefix(author),
       PostKVStoreKey,
       GetKeyBy.GetSubstringAfterSubstore
@@ -354,10 +354,10 @@ export default class Query {
    * @param author
    * @param postID
    */
-  getPostAllComments(author: string, postID: string): Promise<any> {
+  getPostAllComments(author: string, postID: string): Promise<ResultKV<string, Comment>[]> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<Comment>(
       Keys.getPostCommentPrefix(Permlink),
       PostKVStoreKey,
       GetKeyBy.GetSubstringAfterKeySeparator
@@ -383,10 +383,10 @@ export default class Query {
    * @param author
    * @param postID
    */
-  getPostAllViews(author: string, postID: string): Promise<any> {
+  getPostAllViews(author: string, postID: string): Promise<ResultKV<string, View>[]> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<View>(
       Keys.getPostViewPrefix(Permlink),
       PostKVStoreKey,
       GetKeyBy.GetSubstringAfterKeySeparator
@@ -415,10 +415,10 @@ export default class Query {
    * @param author
    * @param postID
    */
-  getPostAllDonations(author: string, postID: string): Promise<any> {
+  getPostAllDonations(author: string, postID: string): Promise<ResultKV<string, Donations>[]> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<Donations>(
       Keys.getPostDonationsPrefix(Permlink),
       PostKVStoreKey,
       GetKeyBy.GetSubstringAfterKeySeparator
@@ -447,10 +447,13 @@ export default class Query {
    * @param author
    * @param postID
    */
-  getPostAllReportOrUpvotes(author: string, postID: string): Promise<any> {
+  getPostAllReportOrUpvotes(
+    author: string,
+    postID: string
+  ): Promise<ResultKV<string, ReportOrUpvote>[]> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<ReportOrUpvote>(
       Keys.getPostReportOrUpvotePrefix(Permlink),
       PostKVStoreKey,
       GetKeyBy.GetSubstringAfterKeySeparator
@@ -476,10 +479,10 @@ export default class Query {
    * @param author
    * @param postID
    */
-  getPostAllLikes(author: string, postID: string): Promise<any> {
+  getPostAllLikes(author: string, postID: string): Promise<ResultKV<string, Like>[]> {
     const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
     const Permlink = Keys.getPermlink(author, postID);
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<Like>(
       Keys.getPostLikePrefix(Permlink),
       PostKVStoreKey,
       GetKeyBy.GetSubstringAfterKeySeparator
@@ -533,9 +536,9 @@ export default class Query {
    *
    * @param voter
    */
-  getVoterAllDelegation(voter: string): Promise<any> {
+  getVoterAllDelegation(voter: string): Promise<ResultKV<string, Delegation>[]> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<Delegation>(
       Keys.getDelegationPrefix(voter),
       VoteKVStoreKey,
       GetKeyBy.GetSubstringAfterKeySeparator
@@ -547,9 +550,9 @@ export default class Query {
    *
    * @param delegatorName
    */
-  getDelegatorAllDelegation(delegatorName: string): Promise<any> {
+  getDelegatorAllDelegation(delegatorName: string): Promise<ResultKV<string, Delegation>[]> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<Delegation>(
       Keys.getDelegateePrefix(delegatorName),
       VoteKVStoreKey,
       GetKeyBy.GetSubstringAfterKeySeparator
@@ -582,9 +585,9 @@ export default class Query {
    *
    * @param proposalID
    */
-  getProposalAllVotes(proposalID: string): Promise<any> {
+  getProposalAllVotes(proposalID: string): Promise<ResultKV<string, Vote>[]> {
     const VoteKVStoreKey = Keys.KVSTOREKEYS.VoteKVStoreKey;
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<Vote>(
       Keys.getVotePrefix(proposalID),
       VoteKVStoreKey,
       GetKeyBy.GetSubstringAfterKeySeparator
@@ -609,9 +612,9 @@ export default class Query {
   /**
    * getDevelopers returns a list of develop.
    */
-  getDevelopers(): Promise<any> {
+  getDevelopers(): Promise<ResultKV<string, Developer>[]> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
-    return this._transport.querySubspace(
+    return this._transport.querySubspace<Developer>(
       Keys.getDeveloperPrefix(),
       DeveloperKVStoreKey,
       GetKeyBy.GetSubstringAfterSubstore
