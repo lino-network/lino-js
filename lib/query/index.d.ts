@@ -1,7 +1,7 @@
 import * as Types from '../common';
 import { ITransport } from '../transport';
 import { StdTx } from '../transport/encoder';
-import { ResultBlock } from '../transport/rpc';
+import { ResultBlock, ResultKV } from '../transport/rpc';
 export default class Query {
     private _transport;
     constructor(transport: ITransport);
@@ -95,7 +95,7 @@ export default class Query {
      *
      * @param username
      */
-    getAllGrantPubKeys(username: string): Promise<any>;
+    getAllGrantPubKeys(username: string): Promise<ResultKV<string, GrantPubKey>[]>;
     /**
      * getReward returns rewards of a user.
      *
@@ -114,7 +114,7 @@ export default class Query {
      *
      * @param username
      */
-    getAllRelationships(username: string): Promise<any>;
+    getAllRelationships(username: string): Promise<ResultKV<string, Relationship>[]>;
     /**
      * getFollowerMeta returns the follower meta of two users.
      *
@@ -127,7 +127,7 @@ export default class Query {
      *
      * @param username
      */
-    getAllFollowerMeta(username: string): Promise<any>;
+    getAllFollowerMeta(username: string): Promise<ResultKV<string, FollowerMeta>[]>;
     /**
      * getFollowingMeta returns the following meta of two users.
      *
@@ -140,13 +140,13 @@ export default class Query {
      *
      * @param username
      */
-    getAllFollowingMeta(username: string): Promise<any>;
+    getAllFollowingMeta(username: string): Promise<ResultKV<string, FollowingMeta>[]>;
     /**
      * getAllPosts returns all posts the author created.
      *
      * @param author
      */
-    getAllPosts(author: string): Promise<any>;
+    getAllPosts(author: string): Promise<ResultKV<string, PostInfo>[]>;
     /**
      * getPostComment returns a specific comment of a post given the post permlink
      * and comment permlink.
@@ -162,7 +162,7 @@ export default class Query {
      * @param author
      * @param postID
      */
-    getPostAllComments(author: string, postID: string): Promise<any>;
+    getPostAllComments(author: string, postID: string): Promise<ResultKV<string, Comment>[]>;
     /**
      * getPostView returns a view of a post performed by a user.
      *
@@ -177,7 +177,7 @@ export default class Query {
      * @param author
      * @param postID
      */
-    getPostAllViews(author: string, postID: string): Promise<any>;
+    getPostAllViews(author: string, postID: string): Promise<ResultKV<string, View>[]>;
     /**
      * getPostDonations returns all donations that a user has given to a post.
      *
@@ -192,7 +192,7 @@ export default class Query {
      * @param author
      * @param postID
      */
-    getPostAllDonations(author: string, postID: string): Promise<any>;
+    getPostAllDonations(author: string, postID: string): Promise<ResultKV<string, Donations>[]>;
     /**
      * getPostReportOrUpvote returns report or upvote that a user has given to a post.
      *
@@ -207,7 +207,7 @@ export default class Query {
      * @param author
      * @param postID
      */
-    getPostAllReportOrUpvotes(author: string, postID: string): Promise<any>;
+    getPostAllReportOrUpvotes(author: string, postID: string): Promise<ResultKV<string, ReportOrUpvote>[]>;
     /**
      * getPostLike returns like that a user has given to a post.
      *
@@ -222,7 +222,7 @@ export default class Query {
      * @param author
      * @param postID
      */
-    getPostAllLikes(author: string, postID: string): Promise<any>;
+    getPostAllLikes(author: string, postID: string): Promise<ResultKV<string, Like>[]>;
     /**
      * getPostInfo returns post info given a permlink(author#postID).
      *
@@ -250,13 +250,13 @@ export default class Query {
      *
      * @param voter
      */
-    getVoterAllDelegation(voter: string): Promise<any>;
+    getVoterAllDelegation(voter: string): Promise<ResultKV<string, Delegation>[]>;
     /**
      * getDelegatorAllDelegation returns all delegations that a delegator has delegated to.
      *
      * @param delegatorName
      */
-    getDelegatorAllDelegation(delegatorName: string): Promise<any>;
+    getDelegatorAllDelegation(delegatorName: string): Promise<ResultKV<string, Delegation>[]>;
     /**
      * getVoter returns voter info given a voter name from blockchain.
      *
@@ -275,7 +275,7 @@ export default class Query {
      *
      * @param proposalID
      */
-    getProposalAllVotes(proposalID: string): Promise<any>;
+    getProposalAllVotes(proposalID: string): Promise<ResultKV<string, Vote>[]>;
     /**
      * getDeveloper returns a specific developer info from blockchain
      *
@@ -285,7 +285,7 @@ export default class Query {
     /**
      * getDevelopers returns a list of develop.
      */
-    getDevelopers(): Promise<any>;
+    getDevelopers(): Promise<ResultKV<string, Developer>[]>;
     /**
      * getDeveloperList returns a list of developer name.
      */

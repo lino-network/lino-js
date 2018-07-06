@@ -1,7 +1,7 @@
 import { ResultBlock, ResultBroadcastTxCommit, ResultKV } from './rpc';
 export interface ITransport {
     query<T = any>(key: string, storeName: string): Promise<T>;
-    querySubspace(subspace: string, storeName: string, getKeyBy: GetKeyBy): Promise<any>;
+    querySubspace<T = any>(subspace: string, storeName: string, getKeyBy: GetKeyBy): Promise<ResultKV<string, T>[]>;
     block(height: number): Promise<ResultBlock>;
     signBuildBroadcast(msg: any, msgType: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
 }
