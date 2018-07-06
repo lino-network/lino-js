@@ -2,10 +2,11 @@ import ByteBuffer from 'bytebuffer';
 import { ec as EC } from 'elliptic';
 import { decodePrivKey, encodeSignMsg, encodeTx, convertMsg, StdMsg, encodeMsg } from './encoder';
 import { ResultBlock, ResultBroadcastTxCommit, Rpc } from './rpc';
+import Keys from '../query/keys';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T>;
-  querySubspace<T>(subspace: string, storeName: string): Promise<T[]>;
+  querySubspace(subspace: string, storeName: string): Promise<any>;
   block(height: number): Promise<ResultBlock>;
   signBuildBroadcast(
     msg: any,
@@ -46,11 +47,12 @@ export class Transport implements ITransport {
     });
   }
 
-  querySubspace<T>(subspace: string, storeName: string): Promise<T[]> {
+  querySubspace(subspace: string, storeName: string): Promise<any> {
     // transport: get path and key for ABCIQuery and return result
     // get transport's node and do ABCIQuery
     // rpc client do rpc call
     // check resp
+    console.log('before get res kvs');
     const path = `/store/${storeName}/subspace-js`;
     return this._rpc.abciQuery(path, subspace).then(result => {
       if (!result.response || !result.response.value) {
@@ -59,15 +61,17 @@ export class Transport implements ITransport {
 
       const resValStr = ByteBuffer.atob(result.response.value);
       let resKVs = JSON.parse(resValStr);
-
-      let rst: T[] = [];
+      let rst = {};
+      if (resKVs === null) {
+        return rst;
+      }
       for (let i = 0; i < resKVs.length; i++) {
         const keyStr = ByteBuffer.atob(resKVs[i].key);
 
         const jsonValueStr = ByteBuffer.atob(resKVs[i].value);
         let value = JSON.parse(jsonValueStr);
 
-        rst.push(value);
+        rst[keyStr] = value;
       }
 
       return rst;
