@@ -1,7 +1,7 @@
 import * as Types from '../common';
-import { ITransport } from '../transport';
+import { ITransport, ResultKV } from '../transport';
 import { StdTx } from '../transport/encoder';
-import { ResultBlock, ResultKV } from '../transport/rpc';
+import { ResultBlock } from '../transport/rpc';
 export default class Query {
     private _transport;
     constructor(transport: ITransport);

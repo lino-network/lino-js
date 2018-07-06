@@ -1,4 +1,4 @@
-import { ResultBlock, ResultBroadcastTxCommit, ResultKV } from './rpc';
+import { ResultBlock, ResultBroadcastTxCommit } from './rpc';
 export interface ITransport {
     query<T = any>(key: string, storeName: string): Promise<T>;
     querySubspace<T = any>(subspace: string, storeName: string, getKeyBy: GetKeyBy): Promise<ResultKV<string, T>[]>;
@@ -8,6 +8,10 @@ export interface ITransport {
 export interface ITransportOptions {
     nodeUrl: string;
     chainId?: string;
+}
+export interface ResultKV<K, V> {
+    key: K;
+    value: V;
 }
 export declare class Transport implements ITransport {
     private _chainId;

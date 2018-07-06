@@ -1,7 +1,7 @@
 import ByteBuffer from 'bytebuffer';
 import { ec as EC } from 'elliptic';
 import { decodePrivKey, encodeSignMsg, encodeTx, convertMsg, StdMsg, encodeMsg } from './encoder';
-import { ResultBlock, ResultBroadcastTxCommit, Rpc, ResultKV } from './rpc';
+import { ResultBlock, ResultBroadcastTxCommit, Rpc } from './rpc';
 import Keys from '../query/keys';
 
 export interface ITransport {
@@ -23,6 +23,11 @@ export interface ITransport {
 export interface ITransportOptions {
   nodeUrl: string;
   chainId?: string;
+}
+
+export interface ResultKV<K, V> {
+  key: K;
+  value: V;
 }
 
 export class Transport implements ITransport {
