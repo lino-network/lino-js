@@ -1,9 +1,9 @@
 import ByteBuffer from 'bytebuffer';
 import * as Types from '../common';
-import { ITransport, GetKeyBy } from '../transport';
+import { ITransport, GetKeyBy, ResultKV } from '../transport';
 import { decodePubKey } from '../transport/encoder';
 import { InternalPubKey, StdTx, convertToRawPubKey, encodePubKey } from '../transport/encoder';
-import { ResultBlock, ResultKV } from '../transport/rpc';
+import { ResultBlock } from '../transport/rpc';
 import * as Util from '../util/index';
 import Keys from './keys';
 
