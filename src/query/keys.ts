@@ -64,7 +64,7 @@ namespace Keys {
     coinDayParamSubStore: '07',
     bandwidthParamSubStore: '08',
     accountParamSubstore: '09',
-    postParamSubStore: '0a',
+    postParamSubStore: '10',
 
     sep: ByteBuffer.fromUTF8('/').toHex()
   };
