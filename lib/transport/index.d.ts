@@ -1,7 +1,7 @@
-import { ResultBlock, ResultBroadcastTxCommit } from './rpc';
+import { ResultBlock, ResultBroadcastTxCommit, ResultKV } from './rpc';
 export interface ITransport {
     query<T = any>(key: string, storeName: string): Promise<T>;
-    querySubspace(subspace: string, storeName: string): Promise<any>;
+    querySubspace(subspace: string, storeName: string, getKeyBy: GetKeyBy): Promise<any>;
     block(height: number): Promise<ResultBlock>;
     signBuildBroadcast(msg: any, msgType: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
 }
@@ -14,13 +14,18 @@ export declare class Transport implements ITransport {
     private _rpc;
     constructor(opt: ITransportOptions);
     query<T>(key: string, storeName: string): Promise<T>;
-    querySubspace(subspace: string, storeName: string): Promise<any>;
+    querySubspace<V>(subspace: string, storeName: string, getKeyBy: GetKeyBy): Promise<ResultKV<string, V>[]>;
     block(height: number): Promise<ResultBlock>;
     signBuildBroadcast(msg: any, msgType: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
 }
 export declare enum BroadCastErrorEnum {
     CheckTx = 0,
     DeliverTx = 1
+}
+export declare enum GetKeyBy {
+    GetSubstringAfterKeySeparator = 0,
+    GetHexSubstringAfterKeySeparator = 1,
+    GetSubstringAfterSubstore = 2
 }
 export declare class BroadcastError extends Error {
     readonly code: number;

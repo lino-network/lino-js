@@ -60,7 +60,6 @@ export interface VoteParam {
 }
 export declare function isVoteParam(param: object): param is VoteParam;
 export interface ProposalParam {
-    next_proposal_id: number;
     content_censorship_decide_hr: number;
     content_censorship_min_deposit: Coin;
     content_censorship_pass_ratio: Rat;
@@ -111,5 +110,6 @@ export interface AccountParam {
 export declare function isAccountParam(param: object): param is AccountParam;
 export interface PostParam {
     micropayment_limitation: Coin;
+    report_or_upvote_interval: number;
 }
 export declare function isPostParam(param: object): param is PostParam;

@@ -283,9 +283,13 @@ export default class Query {
      */
     getDeveloper(developerName: string): Promise<Developer>;
     /**
-     * getDevelopers returns a list of all developers.
+     * getDevelopers returns a list of develop.
      */
-    getDevelopers(): Promise<DeveloperList>;
+    getDevelopers(): Promise<any>;
+    /**
+     * getDeveloperList returns a list of developer name.
+     */
+    getDeveloperList(): Promise<DeveloperList>;
     /**
      * getInfraProvider returns the infra provider info such as usage.
      *
@@ -315,6 +319,10 @@ export default class Query {
      * getExpiredProposal returns all past proposals.
      */
     getExpiredProposal(): Promise<Proposal[]>;
+    /**
+     * getNextProposalID returns the next proposal id
+     */
+    getNextProposalID(): Promise<NextProposalID>;
     /**
      * getEvaluateOfContentValueParam returns the EvaluateOfContentValueParam.
      */
@@ -533,6 +541,7 @@ export interface AccountMeta {
     last_activity_at: number;
     transaction_capacity: Types.Coin;
     json_meta: string;
+    last_report_or_upvote_at: number;
 }
 export interface FollowerMeta {
     created_at: number;
@@ -550,6 +559,10 @@ export interface Reward {
 }
 export interface Relationship {
     donation_times: number;
+}
+export interface RangeQueryResult<T> {
+    key: string;
+    result: T;
 }
 export interface BalanceHistory {
     details: Detail[];
@@ -574,6 +587,9 @@ export interface ProposalInfo {
     result: number;
     created_at: number;
     expired_at: number;
+}
+export interface NextProposalID {
+    next_proposal_id: number;
 }
 export interface Proposal {
     type: string;

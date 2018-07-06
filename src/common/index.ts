@@ -103,7 +103,6 @@ export function isVoteParam(param: object): param is VoteParam {
 }
 
 export interface ProposalParam {
-  next_proposal_id: number;
   content_censorship_decide_hr: number;
   content_censorship_min_deposit: Coin;
   content_censorship_pass_ratio: Rat;
@@ -119,7 +118,6 @@ export interface ProposalParam {
 }
 export function isProposalParam(param: object): param is ProposalParam {
   return (
-    'next_proposal_id' in param &&
     'content_censorship_decide_hr' in param &&
     'content_censorship_min_deposit' in param &&
     'content_censorship_pass_ratio' in param &&
@@ -201,7 +199,8 @@ export function isAccountParam(param: object): param is AccountParam {
 
 export interface PostParam {
   micropayment_limitation: Coin;
+  report_or_upvote_interval: number;
 }
 export function isPostParam(param: object): param is PostParam {
-  return 'micropayment_limitation' in param;
+  return 'micropayment_limitation' in param && 'report_or_upvote_interval' in param;
 }

@@ -1,4 +1,4 @@
-const NODE_URL = 'http://18.188.188.164:26657';
+const NODE_URL = 'http://localhost:26657';
 const testTxPrivHex = 'E1B0F79A20B1B66F263A295015BFC4805F979DD3028C29E04C911C5F941CFFA03D97862E3E';
 
 const zhimaoTx =
@@ -258,15 +258,29 @@ function addSuite(envName) {
       });
 
       it('getAllGrantPubKeys', function() {
-        return query.getAllGrantPubKeys('lino').then(v => {
+        return query.getAllGrantPubKeys('yukai-tu11').then(v => {
           debug('getAllGrantPubKeys', v);
         });
       });
 
       it('getAllPosts', function() {
         this.timeout(0);
-        return query.getAllPosts('test2').then(v => {
+        return query.getAllPosts('yukai-tu11').then(v => {
           debug('getAllPosts', v);
+        });
+      });
+
+      it('getAccountBank', function() {
+        this.timeout(0);
+        return query.getAccountBank('yukai-tu11').then(v => {
+          debug('get acc bank', v);
+        });
+      });
+
+      it('getDevelopers', function() {
+        this.timeout(0);
+        return query.getDevelopers().then(v => {
+          debug('getDevelopers', v);
         });
       });
     });

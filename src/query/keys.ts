@@ -1,5 +1,6 @@
 //@ts-ignore
 import ByteBuffer from 'bytebuffer';
+import { convertToRawPubKey, encodePubKey } from '../transport/encoder';
 
 namespace Keys {
   export const KVSTOREKEYS = {
@@ -26,6 +27,7 @@ namespace Keys {
 
     proposalSubstore: '00',
     proposalListSubStore: '01',
+    nextProposalIDSubstore: '02',
 
     developerSubstore: '00',
     developerListSubstore: '01',
@@ -62,10 +64,23 @@ namespace Keys {
     coinDayParamSubStore: '07',
     bandwidthParamSubStore: '08',
     accountParamSubstore: '09',
-    postParamSubStore: '10',
+    postParamSubStore: '0a',
 
     sep: ByteBuffer.fromUTF8('/').toHex()
   };
+
+  export function getHexSubstringAfterKeySeparator(key: string): string {
+    console.log(key, key.indexOf('/'));
+    return key.substr(key.indexOf('/') + 1, key.length);
+  }
+
+  export function getSubstringAfterKeySeparator(key: string): string {
+    return key.substr(key.indexOf(_KEYS.sep) + 1, key.length);
+  }
+
+  export function getSubstringAfterSubstore(key: string): string {
+    return key.substr(2, key.length);
+  }
 
   // validator related
   export function getValidatorKey(accKey: string): string {
@@ -117,6 +132,10 @@ namespace Keys {
   export function getDeveloperKey(accKey: string): string {
     const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
     return _KEYS.developerSubstore.concat(accKeyHex);
+  }
+
+  export function getDeveloperPrefix(): string {
+    return _KEYS.developerSubstore;
   }
 
   export function getDeveloperListKey(): string {
@@ -288,6 +307,10 @@ namespace Keys {
 
   export function getProposalListKey(): string {
     return _KEYS.proposalListSubStore;
+  }
+
+  export function getNextProposalIDKey(): string {
+    return _KEYS.nextProposalIDSubstore;
   }
 
   // param related

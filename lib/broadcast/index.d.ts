@@ -417,16 +417,6 @@ export default class Broadcast {
      */
     changeValidatorParam(creator: string, parameter: Types.ValidatorParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
-     * changeCoinDayParam changes CoinDayParam with new value.
-     * It composes ChangeCoinDayParamMsg and then broadcasts the transaction to blockchain.
-     *
-     * @param creator: the user who creates the proposal
-     * @param parameter: the CoinDayParam
-     * @param privKeyHex: the private key of the creator
-     * @param seq: the sequence number of the creator for the next transaction
-     */
-    changeCoinDayParam(creator: string, parameter: Types.CoinDayParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
-    /**
      * changeBandwidthParam changes BandwidthParam with new value.
      * It composes ChangeBandwidthParamMsg and then broadcasts the transaction to blockchain.
      *
@@ -668,10 +658,6 @@ export interface ChangeDeveloperParamMsg {
 export interface ChangeValidatorParamMsg {
     creator: string;
     parameter: Types.ValidatorParam;
-}
-export interface ChangeCoinDayParamMsg {
-    creator: string;
-    parameter: Types.CoinDayParam;
 }
 export interface ChangeBandwidthParamMsg {
     creator: string;

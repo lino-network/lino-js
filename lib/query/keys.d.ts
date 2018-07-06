@@ -11,6 +11,9 @@ declare namespace Keys {
         ParamKVStoreKey: string;
         ProposalKVStoreKey: string;
     };
+    function getHexSubstringAfterKeySeparator(key: string): string;
+    function getSubstringAfterKeySeparator(key: string): string;
+    function getSubstringAfterSubstore(key: string): string;
     function getValidatorKey(accKey: string): string;
     function getValidatorListKey(): string;
     function getVotePrefix(id: string): string;
@@ -21,6 +24,7 @@ declare namespace Keys {
     function getDelegateePrefix(me: string): string;
     function getDelegateeKey(me: string, myDelegatee: string): string;
     function getDeveloperKey(accKey: string): string;
+    function getDeveloperPrefix(): string;
     function getDeveloperListKey(): string;
     function getInfraProviderKey(accKey: string): string;
     function getInfraProviderListKey(): string;
@@ -55,6 +59,7 @@ declare namespace Keys {
     function getPostDonationsKey(permlink: string, donateUser: string): string;
     function getProposalKey(proposalID: string): string;
     function getProposalListKey(): string;
+    function getNextProposalIDKey(): string;
     function getEvaluateOfContentValueParamKey(): string;
     function getGlobalAllocationParamKey(): string;
     function getInfraInternalAllocationParamKey(): string;
