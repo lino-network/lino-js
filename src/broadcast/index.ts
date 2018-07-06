@@ -1254,11 +1254,6 @@ export interface ChangeValidatorParamMsg {
   parameter: Types.ValidatorParam;
 }
 
-export interface ChangeCoinDayParamMsg {
-  creator: string;
-  parameter: Types.CoinDayParam;
-}
-
 export interface ChangeBandwidthParamMsg {
   creator: string;
   parameter: Types.BandwidthParam;
@@ -1312,7 +1307,6 @@ const _MSGTYPE = {
   ChangeProposalParamMsgType: '49AB71A6D3CB78',
   ChangeDeveloperParamMsgType: '5BBFF6FE8C9110',
   ChangeValidatorParamMsgType: '28FAB3D4621AD0',
-  ChangeCoinDayParamMsgType: '34DEDA997171F0',
   ChangeBandwidthParamMsgType: '1F779099D3A7A0',
   ChangeAccountParamMsgType: 'B4E93F3241E950',
   ChangePostParamMsgType: 'D294B618DB0588',
