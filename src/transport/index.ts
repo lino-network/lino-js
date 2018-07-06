@@ -52,7 +52,6 @@ export class Transport implements ITransport {
     // get transport's node and do ABCIQuery
     // rpc client do rpc call
     // check resp
-    console.log('before get res kvs');
     const path = `/store/${storeName}/subspace-js`;
     return this._rpc.abciQuery(path, subspace).then(result => {
       if (!result.response || !result.response.value) {
@@ -61,6 +60,7 @@ export class Transport implements ITransport {
 
       const resValStr = ByteBuffer.atob(result.response.value);
       let resKVs = JSON.parse(resValStr);
+
       let rst = {};
       if (resKVs === null) {
         return rst;

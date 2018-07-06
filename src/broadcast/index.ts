@@ -17,7 +17,7 @@ export default class Broadcast {
   /**
    * Register registers a new user on blockchain.
    * It composes RegisterMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param referrer: the user who refers the new user
    * @param register_fee: the amount of money used for registering
    * @param username: new username
@@ -54,11 +54,11 @@ export default class Broadcast {
   /**
    * Transfer sends a certain amount of LINO token from the sender to the receiver.
    * It composes TransferMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param sender: the user who wants to send money
    * @param receiver: the receiver whom the sender sends money to
    * @param amount: the amount LINO token in the transfer
-   * @param memo: memos inthe transfer 
+   * @param memo: memos inthe transfer
    * @param privKeyHex: the private key of sender
    * @param seq: the sequence number of sender for the next transaction
    */
@@ -82,7 +82,7 @@ export default class Broadcast {
   /**
    * Follow creates a social relationship between follower and followee.
    * It composes FollowMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param follower: follower
    * @param followee: followee
    * @param privKeyHex: the private key of follower
@@ -99,7 +99,7 @@ export default class Broadcast {
   /**
    * Unfollow revokes the social relationship between follower and followee.
    * It composes UnfollowMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param follower: follower
    * @param followee: followee
    * @param privKeyHex: the private key of follower
@@ -134,7 +134,7 @@ export default class Broadcast {
    * It composes UpdateAccountMsg and then broadcasts the transaction to blockchain.
    *
    * @param username: the user who wants to update account meta
-   * @param json_meta: the newly updated meta 
+   * @param json_meta: the newly updated meta
    * @param privKeyHex: the private key of user
    * @param seq: the sequence number of user for the next transaction
    */
@@ -191,7 +191,7 @@ export default class Broadcast {
    * @param parentPostID: if this is a comment, parentPostID is the id of post that this comment is added to
    * @param sourceAuthor: if this is a re-post, sourceAuthor should be the original post author
    * @param sourcePostID: if this is a re-post, sourcePostID should be the original post id
-   * @param redistributionSplitRate: how much percentage the source post wants to split for re-post 
+   * @param redistributionSplitRate: how much percentage the source post wants to split for re-post
    * @param links: the links of the new post
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of user for the next transaction
@@ -241,7 +241,7 @@ export default class Broadcast {
   /**
    * Like adds a weighted-like to a post that is performed by a user.
    * It composes LikeMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param username: the user who likes the post
    * @param author: the author of the post
    * @param weight: like weight of the user
@@ -269,7 +269,7 @@ export default class Broadcast {
   /**
    * Donate adds a money donation to a post by a user.
    * It composes DonateMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param username: the user who wants to donate to the post
    * @param author: the author of the post
    * @param amount: the amount LINO token that the user wants to donate
@@ -306,7 +306,7 @@ export default class Broadcast {
   /**
    * ReportOrUpvote adds a report or upvote action to a post.
    * It composes ReportOrUpvoteMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param username: the user who report or upvote the post
    * @param author: the author of the post
    * @param post_id: the id of the post
@@ -336,7 +336,7 @@ export default class Broadcast {
    * remove the post from the blockchain, instead it sets IsDeleted to true
    * and clears all the other data.
    * It composes DeletePostMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param author: the author of the post
    * @param post_id: the id of the post
    * @param privKeyHex: the private key of the author
@@ -349,14 +349,14 @@ export default class Broadcast {
     };
     return this._broadcastTransaction(msg, _MSGTYPE.DeletePostMsgType, privKeyHex, seq);
   }
-  
+
   /**
    * View increases the view count of a post by one.
    * It composes ViewMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param username: the user who view the post
    * @param author: The author of the post
-   * @param post_id: the id of the post 
+   * @param post_id: the id of the post
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the author for the next transaction
    */
@@ -372,12 +372,12 @@ export default class Broadcast {
   /**
    * UpdatePost updates post info with new data.
    * It composes UpdatePostMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param author: the author of the post
-   * @param title: new titile of the post 
+   * @param title: new titile of the post
    * @param post_id: the id of the post
    * @param content: new content of the post
-   * @param redistribution_split_rate: new re-spot split rate 
+   * @param redistribution_split_rate: new re-spot split rate
    * @param links: new links of the post
    * @param privKeyHex: the private key of the author
    * @param seq: the sequence number of the author for the next transaction
@@ -422,13 +422,13 @@ export default class Broadcast {
    * in order to become a validator. Before becoming a validator, the user
    * has to be a voter.
    * It composes ValidatorDepositMsg and then broadcasts the transaction to blockchain.
-   * 
-   * @param username: the user who wants to deposit money for being a validator 
+   *
+   * @param username: the user who wants to deposit money for being a validator
    * @param deposit: the amount of LINO token the user wants to deposit
-   * @param validator_public_key: the validator public key given by Tendermint 
+   * @param validator_public_key: the validator public key given by Tendermint
    * @param link: the link of the user
-   * @param privKeyHex: the private key of the user 
-   * @param seq: the sequence number of the user for the next transaction 
+   * @param privKeyHex: the private key of the user
+   * @param seq: the sequence number of the user for the next transaction
    */
   validatorDeposit(
     username: string,
@@ -451,7 +451,7 @@ export default class Broadcast {
    * ValidatorWithdraw withdraws part of LINO token from a validator's deposit,
    * while still keep being a validator.
    * It composes ValidatorDepositMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param username: the validator username
    * @param amount: the amount of LINO token the validator wants to withdraw
    * @param privKeyHex: the private key of the validator
@@ -469,7 +469,7 @@ export default class Broadcast {
    * ValidatorRevoke revokes all deposited LINO token of a validator
    * so that the user will not be a validator anymore.
    * It composes ValidatorRevokeMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param username: the validator username
    * @param privKeyHex: the private key of the validator
    * @param seq: the sequence number of the validator
@@ -487,7 +487,7 @@ export default class Broadcast {
    * VoterDeposit deposits a certain amount of LINO token for a user
    * in order to become a voter.
    * It composes VoterDepositMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param username: the user whot wants to deposit money for being a voter
    * @param deposit: the amount of LINO token the user wants to deposit
    * @param privKeyHex: the private key of the user
@@ -505,10 +505,10 @@ export default class Broadcast {
    * VoterWithdraw withdraws part of LINO token from a voter's deposit,
    * while still keep being a voter.
    * It composes VoterWithdrawMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param username: the voter username
-   * @param amount: the amount of LINO token the voter wants to withdraw 
-   * @param privKeyHex: the private key of the voter 
+   * @param amount: the amount of LINO token the voter wants to withdraw
+   * @param privKeyHex: the private key of the voter
    * @param seq: the sequence number of the voter for the next transaction
    */
   voterWithdraw(username: string, amount: string, privKeyHex: string, seq: number) {
@@ -539,7 +539,7 @@ export default class Broadcast {
    * Delegate delegates a certain amount of LINO token of delegator to a voter, so
    * the voter will have more voting power.
    * It composes DelegateMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param delegator: the user who wants to delegate money
    * @param voter: the voter that the delegator wants to delegate moeny to
    * @param amount: the amount of LINO token that the delegator wants to delegate
@@ -587,7 +587,7 @@ export default class Broadcast {
    * RevokeDelegation reovkes all delegated LINO token of a delegator to a voter
    * so there is no delegation between the two users.
    * It composes RevokeDelegationMsg and then broadcasts the transaction to blockchain    *
-   * 
+   *
    * @param delegator: the delegator username
    * @param voter: the voter username
    * @param privKeyHex: the private key of the delegator
@@ -643,7 +643,7 @@ export default class Broadcast {
    * GrantPermission grants a certain (e.g. Post or Micropayment) permission to
    * an authenticated app with a certain period of time.
    * It composes GrantPermissionMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param username: the user who grants the permission
    * @param authenticate_app: the authenticated app of the developer
    * @param validity_period: how long does this app is valid
@@ -703,9 +703,9 @@ export default class Broadcast {
   /**
    * ProviderReport reports infra usage of a infra provider in order to get infra inflation.
    * It composes ProviderReportMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param username: the username of the infra provider
-   * @param usage: the amount of data traffic consumed 
+   * @param usage: the amount of data traffic consumed
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the user for the next transaction
    */
@@ -722,10 +722,10 @@ export default class Broadcast {
   /**
    * VoteProposal adds a vote to a certain proposal with agree/disagree.
    * It composes VoteProposalMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param voter: the voter username
-   * @param proposal_id: the proposal id 
-   * @param result: agree or disagree 
+   * @param proposal_id: the proposal id
+   * @param result: agree or disagree
    * @param privKeyHex: the private key of the voter
    * @param seq: the sequence number of the voter for the next transaction
    */
@@ -747,7 +747,7 @@ export default class Broadcast {
   /**
    * ChangeGlobalAllocationParam changes GlobalAllocationParam with new value.
    * It composes ChangeGlobalAllocationParamMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param creator: the user who creates the proposal
    * @param parameter: the GlobalAllocationParam
    * @param privKeyHex: the private key of the creator
@@ -770,7 +770,7 @@ export default class Broadcast {
   /**
    * changeEvaluateOfContentValueParam changes EvaluateOfContentValueParam with new value.
    * It composes ChangeEvaluateOfContentValueParamMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param creator: the user who creates the proposal
    * @param parameter: the EvaluateOfContentValueParam
    * @param privKeyHex: the private key of the creator
@@ -793,7 +793,7 @@ export default class Broadcast {
   /**
    * changeInfraInternalAllocationParam changes InfraInternalAllocationParam with new value.
    * It composes ChangeInfraInternalAllocationParamMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param creator: the user who creates the proposal
    * @param parameter: the InfraInternalAllocationParam
    * @param privKeyHex: the private key of the creator
@@ -816,7 +816,7 @@ export default class Broadcast {
   /**
    * changeVoteParam changes VoteParam with new value.
    * It composes ChangeVoteParamMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param creator: the user who creates the proposal
    * @param parameter: the VoteParam
    * @param privKeyHex: the private key of the creator
@@ -834,7 +834,7 @@ export default class Broadcast {
   /**
    * changeProposalParam changes ProposalParam with new value.
    * It composes ChangeProposalParamMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param creator: the user who creates the proposal
    * @param parameter: the ProposalParam
    * @param privKeyHex: the private key of the creator
@@ -857,7 +857,7 @@ export default class Broadcast {
   /**
    * changeDeveloperParam changes DeveloperParam with new value.
    * It composes ChangeDeveloperParamMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param creator: the user who creates the proposal
    * @param parameter: the DeveloperParam
    * @param privKeyHex: the private key of the creator
@@ -880,7 +880,7 @@ export default class Broadcast {
   /**
    * changeValidatorParam changes ValidatorParam with new value.
    * It composes ChangeValidatorParamMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param creator: the user who creates the proposal
    * @param parameter: the ValidatorParam
    * @param privKeyHex: the private key of the creator
@@ -901,32 +901,9 @@ export default class Broadcast {
   }
 
   /**
-   * changeCoinDayParam changes CoinDayParam with new value.
-   * It composes ChangeCoinDayParamMsg and then broadcasts the transaction to blockchain.
-   * 
-   * @param creator: the user who creates the proposal
-   * @param parameter: the CoinDayParam
-   * @param privKeyHex: the private key of the creator
-   * @param seq: the sequence number of the creator for the next transaction
-   */
-  changeCoinDayParam(
-    creator: string,
-    parameter: Types.CoinDayParam,
-    privKeyHex: string,
-    seq: number
-  ) {
-    const msg: ChangeCoinDayParamMsg = {
-      creator,
-      parameter
-    };
-
-    return this._broadcastTransaction(msg, _MSGTYPE.ChangeCoinDayParamMsgType, privKeyHex, seq);
-  }
-
-  /**
    * changeBandwidthParam changes BandwidthParam with new value.
    * It composes ChangeBandwidthParamMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param creator: the user who creates the proposal
    * @param parameter: the BandwidthParam
    * @param privKeyHex: the private key of the creator
@@ -949,7 +926,7 @@ export default class Broadcast {
   /**
    * changeAccountParam changes AccountParam with new value.
    * It composes ChangeAccountParamMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param creator: the user who creates the proposal
    * @param parameter: the AccountParam
    * @param privKeyHex: the private key of the creator
@@ -972,7 +949,7 @@ export default class Broadcast {
   /**
    * changePostParam changes PostParam with new value.
    * It composes ChangePostParamMsg and then broadcasts the transaction to blockchain.
-   * 
+   *
    * @param creator: the user who creates the proposal
    * @param parameter: the PostParam
    * @param privKeyHex: the private key of the creator

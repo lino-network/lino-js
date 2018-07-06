@@ -215,6 +215,7 @@ export default class Query {
   getAllGrantPubKeys(username: string): Promise<any> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.querySubspace(Keys.getGrantPubKeyPrefix(username), AccountKVStoreKey);
+
   }
 
   /**
@@ -693,6 +694,17 @@ export default class Query {
   }
 
   /**
+   * getProposalIDParam returns the ProposalIDParam.
+   */
+  getProposalIDParam(): Promise<Types.ProposalIDParam> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.ProposalIDParam>(
+      Keys.getProposalIDParamKey(),
+      ParamKVStoreKey
+    );
+  }
+
+  /**
    * getValidatorParam returns the ValidatorParam.
    */
   getValidatorParam(): Promise<Types.ValidatorParam> {
@@ -1020,6 +1032,7 @@ export interface AccountMeta {
   last_activity_at: number;
   transaction_capacity: Types.Coin;
   json_meta: string;
+  last_report_or_upvote_at: number;
 }
 
 export interface FollowerMeta {
