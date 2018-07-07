@@ -1,5 +1,5 @@
-const NODE_URL = 'http://localhost:26657';
-const testTxPrivHex = 'E1B0F79A20B1B66F263A295015BFC4805F979DD3028C29E04C911C5F941CFFA03D97862E3E';
+const NODE_URL = 'http://18.188.188.164:26657/';
+const testTxPrivHex = 'E1B0F79A20E33A6524AEE7134012E3B54E61F0F784CD7A75D43FF0D312CCC6FBB7BBFE8B4D';
 
 const zhimaoTx =
   'A32889124042B7EC409FDA30BB1164122A85CC216CA1DBD6A56066B841AE6F4C9CAAE1C2E554F9F0E0BCCF033A67D43D97BDDCCE4E0EE187A45438009D11801F2405268821';
@@ -302,9 +302,37 @@ function addSuite(envName) {
             })
             .then(seq => {
               return broadcast
-                .transfer('lino', 'zhimao', '10', 'memo1', testTxPrivHex, seq)
+                .transfer('lino', 'yukai-tu6', '10', 'memo1', testTxPrivHex, seq)
                 .then(v => {
                   debug('transfer', v);
+                  expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+                });
+            });
+        });
+      });
+      it('grantPermission', function() {
+        return runBroadcast(query, true, () => {
+          return query
+            .getSeqNumber('yukai-tu13')
+            .then(seq => {
+              debug('query seq number before transfer', seq);
+              debug(getUnixTime());
+              expect(seq).to.be.a('number');
+              return seq;
+            })
+            .then(seq => {
+              return broadcast
+                .grantPermission(
+                  'yukai-tu13',
+                  'lino',
+                  1000000,
+                  1,
+                  10,
+                  'A3288912407DBF7DBBD88A2A8E6E0C54C0E7806457052B5352A26290A62EAD028D250C26BB98B51C9CB1AF5F51F70FDB853B63AA6EC61CA1F547C8E27058E8EEE385998EC9',
+                  seq
+                )
+                .then(v => {
+                  debug('grant permission', v);
                   expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
                 });
             });
@@ -317,6 +345,8 @@ function addSuite(envName) {
         const derivedMicroPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
         const derivedPostPrivKey = UTILS.derivePrivKey(derivedMicroPrivKey);
 
+        console.log(derivedTxPrivKey);
+        console.log(derivedMicroPrivKey);
         const masterPubKey = UTILS.pubKeyFromPrivate(randomMasterPrivKey);
         const txPubKey = UTILS.pubKeyFromPrivate(derivedTxPrivKey);
         const microPubKey = UTILS.pubKeyFromPrivate(derivedMicroPrivKey);
@@ -350,6 +380,18 @@ function addSuite(envName) {
                 .then(v => {
                   debug('register', v);
                   expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+                  console.log('start recover');
+                  return broadcast
+                    .recover(
+                      userName,
+                      masterPubKey,
+                      txPubKey,
+                      microPubKey,
+                      postPubKey,
+                      randomMasterPrivKey,
+                      0
+                    )
+                    .then(res => console.log(res));
                 });
             });
         });
