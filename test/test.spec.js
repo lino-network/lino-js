@@ -356,6 +356,7 @@ function addSuite(envName) {
         debug('register: ', userName);
         debug('MasterKey: ', randomMasterPrivKey);
         debug('txPrivKey: ', derivedTxPrivKey);
+        debug('register pub key in input========: ', microPubKey);
 
         return runBroadcast(query, true, () => {
           return query
@@ -453,6 +454,25 @@ function addSuite(envName) {
               debug('voteProposal', v);
               expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
             });
+          });
+        });
+      });
+
+      it('revokePermission', function() {
+        return runBroadcast(query, true, () => {
+          return query.getSeqNumber('yukaitu').then(seq => {
+            return broadcast
+              .revokePermission(
+                'yukaitu',
+                'eb5ae98221037bb974cf968efd294714d01bdf9d848981147bf7fe7432aed3219aa63e307144',
+                1,
+                testTxPrivHex,
+                seq
+              )
+              .then(v => {
+                debug('revoke permission', v);
+                expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+              });
           });
         });
       });

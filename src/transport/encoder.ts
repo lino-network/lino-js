@@ -117,6 +117,10 @@ export function encodeMsg(msg: any): any {
     );
   }
 
+  if ('public_key' in msg) {
+    encodedMsg.public_key = convertToInternalPubKey(msg.public_key, _TYPE.PubKeySecp256k1);
+  }
+
   return encodedMsg;
 }
 export function encodeSignMsg(stdMsg: StdMsg, chainId: string, seq: number): any {
