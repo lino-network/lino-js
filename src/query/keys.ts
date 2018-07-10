@@ -66,16 +66,16 @@ namespace Keys {
     accountParamSubstore: '09',
     postParamSubStore: '10',
 
-    sep: ByteBuffer.fromUTF8('/').toHex()
+    sep: ByteBuffer.fromUTF8('/').toHex(),
+    separator: '/'
   };
 
   export function getHexSubstringAfterKeySeparator(key: string): string {
-    console.log(key, key.indexOf('/'));
-    return key.substr(key.indexOf('/') + 1, key.length);
+    return key.substr(key.indexOf(_KEYS.separator) + 1, key.length);
   }
 
   export function getSubstringAfterKeySeparator(key: string): string {
-    return key.substr(key.indexOf(_KEYS.sep) + 1, key.length);
+    return key.substr(key.indexOf(_KEYS.separator) + 1, key.length);
   }
 
   export function getSubstringAfterSubstore(key: string): string {
