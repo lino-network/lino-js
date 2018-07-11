@@ -45,6 +45,7 @@ namespace Keys {
     accountRelationshipSubstore: '07',
     accountBalanceHistorySubstore: '08',
     accountGrantPubKeySubstore: '09',
+    accountRewardHistorySubstore: '0a',
 
     postInfoSubStore: '00',
     postMetaSubStore: '01',
@@ -191,6 +192,16 @@ namespace Keys {
   export function getRewardKey(accKey: string): string {
     const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
     return _KEYS.accountRewardSubstore.concat(accKeyHex);
+  }
+
+  export function getRewardHistoryPrefix(me: string): string {
+    const meHex = ByteBuffer.fromUTF8(me).toHex();
+    return _KEYS.accountRewardHistorySubstore.concat(meHex).concat(_KEYS.sep);
+  }
+
+  export function getRewardHistoryKey(me: string, bucketSlot: string): string {
+    const bucketSlotHex = ByteBuffer.fromUTF8(bucketSlot).toHex();
+    return getRewardHistoryPrefix(me).concat(bucketSlotHex);
   }
 
   export function getRelationshipPrefix(me: string): string {

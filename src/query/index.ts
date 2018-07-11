@@ -119,17 +119,24 @@ export default class Query {
    */
   getAllBalanceHistory(username: string): Promise<BalanceHistory> {
     return this.getAccountBank(username).then(bank => {
-      let numberOfbundle = bank.number_of_transaction / 100;
+      let res: BalanceHistory = { details: [] };
+      if (bank.number_of_transaction == 0) {
+        return res;
+      }
+
+      let numberOfbundle = (bank.number_of_transaction - 1) / 100;
       let promises: Promise<BalanceHistory>[] = [];
       for (var i = 0; i <= numberOfbundle; ++i) {
         promises.push(this.getBalanceHistoryBundle(username, i));
       }
-      let res: BalanceHistory = { details: [] };
+
       return Promise.all(promises).then(bundles => {
         bundles.reduce((prev, curr) => {
           prev.details.push(...curr.details);
           return prev;
         }, res);
+
+        res.details.reverse();
         return res;
       });
     });
@@ -229,6 +236,50 @@ export default class Query {
   getReward(username: string): Promise<Reward> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     return this._transport.query<Reward>(Keys.getRewardKey(username), AccountKVStoreKey);
+  }
+
+  /**
+   * getAllRewardHistory returns all reward history related to
+   * a user's posts reward, in reverse-chronological order.
+   *
+   * @param username
+   */
+  getAllRewardHistory(username: string): Promise<RewardHistory> {
+    return this.getAccountBank(username).then(bank => {
+      let res: RewardHistory = { details: [] };
+      if (bank.number_of_reward == 0) {
+        return res;
+      }
+
+      let numberOfbundle = (bank.number_of_reward - 1) / 100;
+      let promises: Promise<RewardHistory>[] = [];
+      for (var i = 0; i <= numberOfbundle; ++i) {
+        promises.push(this.getRewardHistoryBundle(username, i));
+      }
+
+      return Promise.all(promises).then(bundles => {
+        bundles.reduce((prev, curr) => {
+          prev.details.push(...curr.details);
+          return prev;
+        }, res);
+        res.details.reverse();
+        return res;
+      });
+    });
+  }
+
+  /**
+   * getRewardHistoryBundle returns all reward history in a certain bucket.
+   *
+   * @param username
+   * @param index
+   */
+  getRewardHistoryBundle(username: string, index: number): Promise<RewardHistory> {
+    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
+    return this._transport.query<RewardHistory>(
+      Keys.getRewardHistoryKey(username, index.toString()),
+      AccountKVStoreKey
+    );
   }
 
   /**
@@ -855,19 +906,19 @@ export default class Query {
     }
 
     let accountBank = await this.getAccountBank(username);
-    let numTx = accountBank.number_of_transaction;
-    let maxTxNo = numTx - 1;
     let rst: BalanceHistory = { details: [] };
 
-    if (numTx == 0) {
+    if (accountBank.number_of_transaction == 0) {
       return rst;
     }
 
-    if (from > maxTxNo) {
+    let maxTxIndex = accountBank.number_of_transaction - 1;
+
+    if (from > maxTxIndex) {
       throw new Error(`GetBalanceHistoryFromTo: [${from}] is larger than total num of tx`);
     }
-    if (to > maxTxNo) {
-      to = maxTxNo;
+    if (to > maxTxIndex) {
+      to = maxTxIndex;
     }
 
     // number of banlance history is wanted
@@ -879,7 +930,7 @@ export default class Query {
     let indexOfTo = to % 100;
 
     while (bucketSlot >= 0 && numHistory > 0) {
-      console.log('sending bucketSlot: ', bucketSlot);
+      console.log('balance history sending bucketSlot: ', bucketSlot);
       let history = await this.getBalanceHistoryBundle(username, bucketSlot);
       let startIndex = bucketSlot == targetBucketOfTo ? indexOfTo : history.details.length - 1;
 
@@ -906,7 +957,88 @@ export default class Query {
     }
     let accountBank = await this.getAccountBank(username);
     let maxTxNo = accountBank.number_of_transaction - 1;
-    return this.getBalanceHistoryFromTo(username, Math.max(0, maxTxNo - numHistory + 1), maxTxNo);
+
+    let from = Math.max(0, maxTxNo - numHistory + 1);
+    if (numHistory > accountBank.number_of_transaction) {
+      from = 0;
+    }
+
+    return this.getBalanceHistoryFromTo(username, from, maxTxNo);
+  }
+
+  /**
+   * getRewardHistoryFromTo returns a list of reward history in the range of [from, to],
+   * that if to is larger than the number of tx, tx will be replaced by the largest tx number,
+   * related to a user's posts rewards, in reverse-chronological order.
+   *
+   * @param username: user name
+   * @param from: the start index of the reward history, inclusively
+   * @param to: the end index of the reward history, inclusively
+   */
+  async getRewardHistoryFromTo(username: string, from: number, to: number): Promise<RewardHistory> {
+    if (!this.isValidNat(from) || !this.isValidNat(to) || from > to) {
+      throw new Error(`getRewardHistoryFromTo: from [${from}] or to [${to}] is invalid`);
+    }
+
+    let accountBank = await this.getAccountBank(username);
+    let rst: RewardHistory = { details: [] };
+
+    if (accountBank.number_of_reward == 0) {
+      return rst;
+    }
+
+    let maxRewardIndex = accountBank.number_of_reward - 1;
+
+    if (from > maxRewardIndex) {
+      throw new Error(`getRewardHistoryFromTo: [${from}] is larger than total num of reward`);
+    }
+    if (to > maxRewardIndex) {
+      to = maxRewardIndex;
+    }
+
+    // number of reward history is wanted
+    let numReward = to - from + 1;
+    let targetBucketOfTo = Math.floor(to / 100);
+    let bucketSlot = targetBucketOfTo;
+
+    // The index of 'to' in the target bucket
+    let indexOfTo = to % 100;
+
+    while (bucketSlot >= 0 && numReward > 0) {
+      console.log('reward history sending bucketSlot: ', bucketSlot);
+      let history = await this.getRewardHistoryBundle(username, bucketSlot);
+      let startIndex = bucketSlot == targetBucketOfTo ? indexOfTo : history.details.length - 1;
+
+      for (let i = startIndex; i >= 0 && numReward > 0; i--) {
+        rst.details.push(history.details[i]);
+        numReward--;
+      }
+      bucketSlot--;
+    }
+
+    return rst;
+  }
+
+  /**
+   * getRecentRewardHistory returns a certain number of recent reward history
+   * related to a user's posts reward, in reverse-chronological order.
+   *
+   * @param username: user name
+   * @param numReward: the number of reward history are wanted
+   */
+  async getRecentRewardHistory(username: string, numReward: number): Promise<RewardHistory> {
+    if (!this.isValidNat(numReward)) {
+      throw new Error(`getRecentRewardHistory: numReward is invalid: ${numReward}`);
+    }
+    let accountBank = await this.getAccountBank(username);
+    let maxTxNo = accountBank.number_of_reward - 1;
+
+    let from = Math.max(0, maxTxNo - numReward + 1);
+    if (numReward > accountBank.number_of_reward) {
+      from = 0;
+    }
+
+    return this.getRewardHistoryFromTo(username, from, maxTxNo);
   }
 
   // @return false negative or larger than safe int.
@@ -1039,6 +1171,9 @@ export interface Developer {
   username: string;
   deposit: Types.Coin;
   app_consumption: Types.Coin;
+  website: string;
+  description: string;
+  app_meta_data: string;
 }
 
 export interface DeveloperList {
@@ -1070,6 +1205,7 @@ export interface AccountBank {
   stake: Types.Coin;
   frozen_money_list: FrozenMoney[];
   number_of_transaction: number;
+  number_of_reward: number;
 }
 
 export interface FrozenMoney {
@@ -1110,6 +1246,19 @@ export interface Reward {
   friction_income: Types.Coin;
   actual_reward: Types.Coin;
   unclaim_reward: Types.Coin;
+}
+
+export interface RewardDetail {
+  original_income: Types.Coin;
+  friction_income: Types.Coin;
+  actual_reward: Types.Coin;
+  consumer: string;
+  post_author: string;
+  post_id: string;
+}
+
+export interface RewardHistory {
+  details: RewardDetail[];
 }
 
 export interface Relationship {
