@@ -613,10 +613,21 @@ export default class Broadcast {
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the user for the next transaction
    */
-  developerRegister(username: string, deposit: string, privKeyHex: string, seq: number) {
+  developerRegister(
+    username: string,
+    deposit: string,
+    website: string,
+    description: string,
+    app_meta_data: string,
+    privKeyHex: string,
+    seq: number
+  ) {
     const msg: DeveloperRegisterMsg = {
       username,
-      deposit
+      deposit,
+      website,
+      description,
+      app_meta_data
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.DevRegisterMsgType, privKeyHex, seq);
@@ -1175,6 +1186,9 @@ export interface RevokeDelegationMsg {
 export interface DeveloperRegisterMsg {
   username: string;
   deposit: string;
+  website: string;
+  description: string;
+  app_meta_data: string;
 }
 
 export interface DeveloperRevokeMsg {
