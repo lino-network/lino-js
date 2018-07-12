@@ -289,7 +289,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the user
      * @param seq: the sequence number of the user for the next transaction
      */
-    developerRegister(username: string, deposit: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    developerRegister(username: string, deposit: string, website: string, description: string, app_meta_data: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * DeveloperRevoke reovkes all deposited LINO token of a developer
      * so the user will not be a developer anymore.
@@ -597,6 +597,9 @@ export interface RevokeDelegationMsg {
 export interface DeveloperRegisterMsg {
     username: string;
     deposit: string;
+    website: string;
+    description: string;
+    app_meta_data: string;
 }
 export interface DeveloperRevokeMsg {
     username: string;

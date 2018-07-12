@@ -103,6 +103,20 @@ export default class Query {
      */
     getReward(username: string): Promise<Reward>;
     /**
+     * getAllRewardHistory returns all reward history related to
+     * a user's posts reward, in reverse-chronological order.
+     *
+     * @param username
+     */
+    getAllRewardHistory(username: string): Promise<RewardHistory>;
+    /**
+     * getRewardHistoryBundle returns all reward history in a certain bucket.
+     *
+     * @param username
+     * @param index
+     */
+    getRewardHistoryBundle(username: string, index: number): Promise<RewardHistory>;
+    /**
      * getRelationship returns the donation times of two users.
      *
      * @param me
@@ -364,6 +378,14 @@ export default class Query {
      */
     getAccountParam(): Promise<Types.AccountParam>;
     /**
+     * getGlobalMeta returns the GlobalMeta.
+     */
+    getGlobalMeta(): Promise<Types.GlobalMeta>;
+    /**
+     * getAccountParam returns the AccountParam.
+     */
+    getConsumptionMeta(): Promise<Types.ConsumptionMeta>;
+    /**
      * getPostParam returns the PostParam.
      */
     getPostParam(): Promise<Types.PostParam>;
@@ -396,6 +418,24 @@ export default class Query {
      * @param numHistory: the number of balance history are wanted
      */
     getRecentBalanceHistory(username: string, numHistory: number): Promise<BalanceHistory>;
+    /**
+     * getRewardHistoryFromTo returns a list of reward history in the range of [from, to],
+     * that if to is larger than the number of tx, tx will be replaced by the largest tx number,
+     * related to a user's posts rewards, in reverse-chronological order.
+     *
+     * @param username: user name
+     * @param from: the start index of the reward history, inclusively
+     * @param to: the end index of the reward history, inclusively
+     */
+    getRewardHistoryFromTo(username: string, from: number, to: number): Promise<RewardHistory>;
+    /**
+     * getRecentRewardHistory returns a certain number of recent reward history
+     * related to a user's posts reward, in reverse-chronological order.
+     *
+     * @param username: user name
+     * @param numReward: the number of reward history are wanted
+     */
+    getRecentRewardHistory(username: string, numReward: number): Promise<RewardHistory>;
     isValidNat(num: number): boolean;
 }
 export interface PubKey {
@@ -498,6 +538,9 @@ export interface Developer {
     username: string;
     deposit: Types.Coin;
     app_consumption: Types.Coin;
+    website: string;
+    description: string;
+    app_meta_data: string;
 }
 export interface DeveloperList {
     all_developers: string[];
@@ -522,6 +565,7 @@ export interface AccountBank {
     stake: Types.Coin;
     frozen_money_list: FrozenMoney[];
     number_of_transaction: number;
+    number_of_reward: number;
 }
 export interface FrozenMoney {
     amount: Types.Coin;
@@ -556,6 +600,17 @@ export interface Reward {
     friction_income: Types.Coin;
     actual_reward: Types.Coin;
     unclaim_reward: Types.Coin;
+}
+export interface RewardDetail {
+    original_income: Types.Coin;
+    friction_income: Types.Coin;
+    actual_reward: Types.Coin;
+    consumer: string;
+    post_author: string;
+    post_id: string;
+}
+export interface RewardHistory {
+    details: RewardDetail[];
 }
 export interface Relationship {
     donation_times: number;

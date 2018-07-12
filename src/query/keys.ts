@@ -45,6 +45,7 @@ namespace Keys {
     accountRelationshipSubstore: '07',
     accountBalanceHistorySubstore: '08',
     accountGrantPubKeySubstore: '09',
+    accountRewardHistorySubstore: '0a',
 
     postInfoSubStore: '00',
     postMetaSubStore: '01',
@@ -65,6 +66,11 @@ namespace Keys {
     bandwidthParamSubStore: '08',
     accountParamSubstore: '09',
     postParamSubStore: '10',
+
+    globalMetaSubStore: '01',
+    inflationPoolSubStore: '02',
+    consumptionMetaSubStore: '03',
+    tpsSubStore: '04',
 
     sep: ByteBuffer.fromUTF8('/').toHex(),
     separator: '/'
@@ -191,6 +197,16 @@ namespace Keys {
   export function getRewardKey(accKey: string): string {
     const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
     return _KEYS.accountRewardSubstore.concat(accKeyHex);
+  }
+
+  export function getRewardHistoryPrefix(me: string): string {
+    const meHex = ByteBuffer.fromUTF8(me).toHex();
+    return _KEYS.accountRewardHistorySubstore.concat(meHex).concat(_KEYS.sep);
+  }
+
+  export function getRewardHistoryKey(me: string, bucketSlot: string): string {
+    const bucketSlotHex = ByteBuffer.fromUTF8(bucketSlot).toHex();
+    return getRewardHistoryPrefix(me).concat(bucketSlotHex);
   }
 
   export function getRelationshipPrefix(me: string): string {
@@ -356,6 +372,22 @@ namespace Keys {
 
   export function getPostParamKey(): string {
     return _KEYS.postParamSubStore;
+  }
+
+  export function getGlobalMetaKey(): string {
+    return _KEYS.globalMetaSubStore;
+  }
+
+  export function getInflationPoolKey(): string {
+    return _KEYS.inflationPoolSubStore;
+  }
+
+  export function getConsumptionMetaKey(): string {
+    return _KEYS.consumptionMetaSubStore;
+  }
+
+  export function getTPSKey(): string {
+    return _KEYS.tpsSubStore;
   }
 }
 

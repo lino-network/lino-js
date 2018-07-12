@@ -36,6 +36,8 @@ declare namespace Keys {
     function getFollowerKey(me: string, myFollower: string): string;
     function getFollowingKey(me: string, myFollowing: string): string;
     function getRewardKey(accKey: string): string;
+    function getRewardHistoryPrefix(me: string): string;
+    function getRewardHistoryKey(me: string, bucketSlot: string): string;
     function getRelationshipPrefix(me: string): string;
     function getRelationshipKey(me: string, other: string): string;
     function getBalanceHistoryPrefix(me: string): string;
@@ -71,5 +73,9 @@ declare namespace Keys {
     function getBandwidthParamKey(): string;
     function getAccountParamKey(): string;
     function getPostParamKey(): string;
+    function getGlobalMetaKey(): string;
+    function getInflationPoolKey(): string;
+    function getConsumptionMetaKey(): string;
+    function getTPSKey(): string;
 }
 export default Keys;

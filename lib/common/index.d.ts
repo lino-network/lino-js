@@ -101,11 +101,17 @@ export declare function isCoinDayParam(param: object): param is CoinDayParam;
 export interface BandwidthParam {
     seconds_to_recover_bandwidth: number;
     capacity_usage_per_transaction: Coin;
+    balance_history_bundle_size: number;
+    maximum_micropayment_grant_times: number;
+    reward_history_bundle_size: number;
 }
 export declare function isBandwidthParam(param: object): param is BandwidthParam;
 export interface AccountParam {
     minimum_balance: Coin;
     register_fee: Coin;
+    balance_history_bundle_size: number;
+    maximum_micropayment_grant_times: number;
+    reward_history_bundle_size: number;
 }
 export declare function isAccountParam(param: object): param is AccountParam;
 export interface PostParam {
@@ -113,3 +119,17 @@ export interface PostParam {
     report_or_upvote_interval: number;
 }
 export declare function isPostParam(param: object): param is PostParam;
+export interface GlobalMeta {
+    total_lino_coin: Coin;
+    last_year_cumulative_consumption: Coin;
+    cumulative_consumption: Coin;
+    growth_rate: Rat;
+    ceiling: Rat;
+    Floor: Rat;
+}
+export interface ConsumptionMeta {
+    consumption_friction_rate: Rat;
+    ConsumptionWindow: Coin;
+    ConsumptionRewardPool: Coin;
+    consumption_freezing_period: number;
+}
