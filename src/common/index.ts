@@ -222,3 +222,19 @@ export interface PostParam {
 export function isPostParam(param: object): param is PostParam {
   return 'micropayment_limitation' in param && 'report_or_upvote_interval' in param;
 }
+
+export interface GlobalMeta {
+  total_lino_coin: Coin;
+  last_year_cumulative_consumption: Coin;
+  cumulative_consumption: Coin;
+  growth_rate: Rat;
+  ceiling: Rat;
+  Floor: Rat;
+}
+
+export interface ConsumptionMeta {
+  consumption_friction_rate: Rat;
+  ConsumptionWindow: Coin;
+  ConsumptionRewardPool: Coin;
+  consumption_freezing_period: number;
+}
