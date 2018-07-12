@@ -67,6 +67,11 @@ namespace Keys {
     accountParamSubstore: '09',
     postParamSubStore: '10',
 
+    globalMetaSubStore: '01',
+    inflationPoolSubStore: '02',
+    consumptionMetaSubStore: '03',
+    tpsSubStore: '04',
+
     sep: ByteBuffer.fromUTF8('/').toHex(),
     separator: '/'
   };
@@ -367,6 +372,22 @@ namespace Keys {
 
   export function getPostParamKey(): string {
     return _KEYS.postParamSubStore;
+  }
+
+  export function getGlobalMetaKey(): string {
+    return _KEYS.globalMetaSubStore;
+  }
+
+  export function getInflationPoolKey(): string {
+    return _KEYS.inflationPoolSubStore;
+  }
+
+  export function getConsumptionMetaKey(): string {
+    return _KEYS.consumptionMetaSubStore;
+  }
+
+  export function getTPSKey(): string {
+    return _KEYS.tpsSubStore;
   }
 }
 
