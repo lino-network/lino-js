@@ -201,9 +201,18 @@ export function isBandwidthParam(param: object): param is BandwidthParam {
 export interface AccountParam {
   minimum_balance: Coin;
   register_fee: Coin;
+  balance_history_bundle_size: number;
+  maximum_micropayment_grant_times: number;
+  reward_history_bundle_size: number;
 }
 export function isAccountParam(param: object): param is AccountParam {
-  return 'minimum_balance' in param && 'register_fee' in param;
+  return (
+    'minimum_balance' in param &&
+    'register_fee' in param &&
+    'balance_history_bundle_size' in param &&
+    'maximum_micropayment_grant_times' in param &&
+    'reward_history_bundle_size' in param
+  );
 }
 
 export interface PostParam {
