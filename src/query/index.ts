@@ -854,6 +854,25 @@ export default class Query {
   }
 
   /**
+   * getGlobalMeta returns the GlobalMeta.
+   */
+  getGlobalMeta(): Promise<Types.GlobalMeta> {
+    const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
+    return this._transport.query<Types.GlobalMeta>(Keys.getGlobalMetaKey(), GlobalKVStoreKey);
+  }
+
+  /**
+   * getAccountParam returns the AccountParam.
+   */
+  getConsumptionMeta(): Promise<Types.ConsumptionMeta> {
+    const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
+    return this._transport.query<Types.ConsumptionMeta>(
+      Keys.getConsumptionMetaKey(),
+      GlobalKVStoreKey
+    );
+  }
+
+  /**
    * getPostParam returns the PostParam.
    */
   getPostParam(): Promise<Types.PostParam> {

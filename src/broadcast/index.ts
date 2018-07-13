@@ -168,11 +168,11 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: RecoverMsg = {
-      username,
-      new_master_public_key,
-      new_transaction_public_key,
-      new_micropayment_public_key,
-      new_post_public_key
+      username: username,
+      new_master_public_key: decodePubKey(new_master_public_key),
+      new_transaction_public_key: decodePubKey(new_transaction_public_key),
+      new_micropayment_public_key: decodePubKey(new_micropayment_public_key),
+      new_post_public_key: decodePubKey(new_post_public_key)
     };
     return this._broadcastTransaction(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
   }

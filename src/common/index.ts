@@ -184,9 +184,18 @@ export function isCoinDayParam(param: object): param is CoinDayParam {
 export interface BandwidthParam {
   seconds_to_recover_bandwidth: number;
   capacity_usage_per_transaction: Coin;
+  balance_history_bundle_size: number;
+  maximum_micropayment_grant_times: number;
+  reward_history_bundle_size: number;
 }
 export function isBandwidthParam(param: object): param is BandwidthParam {
-  return 'seconds_to_recover_bandwidth' in param && 'capacity_usage_per_transaction' in param;
+  return (
+    'seconds_to_recover_bandwidth' in param &&
+    'capacity_usage_per_transaction' in param &&
+    'balance_history_bundle_size' in param &&
+    'maximum_micropayment_grant_times' in param &&
+    'reward_history_bundle_size' in param
+  );
 }
 
 export interface AccountParam {
@@ -212,4 +221,20 @@ export interface PostParam {
 }
 export function isPostParam(param: object): param is PostParam {
   return 'micropayment_limitation' in param && 'report_or_upvote_interval' in param;
+}
+
+export interface GlobalMeta {
+  total_lino_coin: Coin;
+  last_year_cumulative_consumption: Coin;
+  cumulative_consumption: Coin;
+  growth_rate: Rat;
+  ceiling: Rat;
+  Floor: Rat;
+}
+
+export interface ConsumptionMeta {
+  consumption_friction_rate: Rat;
+  ConsumptionWindow: Coin;
+  ConsumptionRewardPool: Coin;
+  consumption_freezing_period: number;
 }

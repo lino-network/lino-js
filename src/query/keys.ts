@@ -67,16 +67,21 @@ namespace Keys {
     accountParamSubstore: '09',
     postParamSubStore: '10',
 
-    sep: ByteBuffer.fromUTF8('/').toHex()
+    globalMetaSubStore: '01',
+    inflationPoolSubStore: '02',
+    consumptionMetaSubStore: '03',
+    tpsSubStore: '04',
+
+    sep: ByteBuffer.fromUTF8('/').toHex(),
+    separator: '/'
   };
 
   export function getHexSubstringAfterKeySeparator(key: string): string {
-    console.log(key, key.indexOf('/'));
-    return key.substr(key.indexOf('/') + 1, key.length);
+    return key.substr(key.indexOf(_KEYS.separator) + 1, key.length);
   }
 
   export function getSubstringAfterKeySeparator(key: string): string {
-    return key.substr(key.indexOf(_KEYS.sep) + 1, key.length);
+    return key.substr(key.indexOf(_KEYS.separator) + 1, key.length);
   }
 
   export function getSubstringAfterSubstore(key: string): string {
@@ -367,6 +372,22 @@ namespace Keys {
 
   export function getPostParamKey(): string {
     return _KEYS.postParamSubStore;
+  }
+
+  export function getGlobalMetaKey(): string {
+    return _KEYS.globalMetaSubStore;
+  }
+
+  export function getInflationPoolKey(): string {
+    return _KEYS.inflationPoolSubStore;
+  }
+
+  export function getConsumptionMetaKey(): string {
+    return _KEYS.consumptionMetaSubStore;
+  }
+
+  export function getTPSKey(): string {
+    return _KEYS.tpsSubStore;
   }
 }
 
