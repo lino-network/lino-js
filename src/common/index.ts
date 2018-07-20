@@ -1,6 +1,6 @@
 //Common Type defination
 export interface Coin {
-  amount: Int128;
+  amount: string;
 }
 
 export interface SDKCoin {
@@ -8,14 +8,9 @@ export interface SDKCoin {
   amount: number;
 }
 
-export interface Int128 {
-  Lo: number;
-  Hi: number;
-}
-
 export interface MathInt {
-  neg: boolean;
   abs: number[];
+  neg: boolean;
 }
 
 export interface MathRat {
@@ -38,12 +33,12 @@ export interface Parameter {
 }
 
 export interface EvaluateOfContentValueParam {
+  amount_of_consumption_exponent: Rat;
   consumption_time_adjust_base: number;
   consumption_time_adjust_offset: number;
   num_of_consumption_on_author_offset: number;
   total_amount_of_consumption_base: number;
   total_amount_of_consumption_offset: number;
-  amount_of_consumption_exponent: Rat;
 }
 export function isEvaluateOfContentValueParam(param: object): param is EvaluateOfContentValueParam {
   return (
@@ -57,9 +52,9 @@ export function isEvaluateOfContentValueParam(param: object): param is EvaluateO
 }
 
 export interface GlobalAllocationParam {
-  infra_allocation: Rat;
   content_creator_allocation: Rat;
   developer_allocation: Rat;
+  infra_allocation: Rat;
   validator_allocation: Rat;
 }
 export function isGlobalAllocationParam(param: object): param is GlobalAllocationParam {
@@ -72,8 +67,8 @@ export function isGlobalAllocationParam(param: object): param is GlobalAllocatio
 }
 
 export interface InfraInternalAllocationParam {
-  storage_allocation: Rat;
   CDN_allocation: Rat;
+  storage_allocation: Rat;
 }
 export function isInfraInternalAllocationParam(
   param: object
@@ -82,11 +77,11 @@ export function isInfraInternalAllocationParam(
 }
 
 export interface VoteParam {
-  voter_min_deposit: Coin;
-  voter_min_withdraw: Coin;
   delegator_min_withdraw: Coin;
   voter_coin_return_interval: number;
   voter_coin_return_times: number;
+  voter_min_deposit: Coin;
+  voter_min_withdraw: Coin;
   delegator_coin_return_interval: number;
   delegator_coin_return_times: number;
 }
@@ -147,16 +142,16 @@ export function isDeveloperParam(param: object): param is DeveloperParam {
 }
 
 export interface ValidatorParam {
-  validator_min_withdraw: Coin;
-  validator_min_voting_deposit: Coin;
-  validator_min_commiting_deposit: Coin;
-  validator_coin_return_interval: number;
-  validator_coin_return_times: number;
   penalty_miss_vote: Coin;
   penalty_miss_commit: Coin;
   penalty_byzantine: Coin;
   validator_list_size: number;
   absent_commit_limitation: number;
+  validator_min_withdraw: Coin;
+  validator_min_voting_deposit: Coin;
+  validator_min_commiting_deposit: Coin;
+  validator_coin_return_interval: number;
+  validator_coin_return_times: number;
 }
 export function isValidatorParam(param: object): param is ValidatorParam {
   return (
@@ -234,7 +229,7 @@ export interface GlobalMeta {
 
 export interface ConsumptionMeta {
   consumption_friction_rate: Rat;
-  ConsumptionWindow: Coin;
-  ConsumptionRewardPool: Coin;
+  consumption_window: Coin;
+  consumption_reward_pool: Coin;
   consumption_freezing_period: number;
 }

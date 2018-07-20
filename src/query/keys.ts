@@ -1,6 +1,5 @@
 //@ts-ignore
 import ByteBuffer from 'bytebuffer';
-import { convertToRawPubKey, encodePubKey } from '../transport/encoder';
 
 namespace Keys {
   export const KVSTOREKEYS = {

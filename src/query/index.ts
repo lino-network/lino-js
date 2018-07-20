@@ -107,7 +107,7 @@ export default class Query {
    */
   getSeqNumber(username: string): Promise<number> {
     return this.getAccountMeta(username).then(meta => {
-      return meta.sequence;
+      return +meta.sequence;
     });
   }
 
@@ -949,7 +949,6 @@ export default class Query {
     let indexOfTo = to % 100;
 
     while (bucketSlot >= 0 && numHistory > 0) {
-      console.log('balance history sending bucketSlot: ', bucketSlot);
       let history = await this.getBalanceHistoryBundle(username, bucketSlot);
       let startIndex = bucketSlot == targetBucketOfTo ? indexOfTo : history.details.length - 1;
 
@@ -1024,7 +1023,6 @@ export default class Query {
     let indexOfTo = to % 100;
 
     while (bucketSlot >= 0 && numReward > 0) {
-      console.log('reward history sending bucketSlot: ', bucketSlot);
       let history = await this.getRewardHistoryBundle(username, bucketSlot);
       let startIndex = bucketSlot == targetBucketOfTo ? indexOfTo : history.details.length - 1;
 

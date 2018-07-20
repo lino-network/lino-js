@@ -40,13 +40,13 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: RegisterMsg = {
-      referrer: referrer,
-      register_fee: register_fee,
-      new_username: username,
       new_master_public_key: decodePubKey(masterPubKeyHex),
-      new_transaction_public_key: decodePubKey(transactionPubKeyHex),
       new_micropayment_public_key: decodePubKey(micropaymentPubKeyHex),
-      new_post_public_key: decodePubKey(postPubKeyHex)
+      new_post_public_key: decodePubKey(postPubKeyHex),
+      new_transaction_public_key: decodePubKey(transactionPubKeyHex),
+      new_username: username,
+      referrer: referrer,
+      register_fee: register_fee
     };
     return this._broadcastTransaction(msg, _MSGTYPE.RegisterMsgType, referrerPrivKeyHex, seq);
   }
@@ -71,11 +71,12 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: TransferMsg = {
-      sender,
-      receiver,
-      amount,
-      memo
+      amount: amount,
+      memo: memo,
+      receiver: receiver,
+      sender: sender
     };
+    console.log('transfer msg:', msg);
     return this._broadcastTransaction(msg, _MSGTYPE.TransferMsgType, privKeyHex, seq);
   }
 
@@ -90,8 +91,8 @@ export default class Broadcast {
    */
   follow(follower: string, followee: string, privKeyHex: string, seq: number) {
     const msg: FollowMsg = {
-      follower,
-      followee
+      followee: followee,
+      follower: follower
     };
     return this._broadcastTransaction(msg, _MSGTYPE.FollowMsgType, privKeyHex, seq);
   }
@@ -107,8 +108,8 @@ export default class Broadcast {
    */
   unfollow(follower: string, followee: string, privKeyHex: string, seq: number) {
     const msg: UnfollowMsg = {
-      follower,
-      followee
+      followee: followee,
+      follower: follower
     };
     return this._broadcastTransaction(msg, _MSGTYPE.UnfollowMsgType, privKeyHex, seq);
   }
@@ -140,8 +141,8 @@ export default class Broadcast {
    */
   updateAccount(username: string, json_meta: string, privKeyHex: string, seq: number) {
     const msg: UpdateAccountMsg = {
-      username,
-      json_meta
+      json_meta: json_meta,
+      username: username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.UpdateAccMsgType, privKeyHex, seq);
   }
@@ -168,11 +169,11 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: RecoverMsg = {
-      username: username,
       new_master_public_key: decodePubKey(new_master_public_key),
-      new_transaction_public_key: decodePubKey(new_transaction_public_key),
       new_micropayment_public_key: decodePubKey(new_micropayment_public_key),
-      new_post_public_key: decodePubKey(new_post_public_key)
+      new_post_public_key: decodePubKey(new_post_public_key),
+      new_transaction_public_key: decodePubKey(new_transaction_public_key),
+      username: username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
   }
@@ -224,15 +225,15 @@ export default class Broadcast {
 
     const msg: CreatePostMsg = {
       author: author,
-      post_id: postID,
-      title: title,
       content: content,
+      links: mLinks,
       parent_author: parentAuthor,
       parent_postID: parentPostID,
+      post_id: postID,
+      redistribution_split_rate: redistributionSplitRate,
       source_author: sourceAuthor,
       source_postID: sourcePostID,
-      links: mLinks,
-      redistribution_split_rate: redistributionSplitRate
+      title: title
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.CreatePostMsgType, privKeyHex, seq);
@@ -258,10 +259,10 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: LikeMsg = {
-      username,
-      weight,
       author,
-      post_id
+      post_id,
+      username,
+      weight
     };
     return this._broadcastTransaction(msg, _MSGTYPE.LikeMsgType, privKeyHex, seq);
   }
@@ -292,13 +293,13 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: DonateMsg = {
-      username,
       amount,
       author,
-      post_id,
       from_app,
+      is_micropayment,
       memo,
-      is_micropayment
+      post_id,
+      username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.DonateMsgType, privKeyHex, seq);
   }
@@ -323,10 +324,10 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: ReportOrUpvoteMsg = {
-      username,
       author,
+      is_report,
       post_id,
-      is_report
+      username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.ReportOrUpvoteMsgType, privKeyHex, seq);
   }
@@ -362,9 +363,9 @@ export default class Broadcast {
    */
   view(username: string, author: string, post_id: string, privKeyHex: string, seq: number) {
     const msg: ViewMsg = {
-      username,
       author,
-      post_id
+      post_id,
+      username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.ViewMsgType, privKeyHex, seq);
   }
@@ -406,11 +407,11 @@ export default class Broadcast {
 
     const msg: UpdatePostMsg = {
       author: author,
-      post_id: post_id,
-      title: title,
       content: content,
       links: mLinks,
-      redistribution_split_rate: redistribution_split_rate
+      post_id: post_id,
+      redistribution_split_rate: redistribution_split_rate,
+      title: title
     };
     return this._broadcastTransaction(msg, _MSGTYPE.UpdatePostMsgType, privKeyHex, seq);
   }
@@ -439,10 +440,10 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: ValidatorDepositMsg = {
-      username: username,
       deposit: deposit,
-      validator_public_key: decodePubKey(validator_public_key),
-      link: link
+      link: link,
+      username: username,
+      validator_public_key: decodePubKey(validator_public_key)
     };
     return this._broadcastTransaction(msg, _MSGTYPE.ValDepositMsgType, privKeyHex, seq);
   }
@@ -459,8 +460,8 @@ export default class Broadcast {
    */
   validatorWithdraw(username: string, amount: string, privKeyHex: string, seq: number) {
     const msg: ValidatorWithdrawMsg = {
-      username,
-      amount
+      amount: amount,
+      username: username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.ValWithdrawMsgType, privKeyHex, seq);
   }
@@ -495,8 +496,8 @@ export default class Broadcast {
    */
   voterDeposit(username: string, deposit: string, privKeyHex: string, seq: number) {
     const msg: VoterDepositMsg = {
-      username,
-      deposit
+      deposit: deposit,
+      username: username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.VoteDepositMsgType, privKeyHex, seq);
   }
@@ -513,8 +514,8 @@ export default class Broadcast {
    */
   voterWithdraw(username: string, amount: string, privKeyHex: string, seq: number) {
     const msg: VoterWithdrawMsg = {
-      username,
-      amount
+      amount: amount,
+      username: username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.VoteWithdrawMsgType, privKeyHex, seq);
   }
@@ -548,9 +549,9 @@ export default class Broadcast {
    */
   delegate(delegator: string, voter: string, amount: string, privKeyHex: string, seq: number) {
     const msg: DelegateMsg = {
+      amount,
       delegator,
-      voter,
-      amount
+      voter
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.DelegateMsgType, privKeyHex, seq);
@@ -623,11 +624,11 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: DeveloperRegisterMsg = {
-      username,
+      app_meta_data,
       deposit,
-      website,
       description,
-      app_meta_data
+      username,
+      website
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.DevRegisterMsgType, privKeyHex, seq);
@@ -673,11 +674,11 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: GrantPermissionMsg = {
-      username,
       authenticate_app,
-      validity_period,
       grant_level,
-      times
+      times,
+      username,
+      validity_period
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.GrantPermissionMsgType, privKeyHex, seq);
@@ -701,9 +702,9 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: RevokePermissionMsg = {
-      username: username,
+      grant_level: grant_level,
       public_key: decodePubKey(public_key),
-      grant_level: grant_level
+      username: username
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.RevokePermissionMsgType, privKeyHex, seq);
@@ -722,8 +723,8 @@ export default class Broadcast {
    */
   providerReport(username: string, usage: number, privKeyHex: string, seq: number) {
     const msg: ProviderReportMsg = {
-      username,
-      usage
+      usage,
+      username
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ProviderReportMsgType, privKeyHex, seq);
@@ -748,9 +749,9 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: VoteProposalMsg = {
-      voter,
       proposal_id,
-      result
+      result,
+      voter
     };
     return this._broadcastTransaction(msg, _MSGTYPE.VoteProposalMsgType, privKeyHex, seq);
   }
@@ -1032,13 +1033,13 @@ export default class Broadcast {
 
 // Account related messages
 export interface RegisterMsg {
-  referrer: string;
-  register_fee: string;
-  new_username: string;
   new_master_public_key: string;
-  new_transaction_public_key: string;
   new_micropayment_public_key: string;
   new_post_public_key: string;
+  new_transaction_public_key: string;
+  new_username: string;
+  referrer: string;
+  register_fee: string;
 }
 
 export interface TransferMsg {
@@ -1063,11 +1064,11 @@ export interface ClaimMsg {
 }
 
 export interface RecoverMsg {
-  username: string;
   new_master_public_key: string;
-  new_transaction_public_key: string;
   new_micropayment_public_key: string;
   new_post_public_key: string;
+  new_transaction_public_key: string;
+  username: string;
 }
 
 export interface UpdateAccountMsg {
@@ -1284,49 +1285,45 @@ export interface ChangePostParamMsg {
 }
 
 const _MSGTYPE = {
-  RegisterMsgType: '26DC9A48ED0600',
-  FollowMsgType: '65AF26BE5D3F10',
-  UnfollowMsgType: '9F04229AEA85D0',
-  TransferMsgType: '11D7DAB23CF4A8',
-  ClaimMsgType: 'E43B69C1242DD0',
-  RecoverMsgType: 'D8D1DD8D6DB638',
-  UpdateAccMsgType: '192B669B73B200',
-  DevRegisterMsgType: '488B85517B6738',
-  DevRevokeMsgType: 'B026042592D150',
-  GrantPermissionMsgType: 'B04543BA3A3848',
-  RevokePermissionMsgType: '5049F8880933C0',
-  CreatePostMsgType: '7984D42EEAC938',
-  UpdatePostMsgType: 'F93EAFE05DF8C0',
-  DeletePostMsgType: '056DC956AF53F8',
-  LikeMsgType: '2E9853FBC76B08',
-  DonateMsgType: '0371D9D8F05838',
-  ViewMsgType: '8ED05B78979A40',
-  ReportOrUpvoteMsgType: 'DD37A36073BE20',
-  VoteDepositMsgType: '9E3BB59C845D58',
-  VoteRevokeMsgType: '5D06CAFB44F630',
-  VoteWithdrawMsgType: '56190993CE3378',
-  DelegateMsgType: 'E7EF5D457166A0',
-  DelegateWithdrawMsgType: 'B90BE271224BE8',
-  DelegateRevokeMsgType: '85AB3EB261DF80',
-  ValDepositMsgType: 'DD1A6F7DB18808',
-  ValWithdrawMsgType: 'FCF3D85CFC69F0',
-  ValRevokeMsgType: '027606935C70E0',
-  VoteProposalMsgType: '9914E2FD1D1800',
-  DeletePostContentMsgType: '80612B567A8F98',
-  UpgradeProtocolMsgType: '8B53D94BF77490',
-  ChangeGlobalAllocationMsgType: 'FC2A866293F188',
-  ChangeEvaluationMsgType: '288E22F5EC6268',
-  ChangeInfraAllocationMsgType: '4F6C325C2ACA58',
-  ChangeVoteParamMsgType: 'BB11A22EFA6098',
-  ChangeProposalParamMsgType: '49AB71A6D3CB78',
-  ChangeDeveloperParamMsgType: '5BBFF6FE8C9110',
-  ChangeValidatorParamMsgType: '28FAB3D4621AD0',
-  ChangeBandwidthParamMsgType: '1F779099D3A7A0',
-  ChangeAccountParamMsgType: 'B4E93F3241E950',
-  ChangePostParamMsgType: 'D294B618DB0588',
-  ProviderReportMsgType: '6090FEC9F690B8',
-  EventRewardMsgType: 'A34081928A6048',
-  EventReturnMsgType: 'F37028A132AD10',
-  EventCpeMsgType: '51F05B75A00E98',
-  EventDpeMsgType: '90647BC86FCAC8'
+  RegisterMsgType: 'lino/register',
+  FollowMsgType: 'lino/follow',
+  UnfollowMsgType: 'lino/unfollow',
+  TransferMsgType: 'lino/transfer',
+  ClaimMsgType: 'lino/claim',
+  RecoverMsgType: 'lino/recover',
+  UpdateAccMsgType: 'lino/updateAcc',
+  DevRegisterMsgType: 'lino/devRegister',
+  DevRevokeMsgType: 'lino/devRevoke',
+  GrantPermissionMsgType: 'lino/grantPermission',
+  RevokePermissionMsgType: 'lino/revokePermission',
+  CreatePostMsgType: 'lino/createPost',
+  UpdatePostMsgType: 'lino/updatePost',
+  DeletePostMsgType: 'lino/deletePost',
+  LikeMsgType: 'lino/like',
+  DonateMsgType: 'lino/donate',
+  ViewMsgType: 'lino/view',
+  ReportOrUpvoteMsgType: 'lino/reportOrUpvote',
+  VoteDepositMsgType: 'lino/voteDeposit',
+  VoteRevokeMsgType: 'lino/voteRevoke',
+  VoteWithdrawMsgType: 'lino/voteWithdraw',
+  DelegateMsgType: 'lino/delegate',
+  DelegateWithdrawMsgType: 'lino/delegateWithdraw',
+  DelegateRevokeMsgType: 'lino/delegateRevoke',
+  ValDepositMsgType: 'lino/valDeposit',
+  ValWithdrawMsgType: 'lino/valWithdraw',
+  ValRevokeMsgType: 'lino/valRevoke',
+  VoteProposalMsgType: 'lino/voteProposal',
+  DeletePostContentMsgType: 'lino/deletePostContent',
+  UpgradeProtocolMsgType: 'lino/upgradeProtocol',
+  ChangeGlobalAllocationMsgType: 'lino/changeGlobalAllocation',
+  ChangeEvaluationMsgType: 'lino/changeEvaluation',
+  ChangeInfraAllocationMsgType: 'lino/changeInfraAllocation',
+  ChangeVoteParamMsgType: 'lino/changeVoteParam',
+  ChangeProposalParamMsgType: 'lino/changeProposalParam',
+  ChangeDeveloperParamMsgType: 'lino/changeDeveloperParam',
+  ChangeValidatorParamMsgType: 'lino/changeValidatorParam',
+  ChangeBandwidthParamMsgType: 'lino/changeBandwidthParam',
+  ChangeAccountParamMsgType: 'lino/changeAccountParam',
+  ChangePostParamMsgType: 'lino/changePostParam',
+  ProviderReportMsgType: 'lino/providerReport'
 };

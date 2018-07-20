@@ -1,10 +1,14 @@
 import ByteBuffer from 'bytebuffer';
-import { encode } from 'punycode';
 import shajs from 'sha.js';
 import { Coin, SDKCoin } from '../common';
 
 // TODO: for int64, maybe we should do extra check in proper place, or use string
 export interface StdFee {
+  amount: SDKCoin[];
+  gas: string;
+}
+
+export interface StdFeeInSig {
   amount: SDKCoin[];
   gas: number;
 }
@@ -12,8 +16,8 @@ export interface StdFee {
 export interface StdSignature {
   pub_key: InternalPubKey;
   signature: InternalPrivKey;
-  account_number: number;
-  sequence: number;
+  account_number: string;
+  sequence: string;
 }
 
 export interface StdMsg {
@@ -22,18 +26,18 @@ export interface StdMsg {
 }
 
 export interface StdTx {
-  msg: StdMsg;
+  msg: StdMsg[];
   fee: StdFee;
   signatures: StdSignature[];
 }
 
 export interface StdSignMsg {
   chain_id: string;
-  account_numbers: number[];
-  sequences: number[];
-  fee_bytes: string;
-  msg_bytes: string;
-  alt_bytes: any;
+  account_number: string;
+  sequence: string;
+  fee: StdFee;
+  msgs: StdMsg[];
+  memo: string;
 }
 
 export interface InternalPubKey {
@@ -54,11 +58,17 @@ export interface InternalPrivKey {
 // return a new zero fee object
 export const getZeroFee: () => StdFee = () => ({
   amount: [],
+  gas: '0'
+});
+
+// return a new zero fee object to sign
+export const getZeroFeeInSig: () => StdFeeInSig = () => ({
+  amount: [],
   gas: 0
 });
 
 export function encodeTx(
-  stdMsg: StdMsg,
+  msgs: StdMsg[],
   rawPubKey: string,
   rawSigDER: string,
   seq: number
@@ -66,12 +76,12 @@ export function encodeTx(
   const stdSig: StdSignature = {
     pub_key: convertToInternalPubKey(rawPubKey, _TYPE.PubKeySecp256k1),
     signature: convertToInternalSig(rawSigDER, _TYPE.SignatureKeySecp256k1),
-    account_number: 0,
-    sequence: seq
+    account_number: '0',
+    sequence: String(seq)
   };
 
   const stdTx: StdTx = {
-    msg: stdMsg,
+    msg: msgs,
     signatures: [stdSig],
     fee: getZeroFee()
   };
@@ -123,23 +133,25 @@ export function encodeMsg(msg: any): any {
 
   return encodedMsg;
 }
-export function encodeSignMsg(stdMsg: StdMsg, chainId: string, seq: number): any {
+
+export function encodeSignMsg(stdMsg: StdMsg[], chainId: string, seq: number): any {
   const fee = getZeroFee();
   const stdSignMsg: StdSignMsg = {
+    account_number: '0',
     chain_id: chainId,
-    account_numbers: [],
-    sequences: [seq],
-    fee_bytes: ByteBuffer.btoa(JSON.stringify(fee)),
-    msg_bytes: ByteBuffer.btoa(JSON.stringify(stdMsg)),
-    alt_bytes: null
+    fee: fee,
+    memo: '',
+    msgs: stdMsg,
+    sequence: String(seq)
   };
+  console.log('before sort++++++', stdSignMsg, sortObject(stdSignMsg));
 
-  const jsonStr = JSON.stringify(stdSignMsg);
-  console.log('TX string: ', jsonStr);
+  const jsonStr = JSON.stringify(sortObject(stdSignMsg));
 
   const signMsgHash = shajs('sha256')
     .update(jsonStr)
     .digest();
+  console.log('before sha=>', jsonStr, 'after sha=>', signMsgHash);
   return signMsgHash;
 }
 
@@ -250,22 +262,49 @@ export function convertToRawPubKey(internalPubKey: InternalPubKey): string {
 export function convertToRawSig(internalSignature: InternalSignature): string {
   return ByteBuffer.fromBase64(internalSignature.value).toString('hex');
 }
+function sortObject(object) {
+  var sortedObj = {},
+    keys = Object.keys(object);
+
+  keys.sort(function(key1, key2) {
+    (key1 = key1.toLowerCase()), (key2 = key2.toLowerCase());
+    if (key1 < key2) return -1;
+    if (key1 > key2) return 1;
+    return 0;
+  });
+
+  for (var index in keys) {
+    var key = keys[index];
+    if (typeof object[key] == 'object' && !(object[key] instanceof Array)) {
+      sortedObj[key] = sortObject(object[key]);
+    } else if (typeof object[key] == 'object' && object[key] instanceof Array) {
+      sortedObj[key] = [];
+      object[key].forEach(element => {
+        sortedObj[key].push(sortObject(element));
+      });
+    } else {
+      sortedObj[key] = object[key];
+    }
+  }
+
+  return sortedObj;
+}
 
 const _TYPE = {
-  PubKeyEd25519: 'AC26791624DE60',
-  PubKeySecp256k1: 'F8CCEAEB5AE980',
+  PubKeyEd25519: 'tendermint/PubKeyEd25519',
+  PubKeySecp256k1: 'tendermint/PubKeySecp256k1',
 
-  PrivKeyEd25519: '954568A3288910',
-  PrivKeySecp256k1: '019E82E1B0F798',
+  PrivKeyEd25519: 'tendermint/PrivKeyEd25519',
+  PrivKeySecp256k1: 'tendermint/PrivKeySecp256k1',
 
-  SignatureKeyEd25519: '6BF5903DA1DB28',
-  SignatureKeySecp256k1: '6D1EA416E1FEE8'
+  SignatureKeyEd25519: 'tendermint/SignatureEd25519',
+  SignatureKeySecp256k1: 'tendermint/SignatureSecp256k1'
 };
 
 const _PREFIX = {
-  PrefixPubKeyEd25519: '1624DE6220',
-  PrefixPubKeySecp256k1: 'EB5AE98221',
+  PrefixPubKeyEd25519: '1624DE6420',
+  PrefixPubKeySecp256k1: 'EB5AE98721',
 
-  PrefixPrivKeyEd25519: 'A328891240',
-  PrefixPrivKeySecp256k1: 'E1B0F79A20'
+  PrefixPrivKeyEd25519: 'A328891040',
+  PrefixPrivKeySecp256k1: 'E1B0F79B20'
 };
