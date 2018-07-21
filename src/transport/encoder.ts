@@ -86,15 +86,15 @@ export function encodeTx(
     fee: getZeroFee()
   };
 
-  const jsonStr = JSON.stringify(stdTx);
+  const jsonStr = JSON.stringify(number2StringInObject(stdTx));
   return ByteBuffer.btoa(jsonStr);
 }
 
 export function encodeMsg(msg: any): any {
   var encodedMsg = Object.assign({}, msg);
-  if ('new_master_public_key' in msg) {
-    encodedMsg.new_master_public_key = convertToInternalPubKey(
-      msg.new_master_public_key,
+  if ('new_reset_public_key' in msg) {
+    encodedMsg.new_reset_public_key = convertToInternalPubKey(
+      msg.new_reset_public_key,
       _TYPE.PubKeySecp256k1
     );
   }
@@ -144,9 +144,8 @@ export function encodeSignMsg(stdMsg: StdMsg[], chainId: string, seq: number): a
     msgs: stdMsg,
     sequence: String(seq)
   };
-  console.log('before sort++++++', stdSignMsg, sortObject(stdSignMsg));
 
-  const jsonStr = JSON.stringify(sortObject(stdSignMsg));
+  const jsonStr = JSON.stringify(number2StringInObject(sortObject(stdSignMsg)));
 
   const signMsgHash = shajs('sha256')
     .update(jsonStr)
@@ -157,9 +156,9 @@ export function encodeSignMsg(stdMsg: StdMsg[], chainId: string, seq: number): a
 
 export function convertMsg(msg: any): any {
   var encodedMsg = Object.assign({}, msg);
-  if ('new_master_public_key' in msg) {
-    var buffer = ByteBuffer.fromHex(msg.new_master_public_key);
-    encodedMsg.new_master_public_key = getByteArray(buffer);
+  if ('new_reset_public_key' in msg) {
+    var buffer = ByteBuffer.fromHex(msg.new_reset_public_key);
+    encodedMsg.new_reset_public_key = getByteArray(buffer);
   }
 
   if ('new_post_public_key' in msg) {
@@ -262,6 +261,7 @@ export function convertToRawPubKey(internalPubKey: InternalPubKey): string {
 export function convertToRawSig(internalSignature: InternalSignature): string {
   return ByteBuffer.fromBase64(internalSignature.value).toString('hex');
 }
+
 function sortObject(object) {
   var sortedObj = {},
     keys = Object.keys(object);
@@ -286,8 +286,31 @@ function sortObject(object) {
       sortedObj[key] = object[key];
     }
   }
-
   return sortedObj;
+}
+
+function number2StringInObject(object) {
+  var resultObj = {},
+    keys = Object.keys(object);
+
+  for (var index in keys) {
+    var key = keys[index];
+    if (typeof object[key] == 'object' && !(object[key] instanceof Array)) {
+      resultObj[key] = number2StringInObject(object[key]);
+    } else if (typeof object[key] == 'object' && object[key] instanceof Array) {
+      resultObj[key] = [];
+      object[key].forEach(element => {
+        resultObj[key].push(number2StringInObject(element));
+      });
+    } else {
+      if (typeof object[key] == 'number') {
+        resultObj[key] = String(object[key]);
+      } else {
+        resultObj[key] = object[key];
+      }
+    }
+  }
+  return resultObj;
 }
 
 const _TYPE = {

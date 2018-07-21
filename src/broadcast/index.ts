@@ -21,7 +21,7 @@ export default class Broadcast {
    * @param referrer: the user who refers the new user
    * @param register_fee: the amount of money used for registering
    * @param username: new username
-   * @param masterPubKeyHex: new user's master key
+   * @param resetPubKey: new user's reset key
    * @param transactionPubKeyHex: new user's transaction key
    * @param micropaymentPubKeyHex: new user's micropayment key
    * @param postPubKeyHex: new user's post key
@@ -32,7 +32,7 @@ export default class Broadcast {
     referrer: string,
     register_fee: string,
     username: string,
-    masterPubKeyHex: string,
+    resetPubKey: string,
     transactionPubKeyHex: string,
     micropaymentPubKeyHex: string,
     postPubKeyHex: string,
@@ -40,7 +40,7 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: RegisterMsg = {
-      new_master_public_key: decodePubKey(masterPubKeyHex),
+      new_reset_public_key: decodePubKey(resetPubKey),
       new_micropayment_public_key: decodePubKey(micropaymentPubKeyHex),
       new_post_public_key: decodePubKey(postPubKeyHex),
       new_transaction_public_key: decodePubKey(transactionPubKeyHex),
@@ -152,7 +152,7 @@ export default class Broadcast {
    * It composes RecoverMsg and then broadcasts the transaction to blockchain.
    *
    * @param username: the user who wants to recover account
-   * @param new_master_public_key: new master public key for user
+   * @param new_reset_public_key: new reset public key for user
    * @param new_transaction_public_key: new transaction public key for user
    * @param new_micropayment_public_key: new micropayment public key for user
    * @param new_post_public_key: new post public key for user
@@ -161,7 +161,7 @@ export default class Broadcast {
    */
   recover(
     username: string,
-    new_master_public_key: string,
+    new_reset_public_key: string,
     new_transaction_public_key: string,
     new_micropayment_public_key: string,
     new_post_public_key: string,
@@ -169,7 +169,7 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: RecoverMsg = {
-      new_master_public_key: decodePubKey(new_master_public_key),
+      new_reset_public_key: decodePubKey(new_reset_public_key),
       new_micropayment_public_key: decodePubKey(new_micropayment_public_key),
       new_post_public_key: decodePubKey(new_post_public_key),
       new_transaction_public_key: decodePubKey(new_transaction_public_key),
@@ -1033,7 +1033,7 @@ export default class Broadcast {
 
 // Account related messages
 export interface RegisterMsg {
-  new_master_public_key: string;
+  new_reset_public_key: string;
   new_micropayment_public_key: string;
   new_post_public_key: string;
   new_transaction_public_key: string;
@@ -1064,7 +1064,7 @@ export interface ClaimMsg {
 }
 
 export interface RecoverMsg {
-  new_master_public_key: string;
+  new_reset_public_key: string;
   new_micropayment_public_key: string;
   new_post_public_key: string;
   new_transaction_public_key: string;
