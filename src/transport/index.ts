@@ -129,12 +129,13 @@ export class Transport implements ITransport {
     };
 
     // signmsg
-    const signMsgHash = encodeSignMsg(stdMsg, this._chainId, seq);
+    var msgs = new Array<StdMsg>(stdMsg);
+    const signMsgHash = encodeSignMsg(msgs, this._chainId, seq);
     // sign to get signature
     const sig = key.sign(signMsgHash, { canonical: true });
     const sigDERHex = sig.toDER('hex');
     // build tx
-    const tx = encodeTx(stdMsg, key.getPublic(true, 'hex'), sigDERHex, seq);
+    const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq);
 
     // return broadcast
     return this._rpc.broadcastTxCommit(tx).then(result => {

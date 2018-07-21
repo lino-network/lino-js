@@ -6,12 +6,12 @@ export default class Query {
     private _transport;
     constructor(transport: ITransport);
     /**
-     * doesUsernameMatchMasterPrivKey returns true if a user has the master private key.
+     * doesUsernameMatchResetPrivKey returns true if a user has the reset private key.
      *
      * @param username
-     * @param masterPrivKeyHex
+     * @param resetPrivKeyHex
      */
-    doesUsernameMatchMasterPrivKey(username: string, masterPrivKeyHex: string): Promise<boolean>;
+    doesUsernameMatchResetPrivKey(username: string, resetPrivKeyHex: string): Promise<boolean>;
     /**
      * doesUsernameMatchTxPrivKey returns true if a user has the transaction private key.
      *
@@ -555,7 +555,7 @@ export interface InfraProviderList {
 export interface AccountInfo {
     username: string;
     created_at: number;
-    master_key: string;
+    reset_key: string;
     transaction_key: string;
     micropayment_key: string;
     post_key: string;

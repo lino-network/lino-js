@@ -1,10 +1,6 @@
 export interface ResultABCIQuery {
     response: ResponseQuery;
 }
-export interface ResultKV<K, V> {
-    key: K;
-    value: V;
-}
 export interface ResponseQuery {
     code: number;
     log: string;
@@ -37,7 +33,7 @@ export declare class Rpc {
     private _nodeUrl;
     constructor(nodeUrl: string);
     abciQuery(path: string, key: string, opts?: {
-        height: number;
+        height: string;
         trusted: boolean;
     }): Promise<ResultABCIQuery>;
     broadcastTxCommit(tx: string): Promise<ResultBroadcastTxCommit>;

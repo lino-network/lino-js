@@ -15,17 +15,17 @@ export default class Query {
   }
 
   /**
-   * doesUsernameMatchMasterPrivKey returns true if a user has the master private key.
+   * doesUsernameMatchResetPrivKey returns true if a user has the reset private key.
    *
    * @param username
-   * @param masterPrivKeyHex
+   * @param resetPrivKeyHex
    */
-  doesUsernameMatchMasterPrivKey(username: string, masterPrivKeyHex: string): Promise<boolean> {
+  doesUsernameMatchResetPrivKey(username: string, resetPrivKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
       if (info == null) {
         return false;
       }
-      return Util.isKeyMatch(masterPrivKeyHex, info.master_key);
+      return Util.isKeyMatch(resetPrivKeyHex, info.reset_key);
     });
   }
 
@@ -107,7 +107,7 @@ export default class Query {
    */
   getSeqNumber(username: string): Promise<number> {
     return this.getAccountMeta(username).then(meta => {
-      return meta.sequence;
+      return +meta.sequence;
     });
   }
 
@@ -189,7 +189,7 @@ export default class Query {
         const res: AccountInfo = {
           username: info.username,
           created_at: info.created_at,
-          master_key: encodePubKey(convertToRawPubKey(info.master_key)),
+          reset_key: encodePubKey(convertToRawPubKey(info.reset_key)),
           transaction_key: encodePubKey(convertToRawPubKey(info.transaction_key)),
           micropayment_key: encodePubKey(convertToRawPubKey(info.micropayment_key)),
           post_key: encodePubKey(convertToRawPubKey(info.post_key))
@@ -949,7 +949,6 @@ export default class Query {
     let indexOfTo = to % 100;
 
     while (bucketSlot >= 0 && numHistory > 0) {
-      console.log('balance history sending bucketSlot: ', bucketSlot);
       let history = await this.getBalanceHistoryBundle(username, bucketSlot);
       let startIndex = bucketSlot == targetBucketOfTo ? indexOfTo : history.details.length - 1;
 
@@ -1024,7 +1023,6 @@ export default class Query {
     let indexOfTo = to % 100;
 
     while (bucketSlot >= 0 && numReward > 0) {
-      console.log('reward history sending bucketSlot: ', bucketSlot);
       let history = await this.getRewardHistoryBundle(username, bucketSlot);
       let startIndex = bucketSlot == targetBucketOfTo ? indexOfTo : history.details.length - 1;
 
@@ -1213,7 +1211,7 @@ export interface InfraProviderList {
 export interface AccountInfo {
   username: string;
   created_at: number;
-  master_key: string;
+  reset_key: string;
   transaction_key: string;
   micropayment_key: string;
   post_key: string;
@@ -1398,7 +1396,7 @@ const _TIMECONST = {
 interface AccountInfoInternal {
   username: string;
   created_at: number;
-  master_key: InternalPubKey;
+  reset_key: InternalPubKey;
   transaction_key: InternalPubKey;
   micropayment_key: InternalPubKey;
   post_key: InternalPubKey;

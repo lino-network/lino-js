@@ -11,14 +11,14 @@ export default class Broadcast {
      * @param referrer: the user who refers the new user
      * @param register_fee: the amount of money used for registering
      * @param username: new username
-     * @param masterPubKeyHex: new user's master key
+     * @param resetPubKey: new user's reset key
      * @param transactionPubKeyHex: new user's transaction key
      * @param micropaymentPubKeyHex: new user's micropayment key
      * @param postPubKeyHex: new user's post key
      * @param referrerPrivKeyHex: referrer's private key
      * @param seq: the sequence number of referrer for the next transaction
      */
-    register(referrer: string, register_fee: string, username: string, masterPubKeyHex: string, transactionPubKeyHex: string, micropaymentPubKeyHex: string, postPubKeyHex: string, referrerPrivKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    register(referrer: string, register_fee: string, username: string, resetPubKey: string, transactionPubKeyHex: string, micropaymentPubKeyHex: string, postPubKeyHex: string, referrerPrivKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * Transfer sends a certain amount of LINO token from the sender to the receiver.
      * It composes TransferMsg and then broadcasts the transaction to blockchain.
@@ -76,14 +76,14 @@ export default class Broadcast {
      * It composes RecoverMsg and then broadcasts the transaction to blockchain.
      *
      * @param username: the user who wants to recover account
-     * @param new_master_public_key: new master public key for user
+     * @param new_reset_public_key: new reset public key for user
      * @param new_transaction_public_key: new transaction public key for user
      * @param new_micropayment_public_key: new micropayment public key for user
      * @param new_post_public_key: new post public key for user
      * @param privKeyHex: the old private key of user
      * @param seq: the sequence number of user for the next transaction
      */
-    recover(username: string, new_master_public_key: string, new_transaction_public_key: string, new_micropayment_public_key: string, new_post_public_key: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    recover(username: string, new_reset_public_key: string, new_transaction_public_key: string, new_micropayment_public_key: string, new_post_public_key: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * CreatePost creates a new post on blockchain.
      * It composes CreatePostMsg and then broadcasts the transaction to blockchain.
@@ -470,13 +470,13 @@ export default class Broadcast {
     _broadcastTransaction(msg: object, msgType: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
 }
 export interface RegisterMsg {
-    referrer: string;
-    register_fee: string;
-    new_username: string;
-    new_master_public_key: string;
-    new_transaction_public_key: string;
+    new_reset_public_key: string;
     new_micropayment_public_key: string;
     new_post_public_key: string;
+    new_transaction_public_key: string;
+    new_username: string;
+    referrer: string;
+    register_fee: string;
 }
 export interface TransferMsg {
     sender: string;
@@ -496,11 +496,11 @@ export interface ClaimMsg {
     username: string;
 }
 export interface RecoverMsg {
-    username: string;
-    new_master_public_key: string;
-    new_transaction_public_key: string;
+    new_reset_public_key: string;
     new_micropayment_public_key: string;
     new_post_public_key: string;
+    new_transaction_public_key: string;
+    username: string;
 }
 export interface UpdateAccountMsg {
     username: string;
