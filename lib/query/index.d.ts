@@ -627,7 +627,7 @@ export interface Detail {
     from: string;
     to: string;
     amount: Types.Coin;
-    created_at: string;
+    created_at: number;
     memo: string;
 }
 export interface ProposalList {
