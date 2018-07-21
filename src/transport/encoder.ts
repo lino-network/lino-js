@@ -90,6 +90,86 @@ export function encodeTx(
   return ByteBuffer.btoa(jsonStr);
 }
 
+export function decodeObject(result: any): any {
+  var decodedResult = Object.assign({}, result);
+  if ('deposit' in decodedResult) {
+    decodedResult.deposit = <Coin>{ amount: String(Number(decodedResult.deposit) / 100000) };
+  }
+  if ('delegated_power' in decodedResult) {
+    decodedResult.delegated_power = <Coin>{
+      amount: String(Number(decodedResult.delegated_power) / 100000)
+    };
+  }
+  if ('voting_power' in decodedResult) {
+    decodedResult.voting_power = <Coin>{
+      amount: String(Number(decodedResult.voting_power) / 100000)
+    };
+  }
+  if ('amount' in decodedResult) {
+    decodedResult.amount = <Coin>{ amount: String(Number(decodedResult.amount) / 100000) };
+  }
+  if ('stake' in decodedResult) {
+    decodedResult.stake = <Coin>{ amount: String(Number(decodedResult.stake) / 100000) };
+  }
+  if ('total_report_stake' in decodedResult) {
+    decodedResult.total_report_stake = <Coin>{
+      amount: String(Number(decodedResult.total_report_stake) / 100000)
+    };
+  }
+  if ('total_upvote_stake' in decodedResult) {
+    decodedResult.total_upvote_stake = <Coin>{
+      amount: String(Number(decodedResult.total_upvote_stake) / 100000)
+    };
+  }
+  if ('total_reward' in decodedResult) {
+    decodedResult.total_reward = <Coin>{
+      amount: String(Number(decodedResult.total_reward) / 100000)
+    };
+  }
+  if ('app_consumption' in decodedResult) {
+    decodedResult.app_consumption = <Coin>{
+      amount: String(Number(decodedResult.app_consumption) / 100000)
+    };
+  }
+  if ('saving' in decodedResult) {
+    decodedResult.saving = <Coin>{ amount: String(Number(decodedResult.saving) / 100000) };
+  }
+  if ('transaction_capacity' in decodedResult) {
+    decodedResult.transaction_capacity = <Coin>{
+      amount: String(Number(decodedResult.transaction_capacity) / 100000)
+    };
+  }
+  if ('original_income' in decodedResult) {
+    decodedResult.original_income = <Coin>{
+      amount: String(Number(decodedResult.original_income) / 100000)
+    };
+  }
+  if ('friction_income' in decodedResult) {
+    decodedResult.friction_income = <Coin>{
+      amount: String(Number(decodedResult.friction_income) / 100000)
+    };
+  }
+  if ('actual_reward' in decodedResult) {
+    decodedResult.actual_reward = <Coin>{
+      amount: String(Number(decodedResult.actual_reward) / 100000)
+    };
+  }
+  if ('unclaim_reward' in decodedResult) {
+    decodedResult.unclaim_reward = <Coin>{
+      amount: String(Number(decodedResult.unclaim_reward) / 100000)
+    };
+  }
+  if ('agree_vote' in decodedResult) {
+    decodedResult.agree_vote = <Coin>{ amount: String(Number(decodedResult.agree_vote) / 100000) };
+  }
+  if ('disagree_vote' in decodedResult) {
+    decodedResult.disagree_vote = <Coin>{
+      amount: String(Number(decodedResult.disagree_vote) / 100000)
+    };
+  }
+  return decodedResult;
+}
+
 export function encodeMsg(msg: any): any {
   var encodedMsg = Object.assign({}, msg);
   if ('new_reset_public_key' in msg) {

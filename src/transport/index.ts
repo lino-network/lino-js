@@ -1,6 +1,14 @@
 import ByteBuffer from 'bytebuffer';
 import { ec as EC } from 'elliptic';
-import { decodePrivKey, encodeSignMsg, encodeTx, convertMsg, StdMsg, encodeMsg } from './encoder';
+import {
+  decodePrivKey,
+  encodeSignMsg,
+  encodeTx,
+  convertMsg,
+  StdMsg,
+  encodeMsg,
+  decodeObject
+} from './encoder';
 import { ResultBlock, ResultBroadcastTxCommit, Rpc } from './rpc';
 import Keys from '../query/keys';
 
@@ -52,7 +60,7 @@ export class Transport implements ITransport {
       }
 
       const jsonStr = ByteBuffer.atob(result.response.value);
-      return JSON.parse(jsonStr) as T;
+      return decodeObject(JSON.parse(jsonStr) as T);
     });
   }
 
@@ -95,7 +103,7 @@ export class Transport implements ITransport {
         }
         const jsonValueStr = ByteBuffer.atob(resKVs[i].value);
         let value = JSON.parse(jsonValueStr) as V;
-        let item: ResultKV<string, V> = { key: keyStr, value: value };
+        let item: ResultKV<string, V> = { key: keyStr, value: decodeObject(value) };
         rst.push(item);
       }
 
