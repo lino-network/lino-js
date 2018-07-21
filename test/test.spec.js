@@ -455,13 +455,13 @@ function addSuite(envName) {
 
       it('revokePermission', function() {
         return runBroadcast(query, true, () => {
-          return query.getSeqNumber(username).then(seq => {
+          return query.getSeqNumber(userName).then(seq => {
             return broadcast
               .revokePermission(
-                username,
-                'eb5ae98221037bb974cf968efd294714d01bdf9d848981147bf7fe7432aed3219aa63e307144',
+                userName,
+                'eb5ae98721025d79562d58282e5a9b6cd97e3df328023b5b3a7e98d0e1855f66a4aeb5da862c',
                 1,
-                testTxPrivHex,
+                derivedTxPrivKey,
                 seq
               )
               .then(v => {
@@ -471,7 +471,6 @@ function addSuite(envName) {
           });
         });
       });
-
       it.skip('some other', function() {
         // return query.getSeqNumber('zhimao').then(seq => {
         //   return broadcast
