@@ -445,15 +445,15 @@ export interface PubKey {
 export interface ABCIValidator {
     address: string;
     pub_key: PubKey;
-    power: number;
+    power: string;
 }
 export interface Validator {
     abci: ABCIValidator;
     username: string;
     deposit: Types.Coin;
-    absent_commit: number;
-    byzantine_commit: number;
-    produced_blocks: number;
+    absent_commit: string;
+    byzantine_commit: string;
+    produced_blocks: string;
     link: string;
 }
 export interface AllValidators {
@@ -480,22 +480,22 @@ export interface Delegation {
 export interface Comment {
     author: string;
     post_key: string;
-    created: number;
+    created: string;
 }
 export interface View {
     username: string;
-    last_view_at: number;
-    times: number;
+    last_view_at: string;
+    times: string;
 }
 export interface Like {
     username: string;
-    weight: number;
-    created_at: number;
+    weight: string;
+    created_at: string;
 }
 export interface Donation {
     amount: Types.Coin;
-    created: number;
-    donation_type: number;
+    created: string;
+    donation_type: string;
 }
 export interface Donations {
     username: string;
@@ -504,7 +504,7 @@ export interface Donations {
 export interface ReportOrUpvote {
     username: string;
     stake: Types.Coin;
-    created_at: number;
+    created_at: string;
     is_report: boolean;
 }
 export interface PostInfo {
@@ -519,18 +519,18 @@ export interface PostInfo {
     links: Types.IDToURLMapping[];
 }
 export interface PostMeta {
-    created_at: number;
-    last_updated_at: number;
-    last_activity_at: number;
+    created_at: string;
+    last_updated_at: string;
+    last_activity_at: string;
     allow_replies: boolean;
     is_deleted: boolean;
-    total_like_count: number;
-    total_donate_count: number;
-    total_like_weight: number;
-    total_dislike_weight: number;
+    total_like_count: string;
+    total_donate_count: string;
+    total_like_weight: string;
+    total_dislike_weight: string;
     total_report_stake: Types.Coin;
     total_upvote_stake: Types.Coin;
-    total_view_count: number;
+    total_view_count: string;
     total_reward: Types.Coin;
     redistribution_split_rate: Types.Rat;
 }
@@ -554,7 +554,7 @@ export interface InfraProviderList {
 }
 export interface AccountInfo {
     username: string;
-    created_at: number;
+    created_at: string;
     reset_key: string;
     transaction_key: string;
     micropayment_key: string;
@@ -564,35 +564,35 @@ export interface AccountBank {
     saving: Types.Coin;
     stake: Types.Coin;
     frozen_money_list: FrozenMoney[];
-    number_of_transaction: number;
-    number_of_reward: number;
+    number_of_transaction: string;
+    number_of_reward: string;
 }
 export interface FrozenMoney {
     amount: Types.Coin;
-    start_at: number;
-    times: number;
-    interval: number;
+    start_at: string;
+    times: string;
+    interval: string;
 }
 export interface GrantPubKey {
     username: string;
-    permission: number;
-    left_times: number;
-    created_at: number;
-    expires_at: number;
+    permission: string;
+    left_times: string;
+    created_at: string;
+    expires_at: string;
 }
 export interface AccountMeta {
-    sequence: number;
-    last_activity_at: number;
+    sequence: string;
+    last_activity_at: string;
     transaction_capacity: Types.Coin;
     json_meta: string;
-    last_report_or_upvote_at: number;
+    last_report_or_upvote_at: string;
 }
 export interface FollowerMeta {
-    created_at: number;
+    created_at: string;
     follower_name: string;
 }
 export interface FollowingMeta {
-    created_at: number;
+    created_at: string;
     following_name: string;
 }
 export interface Reward {
@@ -613,7 +613,7 @@ export interface RewardHistory {
     details: RewardDetail[];
 }
 export interface Relationship {
-    donation_times: number;
+    donation_times: string;
 }
 export interface RangeQueryResult<T> {
     key: string;
@@ -623,11 +623,11 @@ export interface BalanceHistory {
     details: Detail[];
 }
 export interface Detail {
-    detail_type: number;
+    detail_type: string;
     from: string;
     to: string;
     amount: Types.Coin;
-    created_at: number;
+    created_at: string;
     memo: string;
 }
 export interface ProposalList {
@@ -639,12 +639,12 @@ export interface ProposalInfo {
     proposal_id: string;
     agree_vote: Types.Coin;
     disagree_vote: Types.Coin;
-    result: number;
-    created_at: number;
-    expired_at: number;
+    result: string;
+    created_at: string;
+    expired_at: string;
 }
 export interface NextProposalID {
-    next_proposal_id: number;
+    next_proposal_id: string;
 }
 export interface Proposal {
     type: string;
