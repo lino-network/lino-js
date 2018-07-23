@@ -26,11 +26,11 @@ export interface Parameter {
 }
 export interface EvaluateOfContentValueParam {
     amount_of_consumption_exponent: Rat;
-    consumption_time_adjust_base: number;
-    consumption_time_adjust_offset: number;
-    num_of_consumption_on_author_offset: number;
-    total_amount_of_consumption_base: number;
-    total_amount_of_consumption_offset: number;
+    consumption_time_adjust_base: string;
+    consumption_time_adjust_offset: string;
+    num_of_consumption_on_author_offset: string;
+    total_amount_of_consumption_base: string;
+    total_amount_of_consumption_offset: string;
 }
 export declare function isEvaluateOfContentValueParam(param: object): param is EvaluateOfContentValueParam;
 export interface GlobalAllocationParam {
@@ -47,24 +47,24 @@ export interface InfraInternalAllocationParam {
 export declare function isInfraInternalAllocationParam(param: object): param is InfraInternalAllocationParam;
 export interface VoteParam {
     delegator_min_withdraw: Coin;
-    voter_coin_return_interval: number;
-    voter_coin_return_times: number;
+    voter_coin_return_interval: string;
+    voter_coin_return_times: string;
     voter_min_deposit: Coin;
     voter_min_withdraw: Coin;
-    delegator_coin_return_interval: number;
-    delegator_coin_return_times: number;
+    delegator_coin_return_interval: string;
+    delegator_coin_return_times: string;
 }
 export declare function isVoteParam(param: object): param is VoteParam;
 export interface ProposalParam {
-    content_censorship_decide_hr: number;
+    content_censorship_decide_hr: string;
     content_censorship_min_deposit: Coin;
     content_censorship_pass_ratio: Rat;
     content_censorship_pass_votes: Coin;
-    change_param_decide_hr: number;
+    change_param_decide_hr: string;
     change_param_min_deposit: Coin;
     change_param_pass_ratio: Rat;
     change_param_pass_votes: Coin;
-    protocol_upgrade_decide_hr: number;
+    protocol_upgrade_decide_hr: string;
     protocol_upgrade_min_deposit: Coin;
     protocol_upgrade_pass_ratio: Rat;
     protocol_upgrade_pass_votes: Coin;
@@ -72,21 +72,21 @@ export interface ProposalParam {
 export declare function isProposalParam(param: object): param is ProposalParam;
 export interface DeveloperParam {
     developer_min_deposit: Coin;
-    developer_coin_return_interval: number;
-    developer_coin_return_times: number;
+    developer_coin_return_interval: string;
+    developer_coin_return_times: string;
 }
 export declare function isDeveloperParam(param: object): param is DeveloperParam;
 export interface ValidatorParam {
     penalty_miss_vote: Coin;
     penalty_miss_commit: Coin;
     penalty_byzantine: Coin;
-    validator_list_size: number;
-    absent_commit_limitation: number;
+    validator_list_size: string;
+    absent_commit_limitation: string;
     validator_min_withdraw: Coin;
     validator_min_voting_deposit: Coin;
     validator_min_commiting_deposit: Coin;
-    validator_coin_return_interval: number;
-    validator_coin_return_times: number;
+    validator_coin_return_interval: string;
+    validator_coin_return_times: string;
 }
 export declare function isValidatorParam(param: object): param is ValidatorParam;
 export interface CoinDayParam {
@@ -97,22 +97,19 @@ export declare function isCoinDayParam(param: object): param is CoinDayParam;
 export interface BandwidthParam {
     seconds_to_recover_bandwidth: number;
     capacity_usage_per_transaction: Coin;
-    balance_history_bundle_size: number;
-    maximum_micropayment_grant_times: number;
-    reward_history_bundle_size: number;
 }
 export declare function isBandwidthParam(param: object): param is BandwidthParam;
 export interface AccountParam {
     minimum_balance: Coin;
     register_fee: Coin;
-    balance_history_bundle_size: number;
-    maximum_micropayment_grant_times: number;
-    reward_history_bundle_size: number;
+    balance_history_bundle_size: string;
+    maximum_micropayment_grant_times: string;
+    reward_history_bundle_size: string;
 }
 export declare function isAccountParam(param: object): param is AccountParam;
 export interface PostParam {
     micropayment_limitation: Coin;
-    report_or_upvote_interval: number;
+    report_or_upvote_interval: string;
 }
 export declare function isPostParam(param: object): param is PostParam;
 export interface GlobalMeta {
@@ -127,5 +124,5 @@ export interface ConsumptionMeta {
     consumption_friction_rate: Rat;
     consumption_window: Coin;
     consumption_reward_pool: Coin;
-    consumption_freezing_period: number;
+    consumption_freezing_period: string;
 }
