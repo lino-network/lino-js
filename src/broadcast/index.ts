@@ -76,7 +76,6 @@ export default class Broadcast {
       receiver: receiver,
       sender: sender
     };
-    console.log('transfer msg:', msg);
     return this._broadcastTransaction(msg, _MSGTYPE.TransferMsgType, privKeyHex, seq);
   }
 

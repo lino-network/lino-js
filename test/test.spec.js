@@ -1,15 +1,7 @@
 const NODE_URL = 'http://localhost:26657/';
 const testTxPrivHex = 'E1B0F79B2086806E31E8EF253D2ECA147E5E34D29C59222223154DC58B97ABD10ED0341A87';
 
-const zhimaoTx =
-  'A32889124042B7EC409FDA30BB1164122A85CC216CA1DBD6A56066B841AE6F4C9CAAE1C2E554F9F0E0BCCF033A67D43D97BDDCCE4E0EE187A45438009D11801F2405268821';
-const testValidatorPubHex =
-  '1624DE6220e008041ccafcc76788099b990531697ff4bf8eb2d1fabe204ee5fe0fc2c7c3f6';
-
 const myUser = 'lino';
-const myUserTxPrivKey =
-  'A328891240C3EB3D287AA0D3EA41D8A016B9A602FB845EFD1F407CA65BFF0A4560AB8DFA517AC83395BC2F6AE32D5641D4A824B5B22ED6A23FC51C479A1C8BEBC7C94970DD';
-
 // test utils
 function makeid(len) {
   let text = '';
@@ -265,21 +257,21 @@ function addSuite(envName) {
       });
 
       it('getAllGrantPubKeys', function() {
-        return query.getAllGrantPubKeys('yukai-tu11').then(v => {
+        return query.getAllGrantPubKeys('lino').then(v => {
           debug('getAllGrantPubKeys', v);
         });
       });
 
       it('getAllPosts', function() {
         this.timeout(0);
-        return query.getAllPosts('yukai-tu11').then(v => {
+        return query.getAllPosts('lino').then(v => {
           debug('getAllPosts', v);
         });
       });
 
       it('getAccountBank', function() {
         this.timeout(0);
-        return query.getAccountBank('yukai-tu11').then(v => {
+        return query.getAccountBank('lino').then(v => {
           debug('get acc bank', v);
         });
       });

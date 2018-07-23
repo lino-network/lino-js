@@ -93,79 +93,86 @@ export function encodeTx(
 export function decodeObject(result: any): any {
   var decodedResult = Object.assign({}, result);
   if ('deposit' in decodedResult) {
-    decodedResult.deposit = <Coin>{ amount: String(Number(decodedResult.deposit) / 100000) };
+    decodedResult.deposit.amount = String(Number(decodedResult.deposit.amount) / 100000);
   }
   if ('delegated_power' in decodedResult) {
-    decodedResult.delegated_power = <Coin>{
-      amount: String(Number(decodedResult.delegated_power) / 100000)
-    };
+    decodedResult.delegated_power.amount = String(
+      Number(decodedResult.delegated_power.amount) / 100000
+    );
   }
   if ('voting_power' in decodedResult) {
-    decodedResult.voting_power = <Coin>{
-      amount: String(Number(decodedResult.voting_power) / 100000)
-    };
+    decodedResult.voting_power.amount = String(Number(decodedResult.voting_power.amount) / 100000);
   }
   if ('amount' in decodedResult) {
-    decodedResult.amount = <Coin>{ amount: String(Number(decodedResult.amount) / 100000) };
+    decodedResult.amount.amount = String(Number(decodedResult.amount.amount) / 100000);
   }
   if ('stake' in decodedResult) {
-    decodedResult.stake = <Coin>{ amount: String(Number(decodedResult.stake) / 100000) };
+    decodedResult.stake.amount = String(Number(decodedResult.stake.amount) / 100000);
   }
   if ('total_report_stake' in decodedResult) {
-    decodedResult.total_report_stake = <Coin>{
-      amount: String(Number(decodedResult.total_report_stake) / 100000)
-    };
+    decodedResult.total_report_stake.amount = String(
+      Number(decodedResult.total_report_stake.amount) / 100000
+    );
   }
   if ('total_upvote_stake' in decodedResult) {
-    decodedResult.total_upvote_stake = <Coin>{
-      amount: String(Number(decodedResult.total_upvote_stake) / 100000)
-    };
+    decodedResult.total_upvote_stake.amount = String(
+      Number(decodedResult.total_upvote_stake.amount) / 100000
+    );
   }
   if ('total_reward' in decodedResult) {
-    decodedResult.total_reward = <Coin>{
-      amount: String(Number(decodedResult.total_reward) / 100000)
-    };
+    decodedResult.total_reward.amount = String(Number(decodedResult.total_reward.amount) / 100000);
   }
   if ('app_consumption' in decodedResult) {
-    decodedResult.app_consumption = <Coin>{
-      amount: String(Number(decodedResult.app_consumption) / 100000)
-    };
+    decodedResult.app_consumption.amount = String(
+      Number(decodedResult.app_consumption.amount) / 100000
+    );
   }
   if ('saving' in decodedResult) {
-    decodedResult.saving = <Coin>{ amount: String(Number(decodedResult.saving) / 100000) };
+    decodedResult.saving.amount = String(Number(decodedResult.saving.amount) / 100000);
   }
   if ('transaction_capacity' in decodedResult) {
-    decodedResult.transaction_capacity = <Coin>{
-      amount: String(Number(decodedResult.transaction_capacity) / 100000)
-    };
+    decodedResult.transaction_capacity.amount = String(
+      Number(decodedResult.transaction_capacity.amount) / 100000
+    );
   }
   if ('original_income' in decodedResult) {
-    decodedResult.original_income = <Coin>{
-      amount: String(Number(decodedResult.original_income) / 100000)
-    };
+    decodedResult.original_income.amount = String(
+      Number(decodedResult.original_income.amount) / 100000
+    );
   }
   if ('friction_income' in decodedResult) {
-    decodedResult.friction_income = <Coin>{
-      amount: String(Number(decodedResult.friction_income) / 100000)
-    };
+    decodedResult.friction_income.amount = String(
+      Number(decodedResult.friction_income.amount) / 100000
+    );
   }
   if ('actual_reward' in decodedResult) {
-    decodedResult.actual_reward = <Coin>{
-      amount: String(Number(decodedResult.actual_reward) / 100000)
-    };
+    decodedResult.actual_reward.amount = String(
+      Number(decodedResult.actual_reward.amount) / 100000
+    );
   }
   if ('unclaim_reward' in decodedResult) {
-    decodedResult.unclaim_reward = <Coin>{
-      amount: String(Number(decodedResult.unclaim_reward) / 100000)
-    };
+    decodedResult.unclaim_reward.amount = String(
+      Number(decodedResult.unclaim_reward.amount) / 100000
+    );
   }
   if ('agree_vote' in decodedResult) {
-    decodedResult.agree_vote = <Coin>{ amount: String(Number(decodedResult.agree_vote) / 100000) };
+    decodedResult.agree_vote.amount = String(Number(decodedResult.agree_vote.amount) / 100000);
   }
   if ('disagree_vote' in decodedResult) {
-    decodedResult.disagree_vote = <Coin>{
-      amount: String(Number(decodedResult.disagree_vote) / 100000)
-    };
+    decodedResult.disagree_vote.amount = String(
+      Number(decodedResult.disagree_vote.amount) / 100000
+    );
+  }
+  var keys = Object.keys(result);
+
+  for (var index in keys) {
+    var key = keys[index];
+    if (key === 'details' && result[key] instanceof Array) {
+      decodedResult[key] = [];
+      result[key].forEach(element => {
+        decodedResult[key].push(decodeObject(element));
+      });
+    }
   }
   return decodedResult;
 }
@@ -230,7 +237,6 @@ export function encodeSignMsg(stdMsg: StdMsg[], chainId: string, seq: number): a
   const signMsgHash = shajs('sha256')
     .update(jsonStr)
     .digest();
-  console.log('before sha=>', jsonStr, 'after sha=>', signMsgHash);
   return signMsgHash;
 }
 
