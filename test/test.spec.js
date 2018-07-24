@@ -288,8 +288,7 @@ function addSuite(envName) {
       const userName = makeid(10);
       const randomResetPrivKey = UTILS.genPrivKeyHex();
       const derivedTxPrivKey = UTILS.derivePrivKey(randomResetPrivKey);
-      const derivedMicroPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
-      const derivedPostPrivKey = UTILS.derivePrivKey(derivedMicroPrivKey);
+      const derivedAppPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
       const query = linoClient.query;
       const broadcast = linoClient.broadcast;
       this.timeout(20000);
@@ -297,13 +296,12 @@ function addSuite(envName) {
       // it('register', function() {
       //   const resetPubKey = UTILS.pubKeyFromPrivate(randomResetPrivKey);
       //   const txPubKey = UTILS.pubKeyFromPrivate(derivedTxPrivKey);
-      //   const microPubKey = UTILS.pubKeyFromPrivate(derivedMicroPrivKey);
-      //   const postPubKey = UTILS.pubKeyFromPrivate(derivedPostPrivKey);
+      //   const appPubKey = UTILS.pubKeyFromPrivate(derivedAppPrivKey);
 
       //   debug('register: ', userName);
       //   debug('resetKey: ', randomResetPrivKey);
       //   debug('txPrivKey: ', derivedTxPrivKey);
-      //   debug('register pub key in input========: ', microPubKey);
+      //   debug('appKey ', appPubKey);
 
       //   return runBroadcast(query, true, () => {
       //     return query
@@ -320,8 +318,7 @@ function addSuite(envName) {
       //             userName,
       //             resetPubKey,
       //             txPubKey,
-      //             microPubKey,
-      //             postPubKey,
+      //             appPubKey,
       //             testTxPrivHex,
       //             seq
       //           )
@@ -334,8 +331,7 @@ function addSuite(envName) {
       //                 userName,
       //                 resetPubKey,
       //                 txPubKey,
-      //                 microPubKey,
-      //                 postPubKey,
+      //                 appPubKey,
       //                 randomResetPrivKey,
       //                 0
       //               )

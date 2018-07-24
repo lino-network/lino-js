@@ -188,7 +188,6 @@ export interface AccountParam {
   minimum_balance: Coin;
   register_fee: Coin;
   balance_history_bundle_size: string;
-  maximum_micropayment_grant_times: string;
   reward_history_bundle_size: string;
 }
 export function isAccountParam(param: object): param is AccountParam {
@@ -196,17 +195,15 @@ export function isAccountParam(param: object): param is AccountParam {
     'minimum_balance' in param &&
     'register_fee' in param &&
     'balance_history_bundle_size' in param &&
-    'maximum_micropayment_grant_times' in param &&
     'reward_history_bundle_size' in param
   );
 }
 
 export interface PostParam {
-  micropayment_limitation: Coin;
   report_or_upvote_interval: string;
 }
 export function isPostParam(param: object): param is PostParam {
-  return 'micropayment_limitation' in param && 'report_or_upvote_interval' in param;
+  return 'report_or_upvote_interval' in param;
 }
 
 export interface GlobalMeta {
