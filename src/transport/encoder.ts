@@ -167,7 +167,10 @@ export function decodeObject(result: any): any {
 
   for (var index in keys) {
     var key = keys[index];
-    if (key === 'details' && result[key] instanceof Array) {
+    if (
+      (key === 'details' || key === 'frozen_money_list' || key === 'donation_list') &&
+      result[key] instanceof Array
+    ) {
       decodedResult[key] = [];
       result[key].forEach(element => {
         decodedResult[key].push(decodeObject(element));

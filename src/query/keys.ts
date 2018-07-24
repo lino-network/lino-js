@@ -64,7 +64,7 @@ namespace Keys {
     coinDayParamSubStore: '07',
     bandwidthParamSubStore: '08',
     accountParamSubstore: '09',
-    postParamSubStore: '10',
+    postParamSubStore: '0a',
 
     globalMetaSubStore: '01',
     inflationPoolSubStore: '02',
