@@ -1,6 +1,5 @@
 //@ts-ignore
 import ByteBuffer from 'bytebuffer';
-import { convertToRawPubKey, encodePubKey } from '../transport/encoder';
 
 namespace Keys {
   export const KVSTOREKEYS = {
@@ -65,7 +64,7 @@ namespace Keys {
     coinDayParamSubStore: '07',
     bandwidthParamSubStore: '08',
     accountParamSubstore: '09',
-    postParamSubStore: '10',
+    postParamSubStore: '0a',
 
     globalMetaSubStore: '01',
     inflationPoolSubStore: '02',

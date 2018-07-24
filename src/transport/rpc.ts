@@ -5,11 +5,6 @@ export interface ResultABCIQuery {
   response: ResponseQuery;
 }
 
-export interface ResultKV<K, V> {
-  key: K;
-  value: V;
-}
-
 export interface ResponseQuery {
   code: number;
   log: string;
@@ -44,7 +39,7 @@ export interface Data {
 }
 
 const DefaultABCIQueryOptions = {
-  height: 0,
+  height: '0',
   trusted: false
 };
 

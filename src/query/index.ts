@@ -15,17 +15,17 @@ export default class Query {
   }
 
   /**
-   * doesUsernameMatchMasterPrivKey returns true if a user has the master private key.
+   * doesUsernameMatchResetPrivKey returns true if a user has the reset private key.
    *
    * @param username
-   * @param masterPrivKeyHex
+   * @param resetPrivKeyHex
    */
-  doesUsernameMatchMasterPrivKey(username: string, masterPrivKeyHex: string): Promise<boolean> {
+  doesUsernameMatchResetPrivKey(username: string, resetPrivKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
       if (info == null) {
         return false;
       }
-      return Util.isKeyMatch(masterPrivKeyHex, info.master_key);
+      return Util.isKeyMatch(resetPrivKeyHex, info.reset_key);
     });
   }
 
@@ -107,7 +107,7 @@ export default class Query {
    */
   getSeqNumber(username: string): Promise<number> {
     return this.getAccountMeta(username).then(meta => {
-      return meta.sequence;
+      return +meta.sequence;
     });
   }
 
@@ -120,11 +120,11 @@ export default class Query {
   getAllBalanceHistory(username: string): Promise<BalanceHistory> {
     return this.getAccountBank(username).then(bank => {
       let res: BalanceHistory = { details: [] };
-      if (bank.number_of_transaction == 0) {
+      if (Number(bank.number_of_transaction) == 0) {
         return res;
       }
 
-      let numberOfbundle = (bank.number_of_transaction - 1) / 100;
+      let numberOfbundle = (Number(bank.number_of_transaction) - 1) / 100;
       let promises: Promise<BalanceHistory>[] = [];
       for (var i = 0; i <= numberOfbundle; ++i) {
         promises.push(this.getBalanceHistoryBundle(username, i));
@@ -189,7 +189,7 @@ export default class Query {
         const res: AccountInfo = {
           username: info.username,
           created_at: info.created_at,
-          master_key: encodePubKey(convertToRawPubKey(info.master_key)),
+          reset_key: encodePubKey(convertToRawPubKey(info.reset_key)),
           transaction_key: encodePubKey(convertToRawPubKey(info.transaction_key)),
           micropayment_key: encodePubKey(convertToRawPubKey(info.micropayment_key)),
           post_key: encodePubKey(convertToRawPubKey(info.post_key))
@@ -247,11 +247,11 @@ export default class Query {
   getAllRewardHistory(username: string): Promise<RewardHistory> {
     return this.getAccountBank(username).then(bank => {
       let res: RewardHistory = { details: [] };
-      if (bank.number_of_reward == 0) {
+      if (Number(bank.number_of_reward) == 0) {
         return res;
       }
 
-      let numberOfbundle = (bank.number_of_reward - 1) / 100;
+      let numberOfbundle = (Number(bank.number_of_reward) - 1) / 100;
       let promises: Promise<RewardHistory>[] = [];
       for (var i = 0; i <= numberOfbundle; ++i) {
         promises.push(this.getRewardHistoryBundle(username, i));
@@ -927,11 +927,11 @@ export default class Query {
     let accountBank = await this.getAccountBank(username);
     let rst: BalanceHistory = { details: [] };
 
-    if (accountBank.number_of_transaction == 0) {
+    if (Number(accountBank.number_of_transaction) == 0) {
       return rst;
     }
 
-    let maxTxIndex = accountBank.number_of_transaction - 1;
+    let maxTxIndex = Number(accountBank.number_of_transaction) - 1;
 
     if (from > maxTxIndex) {
       throw new Error(`GetBalanceHistoryFromTo: [${from}] is larger than total num of tx`);
@@ -949,7 +949,6 @@ export default class Query {
     let indexOfTo = to % 100;
 
     while (bucketSlot >= 0 && numHistory > 0) {
-      console.log('balance history sending bucketSlot: ', bucketSlot);
       let history = await this.getBalanceHistoryBundle(username, bucketSlot);
       let startIndex = bucketSlot == targetBucketOfTo ? indexOfTo : history.details.length - 1;
 
@@ -975,10 +974,10 @@ export default class Query {
       throw new Error(`GetRecentBalanceHistory: numHistory is invalid: ${numHistory}`);
     }
     let accountBank = await this.getAccountBank(username);
-    let maxTxNo = accountBank.number_of_transaction - 1;
+    let maxTxNo = Number(accountBank.number_of_transaction) - 1;
 
     let from = Math.max(0, maxTxNo - numHistory + 1);
-    if (numHistory > accountBank.number_of_transaction) {
+    if (numHistory > Number(accountBank.number_of_transaction)) {
       from = 0;
     }
 
@@ -1002,11 +1001,11 @@ export default class Query {
     let accountBank = await this.getAccountBank(username);
     let rst: RewardHistory = { details: [] };
 
-    if (accountBank.number_of_reward == 0) {
+    if (Number(accountBank.number_of_reward) == 0) {
       return rst;
     }
 
-    let maxRewardIndex = accountBank.number_of_reward - 1;
+    let maxRewardIndex = Number(accountBank.number_of_reward) - 1;
 
     if (from > maxRewardIndex) {
       throw new Error(`getRewardHistoryFromTo: [${from}] is larger than total num of reward`);
@@ -1024,7 +1023,6 @@ export default class Query {
     let indexOfTo = to % 100;
 
     while (bucketSlot >= 0 && numReward > 0) {
-      console.log('reward history sending bucketSlot: ', bucketSlot);
       let history = await this.getRewardHistoryBundle(username, bucketSlot);
       let startIndex = bucketSlot == targetBucketOfTo ? indexOfTo : history.details.length - 1;
 
@@ -1050,10 +1048,10 @@ export default class Query {
       throw new Error(`getRecentRewardHistory: numReward is invalid: ${numReward}`);
     }
     let accountBank = await this.getAccountBank(username);
-    let maxTxNo = accountBank.number_of_reward - 1;
+    let maxTxNo = Number(accountBank.number_of_reward) - 1;
 
     let from = Math.max(0, maxTxNo - numReward + 1);
-    if (numReward > accountBank.number_of_reward) {
+    if (numReward > Number(accountBank.number_of_reward)) {
       from = 0;
     }
 
@@ -1080,16 +1078,16 @@ export interface PubKey {
 export interface ABCIValidator {
   address: string;
   pub_key: PubKey;
-  power: number;
+  power: string;
 }
 
 export interface Validator {
   abci: ABCIValidator;
   username: string;
   deposit: Types.Coin;
-  absent_commit: number;
-  byzantine_commit: number;
-  produced_blocks: number;
+  absent_commit: string;
+  byzantine_commit: string;
+  produced_blocks: string;
   link: string;
 }
 
@@ -1123,25 +1121,25 @@ export interface Delegation {
 export interface Comment {
   author: string;
   post_key: string;
-  created: number;
+  created: string;
 }
 
 export interface View {
   username: string;
-  last_view_at: number;
-  times: number;
+  last_view_at: string;
+  times: string;
 }
 
 export interface Like {
   username: string;
-  weight: number;
-  created_at: number;
+  weight: string;
+  created_at: string;
 }
 
 export interface Donation {
   amount: Types.Coin;
-  created: number;
-  donation_type: number;
+  created: string;
+  donation_type: string;
 }
 
 export interface Donations {
@@ -1152,7 +1150,7 @@ export interface Donations {
 export interface ReportOrUpvote {
   username: string;
   stake: Types.Coin;
-  created_at: number;
+  created_at: string;
   is_report: boolean;
 }
 
@@ -1169,18 +1167,18 @@ export interface PostInfo {
 }
 
 export interface PostMeta {
-  created_at: number;
-  last_updated_at: number;
-  last_activity_at: number;
+  created_at: string;
+  last_updated_at: string;
+  last_activity_at: string;
   allow_replies: boolean;
   is_deleted: boolean;
-  total_like_count: number;
-  total_donate_count: number;
-  total_like_weight: number;
-  total_dislike_weight: number;
+  total_like_count: string;
+  total_donate_count: string;
+  total_like_weight: string;
+  total_dislike_weight: string;
   total_report_stake: Types.Coin;
   total_upvote_stake: Types.Coin;
-  total_view_count: number;
+  total_view_count: string;
   total_reward: Types.Coin;
   redistribution_split_rate: Types.Rat;
 }
@@ -1212,8 +1210,8 @@ export interface InfraProviderList {
 // account related
 export interface AccountInfo {
   username: string;
-  created_at: number;
-  master_key: string;
+  created_at: string;
+  reset_key: string;
   transaction_key: string;
   micropayment_key: string;
   post_key: string;
@@ -1223,40 +1221,40 @@ export interface AccountBank {
   saving: Types.Coin;
   stake: Types.Coin;
   frozen_money_list: FrozenMoney[];
-  number_of_transaction: number;
-  number_of_reward: number;
+  number_of_transaction: string;
+  number_of_reward: string;
 }
 
 export interface FrozenMoney {
   amount: Types.Coin;
-  start_at: number;
-  times: number;
-  interval: number;
+  start_at: string;
+  times: string;
+  interval: string;
 }
 
 export interface GrantPubKey {
   username: string;
-  permission: number;
-  left_times: number;
-  created_at: number;
-  expires_at: number;
+  permission: string;
+  left_times: string;
+  created_at: string;
+  expires_at: string;
 }
 
 export interface AccountMeta {
-  sequence: number;
-  last_activity_at: number;
+  sequence: string;
+  last_activity_at: string;
   transaction_capacity: Types.Coin;
   json_meta: string;
-  last_report_or_upvote_at: number;
+  last_report_or_upvote_at: string;
 }
 
 export interface FollowerMeta {
-  created_at: number;
+  created_at: string;
   follower_name: string;
 }
 
 export interface FollowingMeta {
-  created_at: number;
+  created_at: string;
   following_name: string;
 }
 
@@ -1281,7 +1279,7 @@ export interface RewardHistory {
 }
 
 export interface Relationship {
-  donation_times: number;
+  donation_times: string;
 }
 
 export interface RangeQueryResult<T> {
@@ -1294,7 +1292,7 @@ export interface BalanceHistory {
 }
 
 export interface Detail {
-  detail_type: number;
+  detail_type: string;
   from: string;
   to: string;
   amount: Types.Coin;
@@ -1313,13 +1311,13 @@ export interface ProposalInfo {
   proposal_id: string;
   agree_vote: Types.Coin;
   disagree_vote: Types.Coin;
-  result: number;
-  created_at: number;
-  expired_at: number;
+  result: string;
+  created_at: string;
+  expired_at: string;
 }
 
 export interface NextProposalID {
-  next_proposal_id: number;
+  next_proposal_id: string;
 }
 
 export interface Proposal {
@@ -1397,8 +1395,8 @@ const _TIMECONST = {
 // internally used
 interface AccountInfoInternal {
   username: string;
-  created_at: number;
-  master_key: InternalPubKey;
+  created_at: string;
+  reset_key: InternalPubKey;
   transaction_key: InternalPubKey;
   micropayment_key: InternalPubKey;
   post_key: InternalPubKey;

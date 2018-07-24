@@ -1,6 +1,6 @@
 //Common Type defination
 export interface Coin {
-  amount: Int128;
+  amount: string;
 }
 
 export interface SDKCoin {
@@ -8,14 +8,9 @@ export interface SDKCoin {
   amount: number;
 }
 
-export interface Int128 {
-  Lo: number;
-  Hi: number;
-}
-
 export interface MathInt {
-  neg: boolean;
   abs: number[];
+  neg: boolean;
 }
 
 export interface MathRat {
@@ -38,12 +33,12 @@ export interface Parameter {
 }
 
 export interface EvaluateOfContentValueParam {
-  consumption_time_adjust_base: number;
-  consumption_time_adjust_offset: number;
-  num_of_consumption_on_author_offset: number;
-  total_amount_of_consumption_base: number;
-  total_amount_of_consumption_offset: number;
   amount_of_consumption_exponent: Rat;
+  consumption_time_adjust_base: string;
+  consumption_time_adjust_offset: string;
+  num_of_consumption_on_author_offset: string;
+  total_amount_of_consumption_base: string;
+  total_amount_of_consumption_offset: string;
 }
 export function isEvaluateOfContentValueParam(param: object): param is EvaluateOfContentValueParam {
   return (
@@ -57,9 +52,9 @@ export function isEvaluateOfContentValueParam(param: object): param is EvaluateO
 }
 
 export interface GlobalAllocationParam {
-  infra_allocation: Rat;
   content_creator_allocation: Rat;
   developer_allocation: Rat;
+  infra_allocation: Rat;
   validator_allocation: Rat;
 }
 export function isGlobalAllocationParam(param: object): param is GlobalAllocationParam {
@@ -72,8 +67,8 @@ export function isGlobalAllocationParam(param: object): param is GlobalAllocatio
 }
 
 export interface InfraInternalAllocationParam {
-  storage_allocation: Rat;
   CDN_allocation: Rat;
+  storage_allocation: Rat;
 }
 export function isInfraInternalAllocationParam(
   param: object
@@ -82,13 +77,13 @@ export function isInfraInternalAllocationParam(
 }
 
 export interface VoteParam {
+  delegator_min_withdraw: Coin;
+  voter_coin_return_interval: string;
+  voter_coin_return_times: string;
   voter_min_deposit: Coin;
   voter_min_withdraw: Coin;
-  delegator_min_withdraw: Coin;
-  voter_coin_return_interval: number;
-  voter_coin_return_times: number;
-  delegator_coin_return_interval: number;
-  delegator_coin_return_times: number;
+  delegator_coin_return_interval: string;
+  delegator_coin_return_times: string;
 }
 export function isVoteParam(param: object): param is VoteParam {
   return (
@@ -103,15 +98,15 @@ export function isVoteParam(param: object): param is VoteParam {
 }
 
 export interface ProposalParam {
-  content_censorship_decide_hr: number;
+  content_censorship_decide_hr: string;
   content_censorship_min_deposit: Coin;
   content_censorship_pass_ratio: Rat;
   content_censorship_pass_votes: Coin;
-  change_param_decide_hr: number;
+  change_param_decide_hr: string;
   change_param_min_deposit: Coin;
   change_param_pass_ratio: Rat;
   change_param_pass_votes: Coin;
-  protocol_upgrade_decide_hr: number;
+  protocol_upgrade_decide_hr: string;
   protocol_upgrade_min_deposit: Coin;
   protocol_upgrade_pass_ratio: Rat;
   protocol_upgrade_pass_votes: Coin;
@@ -135,8 +130,8 @@ export function isProposalParam(param: object): param is ProposalParam {
 
 export interface DeveloperParam {
   developer_min_deposit: Coin;
-  developer_coin_return_interval: number;
-  developer_coin_return_times: number;
+  developer_coin_return_interval: string;
+  developer_coin_return_times: string;
 }
 export function isDeveloperParam(param: object): param is DeveloperParam {
   return (
@@ -147,16 +142,16 @@ export function isDeveloperParam(param: object): param is DeveloperParam {
 }
 
 export interface ValidatorParam {
-  validator_min_withdraw: Coin;
-  validator_min_voting_deposit: Coin;
-  validator_min_commiting_deposit: Coin;
-  validator_coin_return_interval: number;
-  validator_coin_return_times: number;
   penalty_miss_vote: Coin;
   penalty_miss_commit: Coin;
   penalty_byzantine: Coin;
-  validator_list_size: number;
-  absent_commit_limitation: number;
+  validator_list_size: string;
+  absent_commit_limitation: string;
+  validator_min_withdraw: Coin;
+  validator_min_voting_deposit: Coin;
+  validator_min_commiting_deposit: Coin;
+  validator_coin_return_interval: string;
+  validator_coin_return_times: string;
 }
 export function isValidatorParam(param: object): param is ValidatorParam {
   return (
@@ -184,26 +179,17 @@ export function isCoinDayParam(param: object): param is CoinDayParam {
 export interface BandwidthParam {
   seconds_to_recover_bandwidth: number;
   capacity_usage_per_transaction: Coin;
-  balance_history_bundle_size: number;
-  maximum_micropayment_grant_times: number;
-  reward_history_bundle_size: number;
 }
 export function isBandwidthParam(param: object): param is BandwidthParam {
-  return (
-    'seconds_to_recover_bandwidth' in param &&
-    'capacity_usage_per_transaction' in param &&
-    'balance_history_bundle_size' in param &&
-    'maximum_micropayment_grant_times' in param &&
-    'reward_history_bundle_size' in param
-  );
+  return 'seconds_to_recover_bandwidth' in param && 'capacity_usage_per_transaction' in param;
 }
 
 export interface AccountParam {
   minimum_balance: Coin;
   register_fee: Coin;
-  balance_history_bundle_size: number;
-  maximum_micropayment_grant_times: number;
-  reward_history_bundle_size: number;
+  balance_history_bundle_size: string;
+  maximum_micropayment_grant_times: string;
+  reward_history_bundle_size: string;
 }
 export function isAccountParam(param: object): param is AccountParam {
   return (
@@ -217,7 +203,7 @@ export function isAccountParam(param: object): param is AccountParam {
 
 export interface PostParam {
   micropayment_limitation: Coin;
-  report_or_upvote_interval: number;
+  report_or_upvote_interval: string;
 }
 export function isPostParam(param: object): param is PostParam {
   return 'micropayment_limitation' in param && 'report_or_upvote_interval' in param;
@@ -234,7 +220,7 @@ export interface GlobalMeta {
 
 export interface ConsumptionMeta {
   consumption_friction_rate: Rat;
-  ConsumptionWindow: Coin;
-  ConsumptionRewardPool: Coin;
-  consumption_freezing_period: number;
+  consumption_window: Coin;
+  consumption_reward_pool: Coin;
+  consumption_freezing_period: string;
 }
