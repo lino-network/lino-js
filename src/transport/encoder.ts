@@ -189,16 +189,16 @@ export function encodeMsg(msg: any): any {
     );
   }
 
-  if ('new_post_public_key' in msg) {
-    encodedMsg.new_post_public_key = convertToInternalPubKey(
-      msg.new_post_public_key,
+  if ('new_transaction_public_key' in msg) {
+    encodedMsg.new_transaction_public_key = convertToInternalPubKey(
+      msg.new_transaction_public_key,
       _TYPE.PubKeySecp256k1
     );
   }
 
-  if ('new_transaction_public_key' in msg) {
-    encodedMsg.new_transaction_public_key = convertToInternalPubKey(
-      msg.new_transaction_public_key,
+  if ('new_app_public_key' in msg) {
+    encodedMsg.new_app_public_key = convertToInternalPubKey(
+      msg.new_app_public_key,
       _TYPE.PubKeySecp256k1
     );
   }
@@ -207,13 +207,6 @@ export function encodeMsg(msg: any): any {
     encodedMsg.validator_public_key = convertToInternalPubKey(
       msg.validator_public_key,
       _TYPE.PubKeyEd25519
-    );
-  }
-
-  if ('new_micropayment_public_key' in msg) {
-    encodedMsg.new_micropayment_public_key = convertToInternalPubKey(
-      msg.new_micropayment_public_key,
-      _TYPE.PubKeySecp256k1
     );
   }
 
@@ -250,24 +243,19 @@ export function convertMsg(msg: any): any {
     encodedMsg.new_reset_public_key = getByteArray(buffer);
   }
 
-  if ('new_post_public_key' in msg) {
-    var buffer = ByteBuffer.fromHex(msg.new_post_public_key);
-    encodedMsg.new_post_public_key = getByteArray(buffer);
-  }
-
   if ('new_transaction_public_key' in msg) {
     var buffer = ByteBuffer.fromHex(msg.new_transaction_public_key);
     encodedMsg.new_transaction_public_key = getByteArray(buffer);
   }
 
+  if ('new_app_public_key' in msg) {
+    var buffer = ByteBuffer.fromHex(msg.new_app_public_key);
+    encodedMsg.new_app_public_key = getByteArray(buffer);
+  }
+
   if ('validator_public_key' in msg) {
     var buffer = ByteBuffer.fromHex(msg.validator_public_key);
     encodedMsg.validator_public_key = getByteArray(buffer);
-  }
-
-  if ('new_micropayment_public_key' in msg) {
-    var buffer = ByteBuffer.fromHex(msg.new_micropayment_public_key);
-    encodedMsg.new_micropayment_public_key = getByteArray(buffer);
   }
 
   return encodedMsg;
