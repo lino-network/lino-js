@@ -688,7 +688,7 @@ export default class Broadcast {
       amount
     };
 
-    return this._broadcastTransaction(msg, _MSGTYPE.GrantPermissionMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.PreAuthorizationMsgType, privKeyHex, seq);
   }
 
   // infra related
