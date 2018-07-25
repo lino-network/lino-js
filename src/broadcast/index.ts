@@ -23,8 +23,7 @@ export default class Broadcast {
    * @param username: new username
    * @param resetPubKey: new user's reset key
    * @param transactionPubKeyHex: new user's transaction key
-   * @param micropaymentPubKeyHex: new user's micropayment key
-   * @param postPubKeyHex: new user's post key
+   * @param appPubKeyHex: new user's app key
    * @param referrerPrivKeyHex: referrer's private key
    * @param seq: the sequence number of referrer for the next transaction
    */
@@ -34,19 +33,17 @@ export default class Broadcast {
     username: string,
     resetPubKey: string,
     transactionPubKeyHex: string,
-    micropaymentPubKeyHex: string,
-    postPubKeyHex: string,
+    appPubKeyHex: string,
     referrerPrivKeyHex: string,
     seq: number
   ) {
     const msg: RegisterMsg = {
-      new_reset_public_key: decodePubKey(resetPubKey),
-      new_micropayment_public_key: decodePubKey(micropaymentPubKeyHex),
-      new_post_public_key: decodePubKey(postPubKeyHex),
-      new_transaction_public_key: decodePubKey(transactionPubKeyHex),
-      new_username: username,
       referrer: referrer,
-      register_fee: register_fee
+      register_fee: register_fee,
+      new_username: username,
+      new_reset_public_key: decodePubKey(resetPubKey),
+      new_transaction_public_key: decodePubKey(transactionPubKeyHex),
+      new_app_public_key: decodePubKey(appPubKeyHex)
     };
     return this._broadcastTransaction(msg, _MSGTYPE.RegisterMsgType, referrerPrivKeyHex, seq);
   }
@@ -153,8 +150,7 @@ export default class Broadcast {
    * @param username: the user who wants to recover account
    * @param new_reset_public_key: new reset public key for user
    * @param new_transaction_public_key: new transaction public key for user
-   * @param new_micropayment_public_key: new micropayment public key for user
-   * @param new_post_public_key: new post public key for user
+   * @param new_app_public_key: new app public key for user
    * @param privKeyHex: the old private key of user
    * @param seq: the sequence number of user for the next transaction
    */
@@ -162,17 +158,15 @@ export default class Broadcast {
     username: string,
     new_reset_public_key: string,
     new_transaction_public_key: string,
-    new_micropayment_public_key: string,
-    new_post_public_key: string,
+    new_app_public_key: string,
     privKeyHex: string,
     seq: number
   ) {
     const msg: RecoverMsg = {
+      username: username,
       new_reset_public_key: decodePubKey(new_reset_public_key),
-      new_micropayment_public_key: decodePubKey(new_micropayment_public_key),
-      new_post_public_key: decodePubKey(new_post_public_key),
       new_transaction_public_key: decodePubKey(new_transaction_public_key),
-      username: username
+      new_app_public_key: decodePubKey(new_app_public_key)
     };
     return this._broadcastTransaction(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
   }
@@ -239,34 +233,6 @@ export default class Broadcast {
   }
 
   /**
-   * Like adds a weighted-like to a post that is performed by a user.
-   * It composes LikeMsg and then broadcasts the transaction to blockchain.
-   *
-   * @param username: the user who likes the post
-   * @param author: the author of the post
-   * @param weight: like weight of the user
-   * @param post_id: the id of the post
-   * @param privKeyHex: the private key of user
-   * @param seq: the sequence number of user for the next transaction
-   */
-  like(
-    username: string,
-    author: string,
-    weight: number,
-    post_id: string,
-    privKeyHex: string,
-    seq: number
-  ) {
-    const msg: LikeMsg = {
-      author,
-      post_id,
-      username,
-      weight
-    };
-    return this._broadcastTransaction(msg, _MSGTYPE.LikeMsgType, privKeyHex, seq);
-  }
-
-  /**
    * Donate adds a money donation to a post by a user.
    * It composes DonateMsg and then broadcasts the transaction to blockchain.
    *
@@ -276,7 +242,6 @@ export default class Broadcast {
    * @param post_id: the id of the post
    * @param from_app: which app that the donation is from
    * @param memo: memo of the donation
-   * @param is_micropayment: indicates if this is a micropayment
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of user for the next transaction
    */
@@ -287,7 +252,6 @@ export default class Broadcast {
     post_id: string,
     from_app: string,
     memo: string,
-    is_micropayment: boolean,
     privKeyHex: string,
     seq: number
   ) {
@@ -295,7 +259,6 @@ export default class Broadcast {
       amount,
       author,
       from_app,
-      is_micropayment,
       memo,
       post_id,
       username
@@ -651,33 +614,30 @@ export default class Broadcast {
   }
 
   /**
-   * GrantPermission grants a certain (e.g. Post or Micropayment) permission to
-   * an authenticated app with a certain period of time.
+   * GrantPermission grants a certain (e.g. App) permission to
+   * an authorized app with a certain period of time.
    * It composes GrantPermissionMsg and then broadcasts the transaction to blockchain.
    *
    * @param username: the user who grants the permission
-   * @param authenticate_app: the authenticated app of the developer
-   * @param validity_period: how long does this app is valid
+   * @param authorized_app: the authenticated app of the developer
+   * @param validity_period_second: how long does this app is valid
    * @param grant_level: the permission level granted
-   * @param times: how many times the app is allowed to use with user's permission
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the user for the next transaction
    */
   grantPermission(
     username: string,
-    authenticate_app: string,
-    validity_period: number,
-    grant_level: number,
-    times: number,
+    authorized_app: string,
+    validity_period_second: number,
+    grant_level: Types.PERMISSION_TYPE,
     privKeyHex: string,
     seq: number
   ) {
     const msg: GrantPermissionMsg = {
-      authenticate_app,
-      grant_level,
-      times,
       username,
-      validity_period
+      authorized_app,
+      validity_period_second,
+      grant_level
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.GrantPermissionMsgType, privKeyHex, seq);
@@ -689,24 +649,46 @@ export default class Broadcast {
    *
    * @param username: the user who wants to revoke permission
    * @param public_key: the user's public key that will be revoked
+   * @param privKeyHex: the private key of the user
+   * @param seq: the sequence number of the user for the next transaction
+   */
+  revokePermission(username: string, public_key: string, privKeyHex: string, seq: number) {
+    const msg: RevokePermissionMsg = {
+      username: username,
+      public_key: decodePubKey(public_key)
+    };
+
+    return this._broadcastTransaction(msg, _MSGTYPE.RevokePermissionMsgType, privKeyHex, seq);
+  }
+
+  /**
+   * preAuthorizationPermission grants pre authorization permission to
+   * an authorized app with a certain period of time and amount.
+   * It composes GrantPermissionMsg and then broadcasts the transaction to blockchain.
+   *
+   * @param username: the user who grants the permission
+   * @param authorized_app: the authenticated app of the developer
+   * @param validity_period_second: how long does this app is valid
    * @param grant_level: the permission level granted
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the user for the next transaction
    */
-  revokePermission(
+  preAuthorizationPermission(
     username: string,
-    public_key: string,
-    grant_level: number,
+    authorized_app: string,
+    validity_period_second: number,
+    amount: string,
     privKeyHex: string,
     seq: number
   ) {
-    const msg: RevokePermissionMsg = {
-      grant_level: grant_level,
-      public_key: decodePubKey(public_key),
-      username: username
+    const msg: PreAuthorizationMsg = {
+      username,
+      authorized_app,
+      validity_period_second,
+      amount
     };
 
-    return this._broadcastTransaction(msg, _MSGTYPE.RevokePermissionMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.PreAuthorizationMsgType, privKeyHex, seq);
   }
 
   // infra related
@@ -1032,13 +1014,12 @@ export default class Broadcast {
 
 // Account related messages
 export interface RegisterMsg {
-  new_reset_public_key: string;
-  new_micropayment_public_key: string;
-  new_post_public_key: string;
-  new_transaction_public_key: string;
-  new_username: string;
   referrer: string;
   register_fee: string;
+  new_username: string;
+  new_reset_public_key: string;
+  new_transaction_public_key: string;
+  new_app_public_key: string;
 }
 
 export interface TransferMsg {
@@ -1063,11 +1044,10 @@ export interface ClaimMsg {
 }
 
 export interface RecoverMsg {
-  new_reset_public_key: string;
-  new_micropayment_public_key: string;
-  new_post_public_key: string;
-  new_transaction_public_key: string;
   username: string;
+  new_reset_public_key: string;
+  new_transaction_public_key: string;
+  new_app_public_key: string;
 }
 
 export interface UpdateAccountMsg {
@@ -1089,13 +1069,6 @@ export interface CreatePostMsg {
   redistribution_split_rate: string;
 }
 
-export interface LikeMsg {
-  username: string;
-  weight: number;
-  author: string;
-  post_id: string;
-}
-
 export interface DonateMsg {
   username: string;
   amount: string;
@@ -1103,7 +1076,6 @@ export interface DonateMsg {
   post_id: string;
   from_app: string;
   memo: string;
-  is_micropayment: boolean;
 }
 
 export interface ReportOrUpvoteMsg {
@@ -1197,16 +1169,21 @@ export interface DeveloperRevokeMsg {
 
 export interface GrantPermissionMsg {
   username: string;
-  authenticate_app: string;
-  validity_period: number;
-  grant_level: number;
-  times: number;
+  authorized_app: string;
+  validity_period_second: number;
+  grant_level: Types.PERMISSION_TYPE;
 }
 
 export interface RevokePermissionMsg {
   username: string;
   public_key: string;
-  grant_level: number;
+}
+
+export interface PreAuthorizationMsg {
+  username: string;
+  authorized_app: string;
+  validity_period_second: number;
+  amount: string;
 }
 
 // infra related messages
@@ -1295,10 +1272,10 @@ const _MSGTYPE = {
   DevRevokeMsgType: 'lino/devRevoke',
   GrantPermissionMsgType: 'lino/grantPermission',
   RevokePermissionMsgType: 'lino/revokePermission',
+  PreAuthorizationMsgType: 'lino/preAuthorizationPermission',
   CreatePostMsgType: 'lino/createPost',
   UpdatePostMsgType: 'lino/updatePost',
   DeletePostMsgType: 'lino/deletePost',
-  LikeMsgType: 'lino/like',
   DonateMsgType: 'lino/donate',
   ViewMsgType: 'lino/view',
   ReportOrUpvoteMsgType: 'lino/reportOrUpvote',

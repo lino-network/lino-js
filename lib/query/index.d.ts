@@ -20,19 +20,12 @@ export default class Query {
      */
     doesUsernameMatchTxPrivKey(username: string, txPrivKeyHex: string): Promise<boolean>;
     /**
-     * doesUsernameMatchMicropaymentPrivKey returns true if a user has the micropayment private key.
+     * doesUsernameMatchAppPrivKey returns true if a user has the app private key.
      *
      * @param username
-     * @param micropaymentPrivKeyHex
+     * @param appPrivKeyHex
      */
-    doesUsernameMatchMicropaymentPrivKey(username: string, micropaymentPrivKeyHex: string): Promise<boolean>;
-    /**
-     * doesUsernameMatchPostPrivKey returns true if a user has the post private key.
-     *
-     * @param username
-     * @param postPrivKeyHex
-     */
-    doesUsernameMatchPostPrivKey(username: string, postPrivKeyHex: string): Promise<boolean>;
+    doesUsernameMatchAppPrivKey(username: string, appPrivKeyHex: string): Promise<boolean>;
     /**
      * getAllValidators returns all oncall validators from blockchain.
      */
@@ -222,21 +215,6 @@ export default class Query {
      * @param postID
      */
     getPostAllReportOrUpvotes(author: string, postID: string): Promise<ResultKV<string, ReportOrUpvote>[]>;
-    /**
-     * getPostLike returns like that a user has given to a post.
-     *
-     * @param author
-     * @param postID
-     * @param likeUser
-     */
-    getPostLike(author: string, postID: string, likeUser: string): Promise<Like>;
-    /**
-     * getPostAllLikes returns all likes that a post has received.
-     *
-     * @param author
-     * @param postID
-     */
-    getPostAllLikes(author: string, postID: string): Promise<ResultKV<string, Like>[]>;
     /**
      * getPostInfo returns post info given a permlink(author#postID).
      *
@@ -479,18 +457,13 @@ export interface Delegation {
 }
 export interface Comment {
     author: string;
-    post_key: string;
+    post_id: string;
     created: string;
 }
 export interface View {
     username: string;
     last_view_at: string;
     times: string;
-}
-export interface Like {
-    username: string;
-    weight: string;
-    created_at: string;
 }
 export interface Donation {
     amount: Types.Coin;
@@ -524,10 +497,7 @@ export interface PostMeta {
     last_activity_at: string;
     allow_replies: boolean;
     is_deleted: boolean;
-    total_like_count: string;
     total_donate_count: string;
-    total_like_weight: string;
-    total_dislike_weight: string;
     total_report_stake: Types.Coin;
     total_upvote_stake: Types.Coin;
     total_view_count: string;
@@ -557,8 +527,7 @@ export interface AccountInfo {
     created_at: string;
     reset_key: string;
     transaction_key: string;
-    micropayment_key: string;
-    post_key: string;
+    app_key: string;
 }
 export interface AccountBank {
     saving: Types.Coin;
@@ -575,10 +544,10 @@ export interface FrozenMoney {
 }
 export interface GrantPubKey {
     username: string;
-    permission: string;
-    left_times: string;
+    permission: Types.PERMISSION_TYPE;
     created_at: string;
     expires_at: string;
+    amount: string;
 }
 export interface AccountMeta {
     sequence: string;
@@ -623,7 +592,7 @@ export interface BalanceHistory {
     details: Detail[];
 }
 export interface Detail {
-    detail_type: string;
+    detail_type: Types.DETAILTYPE;
     from: string;
     to: string;
     amount: Types.Coin;
@@ -667,26 +636,3 @@ export interface ProtocolUpgradeProposalValue extends ProposalValue {
     link: string;
 }
 export declare function isProtocolUpgradeProposalValue(value: ProposalValue): value is ProtocolUpgradeProposalValue;
-export declare const DETAILTYPE: {
-    TransferIn: number;
-    DonationIn: number;
-    ClaimReward: number;
-    ValidatorInflation: number;
-    DeveloperInflation: number;
-    InfraInflation: number;
-    VoteReturnCoin: number;
-    DelegationReturnCoin: number;
-    ValidatorReturnCoin: number;
-    DeveloperReturnCoin: number;
-    InfraReturnCoin: number;
-    ProposalReturnCoin: number;
-    GenesisCoin: number;
-    TransferOut: number;
-    DonationOut: number;
-    Delegate: number;
-    VoterDeposit: number;
-    ValidatorDeposit: number;
-    DeveloperDeposit: number;
-    InfraDeposit: number;
-    ProposalDeposit: number;
-};

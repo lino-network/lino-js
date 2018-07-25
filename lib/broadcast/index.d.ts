@@ -13,12 +13,11 @@ export default class Broadcast {
      * @param username: new username
      * @param resetPubKey: new user's reset key
      * @param transactionPubKeyHex: new user's transaction key
-     * @param micropaymentPubKeyHex: new user's micropayment key
-     * @param postPubKeyHex: new user's post key
+     * @param appPubKeyHex: new user's app key
      * @param referrerPrivKeyHex: referrer's private key
      * @param seq: the sequence number of referrer for the next transaction
      */
-    register(referrer: string, register_fee: string, username: string, resetPubKey: string, transactionPubKeyHex: string, micropaymentPubKeyHex: string, postPubKeyHex: string, referrerPrivKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    register(referrer: string, register_fee: string, username: string, resetPubKey: string, transactionPubKeyHex: string, appPubKeyHex: string, referrerPrivKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * Transfer sends a certain amount of LINO token from the sender to the receiver.
      * It composes TransferMsg and then broadcasts the transaction to blockchain.
@@ -78,12 +77,11 @@ export default class Broadcast {
      * @param username: the user who wants to recover account
      * @param new_reset_public_key: new reset public key for user
      * @param new_transaction_public_key: new transaction public key for user
-     * @param new_micropayment_public_key: new micropayment public key for user
-     * @param new_post_public_key: new post public key for user
+     * @param new_app_public_key: new app public key for user
      * @param privKeyHex: the old private key of user
      * @param seq: the sequence number of user for the next transaction
      */
-    recover(username: string, new_reset_public_key: string, new_transaction_public_key: string, new_micropayment_public_key: string, new_post_public_key: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    recover(username: string, new_reset_public_key: string, new_transaction_public_key: string, new_app_public_key: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * CreatePost creates a new post on blockchain.
      * It composes CreatePostMsg and then broadcasts the transaction to blockchain.
@@ -103,18 +101,6 @@ export default class Broadcast {
      */
     createPost(author: string, postID: string, title: string, content: string, parentAuthor: string, parentPostID: string, sourceAuthor: string, sourcePostID: string, redistributionSplitRate: string, links: Map<string, string>, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
-     * Like adds a weighted-like to a post that is performed by a user.
-     * It composes LikeMsg and then broadcasts the transaction to blockchain.
-     *
-     * @param username: the user who likes the post
-     * @param author: the author of the post
-     * @param weight: like weight of the user
-     * @param post_id: the id of the post
-     * @param privKeyHex: the private key of user
-     * @param seq: the sequence number of user for the next transaction
-     */
-    like(username: string, author: string, weight: number, post_id: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
-    /**
      * Donate adds a money donation to a post by a user.
      * It composes DonateMsg and then broadcasts the transaction to blockchain.
      *
@@ -124,11 +110,10 @@ export default class Broadcast {
      * @param post_id: the id of the post
      * @param from_app: which app that the donation is from
      * @param memo: memo of the donation
-     * @param is_micropayment: indicates if this is a micropayment
      * @param privKeyHex: the private key of the user
      * @param seq: the sequence number of user for the next transaction
      */
-    donate(username: string, author: string, amount: string, post_id: string, from_app: string, memo: string, is_micropayment: boolean, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    donate(username: string, author: string, amount: string, post_id: string, from_app: string, memo: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * ReportOrUpvote adds a report or upvote action to a post.
      * It composes ReportOrUpvoteMsg and then broadcasts the transaction to blockchain.
@@ -301,30 +286,41 @@ export default class Broadcast {
      */
     developerRevoke(username: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
-     * GrantPermission grants a certain (e.g. Post or Micropayment) permission to
-     * an authenticated app with a certain period of time.
+     * GrantPermission grants a certain (e.g. App) permission to
+     * an authorized app with a certain period of time.
      * It composes GrantPermissionMsg and then broadcasts the transaction to blockchain.
      *
      * @param username: the user who grants the permission
-     * @param authenticate_app: the authenticated app of the developer
-     * @param validity_period: how long does this app is valid
+     * @param authorized_app: the authenticated app of the developer
+     * @param validity_period_second: how long does this app is valid
      * @param grant_level: the permission level granted
-     * @param times: how many times the app is allowed to use with user's permission
      * @param privKeyHex: the private key of the user
      * @param seq: the sequence number of the user for the next transaction
      */
-    grantPermission(username: string, authenticate_app: string, validity_period: number, grant_level: number, times: number, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    grantPermission(username: string, authorized_app: string, validity_period_second: number, grant_level: Types.PERMISSION_TYPE, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * RevokePermission revokes the permission given previously to a app.
      * It composes RevokePermissionMsg and then broadcasts the transaction to blockchain.
      *
      * @param username: the user who wants to revoke permission
      * @param public_key: the user's public key that will be revoked
+     * @param privKeyHex: the private key of the user
+     * @param seq: the sequence number of the user for the next transaction
+     */
+    revokePermission(username: string, public_key: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    /**
+     * preAuthorizationPermission grants pre authorization permission to
+     * an authorized app with a certain period of time and amount.
+     * It composes GrantPermissionMsg and then broadcasts the transaction to blockchain.
+     *
+     * @param username: the user who grants the permission
+     * @param authorized_app: the authenticated app of the developer
+     * @param validity_period_second: how long does this app is valid
      * @param grant_level: the permission level granted
      * @param privKeyHex: the private key of the user
      * @param seq: the sequence number of the user for the next transaction
      */
-    revokePermission(username: string, public_key: string, grant_level: number, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    preAuthorizationPermission(username: string, authorized_app: string, validity_period_second: number, amount: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * ProviderReport reports infra usage of a infra provider in order to get infra inflation.
      * It composes ProviderReportMsg and then broadcasts the transaction to blockchain.
@@ -470,13 +466,12 @@ export default class Broadcast {
     _broadcastTransaction(msg: object, msgType: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
 }
 export interface RegisterMsg {
-    new_reset_public_key: string;
-    new_micropayment_public_key: string;
-    new_post_public_key: string;
-    new_transaction_public_key: string;
-    new_username: string;
     referrer: string;
     register_fee: string;
+    new_username: string;
+    new_reset_public_key: string;
+    new_transaction_public_key: string;
+    new_app_public_key: string;
 }
 export interface TransferMsg {
     sender: string;
@@ -496,11 +491,10 @@ export interface ClaimMsg {
     username: string;
 }
 export interface RecoverMsg {
-    new_reset_public_key: string;
-    new_micropayment_public_key: string;
-    new_post_public_key: string;
-    new_transaction_public_key: string;
     username: string;
+    new_reset_public_key: string;
+    new_transaction_public_key: string;
+    new_app_public_key: string;
 }
 export interface UpdateAccountMsg {
     username: string;
@@ -518,12 +512,6 @@ export interface CreatePostMsg {
     links: Types.IDToURLMapping[] | null;
     redistribution_split_rate: string;
 }
-export interface LikeMsg {
-    username: string;
-    weight: number;
-    author: string;
-    post_id: string;
-}
 export interface DonateMsg {
     username: string;
     amount: string;
@@ -531,7 +519,6 @@ export interface DonateMsg {
     post_id: string;
     from_app: string;
     memo: string;
-    is_micropayment: boolean;
 }
 export interface ReportOrUpvoteMsg {
     username: string;
@@ -606,15 +593,19 @@ export interface DeveloperRevokeMsg {
 }
 export interface GrantPermissionMsg {
     username: string;
-    authenticate_app: string;
-    validity_period: number;
-    grant_level: number;
-    times: number;
+    authorized_app: string;
+    validity_period_second: number;
+    grant_level: Types.PERMISSION_TYPE;
 }
 export interface RevokePermissionMsg {
     username: string;
     public_key: string;
-    grant_level: number;
+}
+export interface PreAuthorizationMsg {
+    username: string;
+    authorized_app: string;
+    validity_period_second: number;
+    amount: string;
 }
 export interface ProviderReportMsg {
     username: string;

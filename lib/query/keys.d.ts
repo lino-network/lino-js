@@ -49,8 +49,6 @@ declare namespace Keys {
     function getPostInfoKey(permlink: string): string;
     function getPostMetaPrefix(me: string): string;
     function getPostMetaKey(permlink: string): string;
-    function getPostLikePrefix(permlink: string): string;
-    function getPostLikeKey(permlink: string, likeUser: string): string;
     function getPostReportOrUpvotePrefix(permlink: string): string;
     function getPostReportOrUpvoteKey(permlink: string, user: string): string;
     function getPostViewPrefix(permlink: string): string;

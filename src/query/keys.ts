@@ -48,11 +48,10 @@ namespace Keys {
 
     postInfoSubStore: '00',
     postMetaSubStore: '01',
-    postLikeSubStore: '02',
-    postReportOrUpvoteSubStore: '03',
-    postCommentSubStore: '04',
-    postViewsSubStore: '05',
-    postDonationsSubStore: '06',
+    postReportOrUpvoteSubStore: '02',
+    postCommentSubStore: '03',
+    postViewsSubStore: '04',
+    postDonationsSubStore: '05',
 
     allocationParamSubStore: '00',
     infraInternalAllocationParamSubStore: '01',
@@ -262,16 +261,6 @@ namespace Keys {
   export function getPostMetaKey(permlink: string): string {
     const permlinkHex = ByteBuffer.fromUTF8(permlink).toHex();
     return _KEYS.postMetaSubStore.concat(permlinkHex);
-  }
-
-  export function getPostLikePrefix(permlink: string): string {
-    const permlinkHex = ByteBuffer.fromUTF8(permlink).toHex();
-    return _KEYS.postLikeSubStore.concat(permlinkHex).concat(_KEYS.sep);
-  }
-
-  export function getPostLikeKey(permlink: string, likeUser: string): string {
-    const likeUserHex = ByteBuffer.fromUTF8(likeUser).toHex();
-    return getPostLikePrefix(permlink).concat(likeUserHex);
   }
 
   export function getPostReportOrUpvotePrefix(permlink: string): string {

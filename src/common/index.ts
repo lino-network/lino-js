@@ -188,7 +188,6 @@ export interface AccountParam {
   minimum_balance: Coin;
   register_fee: Coin;
   balance_history_bundle_size: string;
-  maximum_micropayment_grant_times: string;
   reward_history_bundle_size: string;
 }
 export function isAccountParam(param: object): param is AccountParam {
@@ -196,17 +195,15 @@ export function isAccountParam(param: object): param is AccountParam {
     'minimum_balance' in param &&
     'register_fee' in param &&
     'balance_history_bundle_size' in param &&
-    'maximum_micropayment_grant_times' in param &&
     'reward_history_bundle_size' in param
   );
 }
 
 export interface PostParam {
-  micropayment_limitation: Coin;
   report_or_upvote_interval: string;
 }
 export function isPostParam(param: object): param is PostParam {
-  return 'micropayment_limitation' in param && 'report_or_upvote_interval' in param;
+  return 'report_or_upvote_interval' in param;
 }
 
 export interface GlobalMeta {
@@ -223,4 +220,43 @@ export interface ConsumptionMeta {
   consumption_window: Coin;
   consumption_reward_pool: Coin;
   consumption_freezing_period: string;
+}
+
+// tx detail type
+export enum DETAILTYPE {
+  // Different possible incomes
+  TransferIn = '0',
+  DonationIn = '1',
+  ClaimReward = '2',
+  ValidatorInflation = '3',
+  DeveloperInflation = '4',
+  InfraInflation = '5',
+  VoteReturnCoin = '6',
+  DelegationReturnCoin = '7',
+  ValidatorReturnCoin = '8',
+  DeveloperReturnCoin = '9',
+  InfraReturnCoin = '10',
+  ProposalReturnCoin = '11',
+  GenesisCoin = '12',
+  // Different possible outcomes
+  TransferOut = '13',
+  DonationOut = '14',
+  Delegate = '15',
+  VoterDeposit = '16',
+  ValidatorDeposit = '17',
+  DeveloperDeposit = '18',
+  InfraDeposit = '19',
+  ProposalDeposit = '20'
+}
+
+// permission type
+export enum PERMISSION_TYPE {
+  // Different possible incomes
+  // Different permission level for msg
+  UnknownPermission = '0',
+  AppPermission = '1',
+  TransactionPermission = '2',
+  ResetPermission = '3',
+  GrantAppPermissio = '4',
+  PreAuthorizationPermission = '5'
 }

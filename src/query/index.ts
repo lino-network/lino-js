@@ -45,35 +45,17 @@ export default class Query {
   }
 
   /**
-   * doesUsernameMatchMicropaymentPrivKey returns true if a user has the micropayment private key.
+   * doesUsernameMatchAppPrivKey returns true if a user has the app private key.
    *
    * @param username
-   * @param micropaymentPrivKeyHex
+   * @param appPrivKeyHex
    */
-  doesUsernameMatchMicropaymentPrivKey(
-    username: string,
-    micropaymentPrivKeyHex: string
-  ): Promise<boolean> {
+  doesUsernameMatchAppPrivKey(username: string, appPrivKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
       if (info == null) {
         return false;
       }
-      return Util.isKeyMatch(micropaymentPrivKeyHex, info.micropayment_key);
-    });
-  }
-
-  /**
-   * doesUsernameMatchPostPrivKey returns true if a user has the post private key.
-   *
-   * @param username
-   * @param postPrivKeyHex
-   */
-  doesUsernameMatchPostPrivKey(username: string, postPrivKeyHex: string): Promise<boolean> {
-    return this.getAccountInfo(username).then(info => {
-      if (info == null) {
-        return false;
-      }
-      return Util.isKeyMatch(postPrivKeyHex, info.post_key);
+      return Util.isKeyMatch(appPrivKeyHex, info.app_key);
     });
   }
 
@@ -191,8 +173,7 @@ export default class Query {
           created_at: info.created_at,
           reset_key: encodePubKey(convertToRawPubKey(info.reset_key)),
           transaction_key: encodePubKey(convertToRawPubKey(info.transaction_key)),
-          micropayment_key: encodePubKey(convertToRawPubKey(info.micropayment_key)),
-          post_key: encodePubKey(convertToRawPubKey(info.post_key))
+          app_key: encodePubKey(convertToRawPubKey(info.app_key))
         };
         return res;
       });
@@ -506,35 +487,6 @@ export default class Query {
     const Permlink = Keys.getPermlink(author, postID);
     return this._transport.querySubspace<ReportOrUpvote>(
       Keys.getPostReportOrUpvotePrefix(Permlink),
-      PostKVStoreKey,
-      GetKeyBy.GetSubstringAfterKeySeparator
-    );
-  }
-
-  /**
-   * getPostLike returns like that a user has given to a post.
-   *
-   * @param author
-   * @param postID
-   * @param likeUser
-   */
-  getPostLike(author: string, postID: string, likeUser: string): Promise<Like> {
-    const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
-    const Permlink = Keys.getPermlink(author, postID);
-    return this._transport.query<Like>(Keys.getPostLikeKey(Permlink, likeUser), PostKVStoreKey);
-  }
-
-  /**
-   * getPostAllLikes returns all likes that a post has received.
-   *
-   * @param author
-   * @param postID
-   */
-  getPostAllLikes(author: string, postID: string): Promise<ResultKV<string, Like>[]> {
-    const PostKVStoreKey = Keys.KVSTOREKEYS.PostKVStoreKey;
-    const Permlink = Keys.getPermlink(author, postID);
-    return this._transport.querySubspace<Like>(
-      Keys.getPostLikePrefix(Permlink),
       PostKVStoreKey,
       GetKeyBy.GetSubstringAfterKeySeparator
     );
@@ -1120,7 +1072,7 @@ export interface Delegation {
 // post related
 export interface Comment {
   author: string;
-  post_key: string;
+  post_id: string;
   created: string;
 }
 
@@ -1128,12 +1080,6 @@ export interface View {
   username: string;
   last_view_at: string;
   times: string;
-}
-
-export interface Like {
-  username: string;
-  weight: string;
-  created_at: string;
 }
 
 export interface Donation {
@@ -1172,10 +1118,7 @@ export interface PostMeta {
   last_activity_at: string;
   allow_replies: boolean;
   is_deleted: boolean;
-  total_like_count: string;
   total_donate_count: string;
-  total_like_weight: string;
-  total_dislike_weight: string;
   total_report_stake: Types.Coin;
   total_upvote_stake: Types.Coin;
   total_view_count: string;
@@ -1213,8 +1156,7 @@ export interface AccountInfo {
   created_at: string;
   reset_key: string;
   transaction_key: string;
-  micropayment_key: string;
-  post_key: string;
+  app_key: string;
 }
 
 export interface AccountBank {
@@ -1234,10 +1176,10 @@ export interface FrozenMoney {
 
 export interface GrantPubKey {
   username: string;
-  permission: string;
-  left_times: string;
+  permission: Types.PERMISSION_TYPE;
   created_at: string;
   expires_at: string;
+  amount: string;
 }
 
 export interface AccountMeta {
@@ -1292,7 +1234,7 @@ export interface BalanceHistory {
 }
 
 export interface Detail {
-  detail_type: string;
+  detail_type: Types.DETAILTYPE;
   from: string;
   to: string;
   amount: Types.Coin;
@@ -1358,33 +1300,6 @@ export function isProtocolUpgradeProposalValue(
   return 'link' in value;
 }
 
-// tx detail type
-export const DETAILTYPE = {
-  // Different possible incomes
-  TransferIn: 0,
-  DonationIn: 1,
-  ClaimReward: 2,
-  ValidatorInflation: 3,
-  DeveloperInflation: 4,
-  InfraInflation: 5,
-  VoteReturnCoin: 6,
-  DelegationReturnCoin: 7,
-  ValidatorReturnCoin: 8,
-  DeveloperReturnCoin: 9,
-  InfraReturnCoin: 10,
-  ProposalReturnCoin: 11,
-  GenesisCoin: 12,
-  // Different possible outcomes
-  TransferOut: 13,
-  DonationOut: 14,
-  Delegate: 15,
-  VoterDeposit: 16,
-  ValidatorDeposit: 17,
-  DeveloperDeposit: 18,
-  InfraDeposit: 19,
-  ProposalDeposit: 20
-};
-
 const _TIMECONST = {
   HoursPerYear: 8766,
   MinutesPerYear: 8766 * 60,
@@ -1398,6 +1313,5 @@ interface AccountInfoInternal {
   created_at: string;
   reset_key: InternalPubKey;
   transaction_key: InternalPubKey;
-  micropayment_key: InternalPubKey;
-  post_key: InternalPubKey;
+  app_key: InternalPubKey;
 }
