@@ -615,32 +615,29 @@ export default class Broadcast {
 
   /**
    * GrantPermission grants a certain (e.g. App) permission to
-   * an authenticated app with a certain period of time.
+   * an authorized app with a certain period of time.
    * It composes GrantPermissionMsg and then broadcasts the transaction to blockchain.
    *
    * @param username: the user who grants the permission
-   * @param authenticate_app: the authenticated app of the developer
-   * @param validity_period: how long does this app is valid
+   * @param authorized_app: the authenticated app of the developer
+   * @param validity_period_second: how long does this app is valid
    * @param grant_level: the permission level granted
-   * @param times: how many times the app is allowed to use with user's permission
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the user for the next transaction
    */
   grantPermission(
     username: string,
-    authenticate_app: string,
-    validity_period: number,
+    authorized_app: string,
+    validity_period_second: number,
     grant_level: number,
-    times: number,
     privKeyHex: string,
     seq: number
   ) {
     const msg: GrantPermissionMsg = {
-      authenticate_app,
-      grant_level,
-      times,
       username,
-      validity_period
+      authorized_app,
+      validity_period_second,
+      grant_level
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.GrantPermissionMsgType, privKeyHex, seq);
@@ -652,24 +649,46 @@ export default class Broadcast {
    *
    * @param username: the user who wants to revoke permission
    * @param public_key: the user's public key that will be revoked
+   * @param privKeyHex: the private key of the user
+   * @param seq: the sequence number of the user for the next transaction
+   */
+  revokePermission(username: string, public_key: string, privKeyHex: string, seq: number) {
+    const msg: RevokePermissionMsg = {
+      username: username,
+      public_key: decodePubKey(public_key)
+    };
+
+    return this._broadcastTransaction(msg, _MSGTYPE.RevokePermissionMsgType, privKeyHex, seq);
+  }
+
+  /**
+   * preAuthorizationPermission grants pre authorization permission to
+   * an authorized app with a certain period of time and amount.
+   * It composes GrantPermissionMsg and then broadcasts the transaction to blockchain.
+   *
+   * @param username: the user who grants the permission
+   * @param authorized_app: the authenticated app of the developer
+   * @param validity_period_second: how long does this app is valid
    * @param grant_level: the permission level granted
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the user for the next transaction
    */
-  revokePermission(
+  preAuthorizationPermission(
     username: string,
-    public_key: string,
-    grant_level: number,
+    authorized_app: string,
+    validity_period_second: number,
+    amount: string,
     privKeyHex: string,
     seq: number
   ) {
-    const msg: RevokePermissionMsg = {
-      grant_level: grant_level,
-      public_key: decodePubKey(public_key),
-      username: username
+    const msg: PreAuthorizationMsg = {
+      username,
+      authorized_app,
+      validity_period_second,
+      amount
     };
 
-    return this._broadcastTransaction(msg, _MSGTYPE.RevokePermissionMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.PreAuthorizationMsgType, privKeyHex, seq);
   }
 
   // infra related
@@ -1150,16 +1169,21 @@ export interface DeveloperRevokeMsg {
 
 export interface GrantPermissionMsg {
   username: string;
-  authenticate_app: string;
-  validity_period: number;
+  authorized_app: string;
+  validity_period_second: number;
   grant_level: number;
-  times: number;
 }
 
 export interface RevokePermissionMsg {
   username: string;
   public_key: string;
-  grant_level: number;
+}
+
+export interface PreAuthorizationMsg {
+  username: string;
+  authorized_app: string;
+  validity_period_second: number;
+  amount: string;
 }
 
 // infra related messages
@@ -1248,6 +1272,7 @@ const _MSGTYPE = {
   DevRevokeMsgType: 'lino/devRevoke',
   GrantPermissionMsgType: 'lino/grantPermission',
   RevokePermissionMsgType: 'lino/revokePermission',
+  PreAuthorizationMsgType: 'lino/preAuthorizationPermission',
   CreatePostMsgType: 'lino/createPost',
   UpdatePostMsgType: 'lino/updatePost',
   DeletePostMsgType: 'lino/deletePost',

@@ -1177,9 +1177,9 @@ export interface FrozenMoney {
 export interface GrantPubKey {
   username: string;
   permission: string;
-  left_times: string;
   created_at: string;
   expires_at: string;
+  amount: string;
 }
 
 export interface AccountMeta {
