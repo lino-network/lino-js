@@ -1176,7 +1176,7 @@ export interface FrozenMoney {
 
 export interface GrantPubKey {
   username: string;
-  permission: string;
+  permission: Types.PERMISSION_TYPE;
   created_at: string;
   expires_at: string;
   amount: string;
@@ -1234,7 +1234,7 @@ export interface BalanceHistory {
 }
 
 export interface Detail {
-  detail_type: string;
+  detail_type: Types.DETAILTYPE;
   from: string;
   to: string;
   amount: Types.Coin;
@@ -1299,33 +1299,6 @@ export function isProtocolUpgradeProposalValue(
 ): value is ProtocolUpgradeProposalValue {
   return 'link' in value;
 }
-
-// tx detail type
-export const DETAILTYPE = {
-  // Different possible incomes
-  TransferIn: 0,
-  DonationIn: 1,
-  ClaimReward: 2,
-  ValidatorInflation: 3,
-  DeveloperInflation: 4,
-  InfraInflation: 5,
-  VoteReturnCoin: 6,
-  DelegationReturnCoin: 7,
-  ValidatorReturnCoin: 8,
-  DeveloperReturnCoin: 9,
-  InfraReturnCoin: 10,
-  ProposalReturnCoin: 11,
-  GenesisCoin: 12,
-  // Different possible outcomes
-  TransferOut: 13,
-  DonationOut: 14,
-  Delegate: 15,
-  VoterDeposit: 16,
-  ValidatorDeposit: 17,
-  DeveloperDeposit: 18,
-  InfraDeposit: 19,
-  ProposalDeposit: 20
-};
 
 const _TIMECONST = {
   HoursPerYear: 8766,

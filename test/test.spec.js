@@ -1,5 +1,5 @@
 const NODE_URL = 'http://localhost:26657/';
-const testTxPrivHex = 'E1B0F79B207ABCA2048FDD213C1CCB472A02A03A5BA5087205F23A2907FF3775D946649AA6';
+const testTxPrivHex = 'E1B0F79B20020398ED3212A397C200ED9579987D578F5262FC0EB8EBAC9EE1006F85EB1612';
 
 const myUser = 'lino';
 // test utils
@@ -64,7 +64,7 @@ function addSuite(envName) {
   describe('LINO', function() {
     const linoClient = new LINO({
       nodeUrl: NODE_URL,
-      chainId: 'test-chain-QHLy66'
+      chainId: 'test-chain-Tn4ykp'
     });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
@@ -225,8 +225,6 @@ function addSuite(envName) {
         return query.getProposal('1').then(v => {
           debug('getProposal', v);
           expect(v).to.have.all.keys('type', 'value');
-          expect(lino.isChangeParamProposalValue(v.value)).to.be.true;
-          expect(lino.isGlobalAllocationParam(v.value.param.value)).to.be.true;
         });
       });
 
@@ -286,6 +284,7 @@ function addSuite(envName) {
 
     describe('broadcast', function() {
       const userName = makeid(10);
+      const pubkeyToRevoke = UTILS.pubKeyFromPrivate(testTxPrivHex);
       const randomResetPrivKey = UTILS.genPrivKeyHex();
       const derivedTxPrivKey = UTILS.derivePrivKey(randomResetPrivKey);
       const derivedAppPrivKey = UTILS.derivePrivKey(derivedTxPrivKey);
@@ -293,125 +292,117 @@ function addSuite(envName) {
       const broadcast = linoClient.broadcast;
       this.timeout(20000);
 
-      // it('register', function() {
-      //   const resetPubKey = UTILS.pubKeyFromPrivate(randomResetPrivKey);
-      //   const txPubKey = UTILS.pubKeyFromPrivate(derivedTxPrivKey);
-      //   const appPubKey = UTILS.pubKeyFromPrivate(derivedAppPrivKey);
+      it('register', function() {
+        const resetPubKey = UTILS.pubKeyFromPrivate(randomResetPrivKey);
+        const txPubKey = UTILS.pubKeyFromPrivate(derivedTxPrivKey);
+        const appPubKey = UTILS.pubKeyFromPrivate(derivedAppPrivKey);
 
-      //   debug('register: ', userName);
-      //   debug('resetKey: ', randomResetPrivKey);
-      //   debug('txPrivKey: ', derivedTxPrivKey);
-      //   debug('appKey ', appPubKey);
+        debug('register: ', userName);
+        debug('resetKey: ', randomResetPrivKey);
+        debug('txPrivKey: ', derivedTxPrivKey);
+        debug('appKey ', appPubKey);
 
-      //   return runBroadcast(query, true, () => {
-      //     return query
-      //       .getSeqNumber('lino')
-      //       .then(seq => {
-      //         expect(seq).to.be.a('number');
-      //         return seq;
-      //       })
-      //       .then(seq => {
-      //         return broadcast
-      //           .register(
-      //             'lino',
-      //             '10',
-      //             userName,
-      //             resetPubKey,
-      //             txPubKey,
-      //             appPubKey,
-      //             testTxPrivHex,
-      //             seq
-      //           )
-      //           .then(v => {
-      //             debug('register', v);
-      //             expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-      //             console.log('start recover');
-      //             return broadcast
-      //               .recover(
-      //                 userName,
-      //                 resetPubKey,
-      //                 txPubKey,
-      //                 appPubKey,
-      //                 randomResetPrivKey,
-      //                 0
-      //               )
-      //               .then(res => console.log(res));
-      //           });
-      //       });
-      //   });
-      // });
+        return runBroadcast(query, true, () => {
+          return query
+            .getSeqNumber('lino')
+            .then(seq => {
+              expect(seq).to.be.a('number');
+              return seq;
+            })
+            .then(seq => {
+              return broadcast
+                .register(
+                  'lino',
+                  '10',
+                  userName,
+                  resetPubKey,
+                  txPubKey,
+                  appPubKey,
+                  testTxPrivHex,
+                  seq
+                )
+                .then(v => {
+                  debug('register', v);
+                  expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+                  console.log('start recover');
+                  return broadcast
+                    .recover(userName, resetPubKey, txPubKey, appPubKey, randomResetPrivKey, 0)
+                    .then(res => console.log(res));
+                });
+            });
+        });
+      });
 
-      // it('transfer', function() {
-      //   return runBroadcast(query, true, () => {
-      //     return query
-      //       .getSeqNumber('lino')
-      //       .then(seq => {
-      //         debug('query seq number before transfer', seq);
-      //         debug(getUnixTime());
-      //         expect(seq).to.be.a('number');
-      //         return seq;
-      //       })
-      //       .then(seq => {
-      //         return broadcast
-      //           .transfer('lino', userName, '10', 'memo1', testTxPrivHex, seq)
-      //           .then(v => console.log(v));
-      //       });
-      //   });
-      // });
-      // it('grantPermission', function() {
-      //   return runBroadcast(query, true, () => {
-      //     return query
-      //       .getSeqNumber(userName)
-      //       .then(seq => {
-      //         debug('query seq number before grant', seq);
-      //         debug(getUnixTime());
-      //         expect(seq).to.be.a('number');
-      //         return seq;
-      //       })
-      //       .then(seq => {
-      //         return broadcast
-      //           .grantPermission(userName, 'lino', 1000000, 1, 10, derivedTxPrivKey, seq)
-      //           .then(v => {
-      //             debug('grant permission', v);
-      //             console.log('after expect grant permission');
-      //             resolve();
-      //           });
-      //       });
-      //   });
-      // });
+      it('transfer', function() {
+        return runBroadcast(query, true, () => {
+          return query
+            .getSeqNumber('lino')
+            .then(seq => {
+              debug('query seq number before transfer', seq);
+              debug(getUnixTime());
+              expect(seq).to.be.a('number');
+              return seq;
+            })
+            .then(seq => {
+              return broadcast
+                .transfer('lino', userName, '10', 'memo1', testTxPrivHex, seq)
+                .then(v => console.log(v));
+            });
+        });
+      });
+      it('grantPermission', function() {
+        return runBroadcast(query, true, () => {
+          return query
+            .getSeqNumber(userName)
+            .then(seq => {
+              debug('query seq number before grant', seq);
+              debug(getUnixTime());
+              expect(seq).to.be.a('number');
+              return seq;
+            })
+            .then(seq => {
+              return broadcast
+                .grantPermission(userName, 'lino', 1000000, '1', derivedTxPrivKey, seq)
+                .then(v => {
+                  debug('grant permission', v);
+                  resolve();
+                });
+            });
+        });
+      });
 
-      // console.log('create post');
-      // it('createPost', function() {
-      //   let username = userName;
-      //   let txKey = derivedTxPrivKey;
-      //   let postId = makeid(20);
-      //   return runBroadcast(query, false, () => {
-      //     return query.getSeqNumber(username).then(seq => {
-      //       let map = new Map();
-      //       map.set('A', '1');
-      //       map.set('B', '2');
-      //       return broadcast
-      //         .createPost(
-      //           username,
-      //           postId,
-      //           'mytitle',
-      //           'dummycontent',
-      //           '',
-      //           '',
-      //           '',
-      //           '',
-      //           '0.5',
-      //           map,
-      //           txKey,
-      //           seq
-      //         )
-      //         .then(v => {
-      //           debug('createPost', v);
-      //           expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-      //         });
-      //     });
-      //   });
-      // });
+      console.log('create post');
+      it('createPost', function() {
+        let username = userName;
+        let txKey = derivedTxPrivKey;
+        let postId = makeid(20);
+        return runBroadcast(query, false, () => {
+          return query.getSeqNumber(username).then(seq => {
+            let map = new Map();
+            map.set('A', '1');
+            map.set('B', '2');
+            return broadcast
+              .createPost(
+                username,
+                postId,
+                'mytitle',
+                'dummycontent',
+                '',
+                '',
+                '',
+                '',
+                '0.5',
+                map,
+                txKey,
+                seq
+              )
+              .then(v => {
+                debug('createPost', v);
+                expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+              });
+          });
+        });
+      });
 
       it('changeParameter', function() {
         return runBroadcast(query, true, () => {
@@ -464,8 +455,7 @@ function addSuite(envName) {
               .revokePermission(
                 userName,
                 'eb5ae98721025d79562d58282e5a9b6cd97e3df328023b5b3a7e98d0e1855f66a4aeb5da862c',
-                1,
-                derivedTxPrivKey,
+                testTxPrivHex,
                 seq
               )
               .then(v => {
