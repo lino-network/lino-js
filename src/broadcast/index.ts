@@ -573,6 +573,9 @@ export default class Broadcast {
    *
    * @param username: the user who wants to become a developer
    * @param deposit: the amount of money the user wants to deposit
+   * @param website: developer's website
+   * @param description: developer's description
+   * @param app_meta_data: developer's app meta data
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the user for the next transaction
    */
@@ -594,6 +597,35 @@ export default class Broadcast {
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.DevRegisterMsgType, privKeyHex, seq);
+  }
+
+  /**
+   * DeveloperUpdate updates a developer info on blockchain.
+   * It composes DeveloperUpdateMsg and then broadcasts the transaction to blockchain.
+   *
+   * @param username: the developer's username
+   * @param website: new developer's website
+   * @param description: new developer's description
+   * @param app_meta_data: new developer's app meta data
+   * @param privKeyHex: the private key of the user
+   * @param seq: the sequence number of the user for the next transaction
+   */
+  developerUpdate(
+    username: string,
+    website: string,
+    description: string,
+    app_meta_data: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: DeveloperUpdateMsg = {
+      username,
+      website,
+      description,
+      app_meta_data
+    };
+
+    return this._broadcastTransaction(msg, _MSGTYPE.DevUpdateMsgType, privKeyHex, seq);
   }
 
   /**
@@ -743,18 +775,21 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the GlobalAllocationParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
   changeGlobalAllocationParam(
     creator: string,
     parameter: Types.GlobalAllocationParam,
+    reason: string,
     privKeyHex: string,
     seq: number
   ) {
     const msg: ChangeGlobalAllocationParamMsg = {
       creator,
-      parameter
+      parameter,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeGlobalAllocationMsgType, privKeyHex, seq);
@@ -766,18 +801,21 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the EvaluateOfContentValueParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
   changeEvaluateOfContentValueParam(
     creator: string,
     parameter: Types.EvaluateOfContentValueParam,
+    reason: string,
     privKeyHex: string,
     seq: number
   ) {
     const msg: ChangeEvaluateOfContentValueParamMsg = {
       creator,
-      parameter
+      parameter,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeEvaluationMsgType, privKeyHex, seq);
@@ -789,18 +827,21 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the InfraInternalAllocationParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
   changeInfraInternalAllocationParam(
     creator: string,
     parameter: Types.InfraInternalAllocationParam,
+    reason: string,
     privKeyHex: string,
     seq: number
   ) {
     const msg: ChangeInfraInternalAllocationParamMsg = {
       creator,
-      parameter
+      parameter,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeInfraAllocationMsgType, privKeyHex, seq);
@@ -812,13 +853,21 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the VoteParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
-  changeVoteParam(creator: string, parameter: Types.VoteParam, privKeyHex: string, seq: number) {
+  changeVoteParam(
+    creator: string,
+    parameter: Types.VoteParam,
+    reason: string,
+    privKeyHex: string,
+    seq: number
+  ) {
     const msg: ChangeVoteParamMsg = {
       creator,
-      parameter
+      parameter,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeVoteParamMsgType, privKeyHex, seq);
@@ -830,18 +879,21 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the ProposalParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
   changeProposalParam(
     creator: string,
     parameter: Types.ProposalParam,
+    reason: string,
     privKeyHex: string,
     seq: number
   ) {
     const msg: ChangeProposalParamMsg = {
       creator,
-      parameter
+      parameter,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeProposalParamMsgType, privKeyHex, seq);
@@ -853,18 +905,21 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the DeveloperParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
   changeDeveloperParam(
     creator: string,
     parameter: Types.DeveloperParam,
+    reason: string,
     privKeyHex: string,
     seq: number
   ) {
     const msg: ChangeDeveloperParamMsg = {
       creator,
-      parameter
+      parameter,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeDeveloperParamMsgType, privKeyHex, seq);
@@ -876,18 +931,21 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the ValidatorParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
   changeValidatorParam(
     creator: string,
     parameter: Types.ValidatorParam,
+    reason: string,
     privKeyHex: string,
     seq: number
   ) {
     const msg: ChangeValidatorParamMsg = {
       creator,
-      parameter
+      parameter,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeValidatorParamMsgType, privKeyHex, seq);
@@ -899,18 +957,21 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the BandwidthParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
   changeBandwidthParam(
     creator: string,
     parameter: Types.BandwidthParam,
+    reason: string,
     privKeyHex: string,
     seq: number
   ) {
     const msg: ChangeBandwidthParamMsg = {
       creator,
-      parameter
+      parameter,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeBandwidthParamMsgType, privKeyHex, seq);
@@ -922,18 +983,21 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the AccountParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
   changeAccountParam(
     creator: string,
     parameter: Types.AccountParam,
+    reason: string,
     privKeyHex: string,
     seq: number
   ) {
     const msg: ChangeAccountParamMsg = {
       creator,
-      parameter
+      parameter,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeAccountParamMsgType, privKeyHex, seq);
@@ -945,13 +1009,21 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the PostParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
-  changePostParam(creator: string, parameter: Types.PostParam, privKeyHex: string, seq: number) {
+  changePostParam(
+    creator: string,
+    parameter: Types.PostParam,
+    reason: string,
+    privKeyHex: string,
+    seq: number
+  ) {
     const msg: ChangePostParamMsg = {
       creator,
-      parameter
+      parameter,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ChangePostParamMsgType, privKeyHex, seq);
@@ -991,13 +1063,15 @@ export default class Broadcast {
    * It composes UpgradeProtocolMsg and then broadcasts the transaction to blockchain.
    * @param creator: the user who creates the proposal
    * @param link: the link of the upgraded protocol
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
-  upgradeProtocol(creator: string, link: string, privKeyHex: string, seq: number) {
+  upgradeProtocol(creator: string, link: string, reason: string, privKeyHex: string, seq: number) {
     const msg: UpgradeProtocolMsg = {
       creator,
-      link
+      link,
+      reason
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.UpgradeProtocolMsgType, privKeyHex, seq);
@@ -1163,6 +1237,13 @@ export interface DeveloperRegisterMsg {
   app_meta_data: string;
 }
 
+export interface DeveloperUpdateMsg {
+  username: string;
+  website: string;
+  description: string;
+  app_meta_data: string;
+}
+
 export interface DeveloperRevokeMsg {
   username: string;
 }
@@ -1208,56 +1289,67 @@ export interface VoteProposalMsg {
 export interface UpgradeProtocolMsg {
   creator: string;
   link: string;
+  reason: string;
 }
 
 export interface ChangeGlobalAllocationParamMsg {
   creator: string;
   parameter: Types.GlobalAllocationParam;
+  reason: string;
 }
 
 export interface ChangeEvaluateOfContentValueParamMsg {
   creator: string;
   parameter: Types.EvaluateOfContentValueParam;
+  reason: string;
 }
 
 export interface ChangeInfraInternalAllocationParamMsg {
   creator: string;
   parameter: Types.InfraInternalAllocationParam;
+  reason: string;
 }
 
 export interface ChangeVoteParamMsg {
   creator: string;
   parameter: Types.VoteParam;
+  reason: string;
 }
 
 export interface ChangeProposalParamMsg {
   creator: string;
   parameter: Types.ProposalParam;
+  reason: string;
 }
 
 export interface ChangeDeveloperParamMsg {
   creator: string;
   parameter: Types.DeveloperParam;
+  reason: string;
 }
 
 export interface ChangeValidatorParamMsg {
   creator: string;
   parameter: Types.ValidatorParam;
+  reason: string;
 }
 
 export interface ChangeBandwidthParamMsg {
   creator: string;
   parameter: Types.BandwidthParam;
+  reason: string;
 }
 
 export interface ChangeAccountParamMsg {
   creator: string;
   parameter: Types.AccountParam;
+  reason: string;
 }
 
 export interface ChangePostParamMsg {
   creator: string;
   parameter: Types.PostParam;
+  reason: string;
 }
 
 const _MSGTYPE = {
@@ -1269,6 +1361,7 @@ const _MSGTYPE = {
   RecoverMsgType: 'lino/recover',
   UpdateAccMsgType: 'lino/updateAcc',
   DevRegisterMsgType: 'lino/devRegister',
+  DevUpdateMsgType: 'lino/devUpdate',
   DevRevokeMsgType: 'lino/devRevoke',
   GrantPermissionMsgType: 'lino/grantPermission',
   RevokePermissionMsgType: 'lino/revokePermission',
