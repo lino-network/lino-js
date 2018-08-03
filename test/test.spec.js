@@ -1,5 +1,5 @@
-const NODE_URL = 'http://localhost:26657/';
-const testTxPrivHex = 'E1B0F79B20020398ED3212A397C200ED9579987D578F5262FC0EB8EBAC9EE1006F85EB1612';
+const NODE_URL = 'https://fullnode.linovalidator.io/';
+const testTxPrivHex = 'E1B0F79B2053E5D351A7137A2C48EDEEFBD60BBC824C50A1FA5256A31275BF2EA38868A969';
 
 const myUser = 'lino';
 // test utils
@@ -64,7 +64,7 @@ function addSuite(envName) {
   describe('LINO', function() {
     const linoClient = new LINO({
       nodeUrl: NODE_URL,
-      chainId: 'test-chain-Tn4ykp'
+      chainId: 'test-chain-BgWrtq'
     });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
@@ -350,26 +350,26 @@ function addSuite(envName) {
             });
         });
       });
-      it('grantPermission', function() {
-        return runBroadcast(query, true, () => {
-          return query
-            .getSeqNumber(userName)
-            .then(seq => {
-              debug('query seq number before grant', seq);
-              debug(getUnixTime());
-              expect(seq).to.be.a('number');
-              return seq;
-            })
-            .then(seq => {
-              return broadcast
-                .grantPermission(userName, 'lino', 1000000, '1', derivedTxPrivKey, seq)
-                .then(v => {
-                  debug('grant permission', v);
-                  resolve();
-                });
-            });
-        });
-      });
+      // it('grantPermission', function() {
+      //   return runBroadcast(query, true, () => {
+      //     return query
+      //       .getSeqNumber(userName)
+      //       .then(seq => {
+      //         debug('query seq number before grant', seq);
+      //         debug(getUnixTime());
+      //         expect(seq).to.be.a('number');
+      //         return seq;
+      //       })
+      //       .then(seq => {
+      //         broadcast
+      //           .grantPermission(userName, 'lino', 1000000, '1', derivedTxPrivKey, seq)
+      //           .then(v => {
+      //             debug('grant permission', v);
+      //             done();
+      //           });
+      //       });
+      //   });
+      // });
 
       console.log('create post');
       it('createPost', function() {
@@ -428,10 +428,12 @@ function addSuite(envName) {
             return query.getAccountParam().then(param => {
               console.log('changeAccParameter', param);
               param.balance_history_bundle_size = '10000';
-              return broadcast.changeAccountParam('lino', param, testTxPrivHex, seq).then(v => {
-                debug('changeAccParam', v);
-                expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-              });
+              return broadcast
+                .changeAccountParam('lino', param, 'reason', testTxPrivHex, seq)
+                .then(v => {
+                  debug('changeAccParam', v);
+                  expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+                });
             });
           });
         });
