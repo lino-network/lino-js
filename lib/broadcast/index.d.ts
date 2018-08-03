@@ -351,7 +351,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the creator
      * @param seq: the sequence number of the creator for the next transaction
      */
-    changeGlobalAllocationParam(creator: string, parameter: Types.GlobalAllocationParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    changeGlobalAllocationParam(creator: string, parameter: Types.GlobalAllocationParam, reason: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * changeEvaluateOfContentValueParam changes EvaluateOfContentValueParam with new value.
      * It composes ChangeEvaluateOfContentValueParamMsg and then broadcasts the transaction to blockchain.
@@ -361,7 +361,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the creator
      * @param seq: the sequence number of the creator for the next transaction
      */
-    changeEvaluateOfContentValueParam(creator: string, parameter: Types.EvaluateOfContentValueParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    changeEvaluateOfContentValueParam(creator: string, parameter: Types.EvaluateOfContentValueParam, reason: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * changeInfraInternalAllocationParam changes InfraInternalAllocationParam with new value.
      * It composes ChangeInfraInternalAllocationParamMsg and then broadcasts the transaction to blockchain.
@@ -371,7 +371,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the creator
      * @param seq: the sequence number of the creator for the next transaction
      */
-    changeInfraInternalAllocationParam(creator: string, parameter: Types.InfraInternalAllocationParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    changeInfraInternalAllocationParam(creator: string, parameter: Types.InfraInternalAllocationParam, reason: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * changeVoteParam changes VoteParam with new value.
      * It composes ChangeVoteParamMsg and then broadcasts the transaction to blockchain.
@@ -381,7 +381,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the creator
      * @param seq: the sequence number of the creator for the next transaction
      */
-    changeVoteParam(creator: string, parameter: Types.VoteParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    changeVoteParam(creator: string, parameter: Types.VoteParam, reason: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * changeProposalParam changes ProposalParam with new value.
      * It composes ChangeProposalParamMsg and then broadcasts the transaction to blockchain.
@@ -391,7 +391,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the creator
      * @param seq: the sequence number of the creator for the next transaction
      */
-    changeProposalParam(creator: string, parameter: Types.ProposalParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    changeProposalParam(creator: string, parameter: Types.ProposalParam, reason: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * changeDeveloperParam changes DeveloperParam with new value.
      * It composes ChangeDeveloperParamMsg and then broadcasts the transaction to blockchain.
@@ -401,7 +401,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the creator
      * @param seq: the sequence number of the creator for the next transaction
      */
-    changeDeveloperParam(creator: string, parameter: Types.DeveloperParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    changeDeveloperParam(creator: string, parameter: Types.DeveloperParam, reason: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * changeValidatorParam changes ValidatorParam with new value.
      * It composes ChangeValidatorParamMsg and then broadcasts the transaction to blockchain.
@@ -411,7 +411,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the creator
      * @param seq: the sequence number of the creator for the next transaction
      */
-    changeValidatorParam(creator: string, parameter: Types.ValidatorParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    changeValidatorParam(creator: string, parameter: Types.ValidatorParam, reason: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * changeBandwidthParam changes BandwidthParam with new value.
      * It composes ChangeBandwidthParamMsg and then broadcasts the transaction to blockchain.
@@ -421,7 +421,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the creator
      * @param seq: the sequence number of the creator for the next transaction
      */
-    changeBandwidthParam(creator: string, parameter: Types.BandwidthParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    changeBandwidthParam(creator: string, parameter: Types.BandwidthParam, reason: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * changeAccountParam changes AccountParam with new value.
      * It composes ChangeAccountParamMsg and then broadcasts the transaction to blockchain.
@@ -431,7 +431,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the creator
      * @param seq: the sequence number of the creator for the next transaction
      */
-    changeAccountParam(creator: string, parameter: Types.AccountParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    changeAccountParam(creator: string, parameter: Types.AccountParam, reason: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * changePostParam changes PostParam with new value.
      * It composes ChangePostParamMsg and then broadcasts the transaction to blockchain.
@@ -441,7 +441,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the creator
      * @param seq: the sequence number of the creator for the next transaction
      */
-    changePostParam(creator: string, parameter: Types.PostParam, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    changePostParam(creator: string, parameter: Types.PostParam, privKeyHex: string, reason: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * DeletePostContent deletes the content of a post on blockchain, which is used
      * for content censorship.
@@ -462,7 +462,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the creator
      * @param seq: the sequence number of the creator for the next transaction
      */
-    upgradeProtocol(creator: string, link: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    upgradeProtocol(creator: string, link: string, privKeyHex: string, reason: string, seq: number): Promise<ResultBroadcastTxCommit>;
     _broadcastTransaction(msg: object, msgType: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
 }
 export interface RegisterMsg {
@@ -624,44 +624,55 @@ export interface VoteProposalMsg {
 export interface UpgradeProtocolMsg {
     creator: string;
     link: string;
+    reason: string;
 }
 export interface ChangeGlobalAllocationParamMsg {
     creator: string;
     parameter: Types.GlobalAllocationParam;
+    reason: string;
 }
 export interface ChangeEvaluateOfContentValueParamMsg {
     creator: string;
     parameter: Types.EvaluateOfContentValueParam;
+    reason: string;
 }
 export interface ChangeInfraInternalAllocationParamMsg {
     creator: string;
     parameter: Types.InfraInternalAllocationParam;
+    reason: string;
 }
 export interface ChangeVoteParamMsg {
     creator: string;
     parameter: Types.VoteParam;
+    reason: string;
 }
 export interface ChangeProposalParamMsg {
     creator: string;
     parameter: Types.ProposalParam;
+    reason: string;
 }
 export interface ChangeDeveloperParamMsg {
     creator: string;
     parameter: Types.DeveloperParam;
+    reason: string;
 }
 export interface ChangeValidatorParamMsg {
     creator: string;
     parameter: Types.ValidatorParam;
+    reason: string;
 }
 export interface ChangeBandwidthParamMsg {
     creator: string;
     parameter: Types.BandwidthParam;
+    reason: string;
 }
 export interface ChangeAccountParamMsg {
     creator: string;
     parameter: Types.AccountParam;
+    reason: string;
 }
 export interface ChangePostParamMsg {
     creator: string;
     parameter: Types.PostParam;
+    reason: string;
 }
