@@ -869,7 +869,6 @@ export default class Broadcast {
       parameter,
       reason
     };
-
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeVoteParamMsgType, privKeyHex, seq);
   }
 
@@ -1016,8 +1015,8 @@ export default class Broadcast {
   changePostParam(
     creator: string,
     parameter: Types.PostParam,
-    reason: string,
     privKeyHex: string,
+    reason: string,
     seq: number
   ) {
     const msg: ChangePostParamMsg = {
@@ -1067,7 +1066,7 @@ export default class Broadcast {
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
-  upgradeProtocol(creator: string, link: string, reason: string, privKeyHex: string, seq: number) {
+  upgradeProtocol(creator: string, link: string, privKeyHex: string, reason: string, seq: number) {
     const msg: UpgradeProtocolMsg = {
       creator,
       link,
