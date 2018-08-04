@@ -573,6 +573,9 @@ export default class Broadcast {
    *
    * @param username: the user who wants to become a developer
    * @param deposit: the amount of money the user wants to deposit
+   * @param website: developer's website
+   * @param description: developer's description
+   * @param app_meta_data: developer's app meta data
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the user for the next transaction
    */
@@ -594,6 +597,35 @@ export default class Broadcast {
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.DevRegisterMsgType, privKeyHex, seq);
+  }
+
+  /**
+   * DeveloperUpdate updates a developer info on blockchain.
+   * It composes DeveloperUpdateMsg and then broadcasts the transaction to blockchain.
+   *
+   * @param username: the developer's username
+   * @param website: new developer's website
+   * @param description: new developer's description
+   * @param app_meta_data: new developer's app meta data
+   * @param privKeyHex: the private key of the user
+   * @param seq: the sequence number of the user for the next transaction
+   */
+  developerUpdate(
+    username: string,
+    website: string,
+    description: string,
+    app_meta_data: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: DeveloperUpdateMsg = {
+      username,
+      website,
+      description,
+      app_meta_data
+    };
+
+    return this._broadcastTransaction(msg, _MSGTYPE.DevUpdateMsgType, privKeyHex, seq);
   }
 
   /**
@@ -743,6 +775,7 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the GlobalAllocationParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
@@ -768,6 +801,7 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the EvaluateOfContentValueParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
@@ -793,6 +827,7 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the InfraInternalAllocationParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
@@ -818,6 +853,7 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the VoteParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
@@ -842,6 +878,7 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the ProposalParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
@@ -867,6 +904,7 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the DeveloperParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
@@ -892,6 +930,7 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the ValidatorParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
@@ -917,6 +956,7 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the BandwidthParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
@@ -942,6 +982,7 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the AccountParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
@@ -967,6 +1008,7 @@ export default class Broadcast {
    *
    * @param creator: the user who creates the proposal
    * @param parameter: the PostParam
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
@@ -1020,6 +1062,7 @@ export default class Broadcast {
    * It composes UpgradeProtocolMsg and then broadcasts the transaction to blockchain.
    * @param creator: the user who creates the proposal
    * @param link: the link of the upgraded protocol
+   * @param reason: the reason to make such change
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
@@ -1193,6 +1236,13 @@ export interface DeveloperRegisterMsg {
   app_meta_data: string;
 }
 
+export interface DeveloperUpdateMsg {
+  username: string;
+  website: string;
+  description: string;
+  app_meta_data: string;
+}
+
 export interface DeveloperRevokeMsg {
   username: string;
 }
@@ -1310,6 +1360,7 @@ const _MSGTYPE = {
   RecoverMsgType: 'lino/recover',
   UpdateAccMsgType: 'lino/updateAcc',
   DevRegisterMsgType: 'lino/devRegister',
+  DevUpdateMsgType: 'lino/devUpdate',
   DevRevokeMsgType: 'lino/devRevoke',
   GrantPermissionMsgType: 'lino/grantPermission',
   RevokePermissionMsgType: 'lino/revokePermission',
