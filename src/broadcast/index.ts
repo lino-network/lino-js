@@ -1,6 +1,6 @@
 import * as Types from '../common';
 import { ITransport } from '../transport';
-import { decodePubKey } from '../transport/encoder';
+import { encodeObject, decodePubKey } from '../transport/encoder';
 import { ResultBroadcastTxCommit } from '../transport/rpc';
 
 const InvalidSeqErrCode = 3;
@@ -788,7 +788,7 @@ export default class Broadcast {
   ) {
     const msg: ChangeGlobalAllocationParamMsg = {
       creator,
-      parameter,
+      parameter: encodeObject(parameter),
       reason
     };
 
@@ -814,7 +814,7 @@ export default class Broadcast {
   ) {
     const msg: ChangeEvaluateOfContentValueParamMsg = {
       creator,
-      parameter,
+      parameter: encodeObject(parameter),
       reason
     };
 
@@ -840,7 +840,7 @@ export default class Broadcast {
   ) {
     const msg: ChangeInfraInternalAllocationParamMsg = {
       creator,
-      parameter,
+      parameter: encodeObject(parameter),
       reason
     };
 
@@ -866,7 +866,7 @@ export default class Broadcast {
   ) {
     const msg: ChangeVoteParamMsg = {
       creator,
-      parameter,
+      parameter: encodeObject(parameter),
       reason
     };
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeVoteParamMsgType, privKeyHex, seq);
@@ -891,7 +891,7 @@ export default class Broadcast {
   ) {
     const msg: ChangeProposalParamMsg = {
       creator,
-      parameter,
+      parameter: encodeObject(parameter),
       reason
     };
 
@@ -917,7 +917,7 @@ export default class Broadcast {
   ) {
     const msg: ChangeDeveloperParamMsg = {
       creator,
-      parameter,
+      parameter: encodeObject(parameter),
       reason
     };
 
@@ -943,7 +943,7 @@ export default class Broadcast {
   ) {
     const msg: ChangeValidatorParamMsg = {
       creator,
-      parameter,
+      parameter: encodeObject(parameter),
       reason
     };
 
@@ -969,7 +969,7 @@ export default class Broadcast {
   ) {
     const msg: ChangeBandwidthParamMsg = {
       creator,
-      parameter,
+      parameter: encodeObject(parameter),
       reason
     };
 
@@ -995,7 +995,7 @@ export default class Broadcast {
   ) {
     const msg: ChangeAccountParamMsg = {
       creator,
-      parameter,
+      parameter: encodeObject(parameter),
       reason
     };
 
@@ -1021,7 +1021,7 @@ export default class Broadcast {
   ) {
     const msg: ChangePostParamMsg = {
       creator,
-      parameter,
+      parameter: encodeObject(parameter),
       reason
     };
 

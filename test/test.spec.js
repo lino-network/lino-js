@@ -71,6 +71,7 @@ function addSuite(envName) {
       expect(result).to.exist;
     });
     describe('query', function() {
+      this.timeout(20000);
       const query = linoClient.query;
 
       it('getAllValidators', function() {

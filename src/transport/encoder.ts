@@ -93,25 +93,53 @@ export function encodeTx(
 export function decodeObject(result: any): any {
   var decodedResult = Object.assign({}, result);
   var keys = Object.keys(result);
-
-  for (var index in keys) {
-    var key = keys[index];
-    if (
-      (key === 'details' || key === 'frozen_money_list' || key === 'donation_list') &&
-      result[key] instanceof Array
-    ) {
-      decodedResult[key] = [];
-      result[key].forEach(element => {
-        decodedResult[key].push(decodeObject(element));
-      });
-    } else if (decodedResult[key]) {
-      var subKeys = Object.keys(decodedResult[key]);
-      if (subKeys.length === 1 && subKeys[0] === 'amount' && isNaN(decodedResult.amount)) {
-        decodedResult[key].amount = String(Number(decodedResult[key].amount) / 100000);
+  if (keys.length === 1 && keys[0] === 'amount' && !isNaN(decodedResult.amount)) {
+    decodedResult.amount = String(Number(decodedResult.amount) / 100000);
+    return decodedResult;
+  }
+  if (typeof result === 'string') {
+    return String(result);
+  }
+  if (result instanceof Array) {
+    decodedResult = [];
+    result.forEach(element => {
+      decodedResult.push(decodeObject(element));
+    });
+  } else {
+    for (var index in keys) {
+      var key = keys[index];
+      if (decodedResult[key] && typeof decodedResult[key] !== 'string') {
+        decodedResult[key] = decodeObject(result[key]);
       }
     }
   }
   return decodedResult;
+}
+
+export function encodeObject(result: any): any {
+  var encodeResult = Object.assign({}, result);
+  var keys = Object.keys(result);
+  if (keys.length === 1 && keys[0] === 'amount' && !isNaN(encodeResult.amount)) {
+    encodeResult.amount = String(Number(encodeResult.amount) * 100000);
+    return encodeResult;
+  }
+  if (typeof result === 'string') {
+    return String(result);
+  }
+  if (result instanceof Array) {
+    encodeResult = [];
+    result.forEach(element => {
+      encodeResult.push(encodeObject(element));
+    });
+  } else {
+    for (var index in keys) {
+      var key = keys[index];
+      if (encodeResult[key] && typeof encodeResult[key] !== 'string') {
+        encodeResult[key] = encodeObject(result[key]);
+      }
+    }
+  }
+  return encodeResult;
 }
 
 export function encodeMsg(msg: any): any {
