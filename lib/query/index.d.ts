@@ -625,6 +625,7 @@ export interface ProposalValue {
 }
 export interface ChangeParamProposalValue extends ProposalValue {
     param: Types.Parameter;
+    reason: string;
 }
 export declare function isChangeParamProposalValue(value: ProposalValue): value is ChangeParamProposalValue;
 export interface ContentCensorshipProposalValue extends ProposalValue {
@@ -634,5 +635,6 @@ export interface ContentCensorshipProposalValue extends ProposalValue {
 export declare function isContentCensorshipProposalValue(value: ProposalValue): value is ContentCensorshipProposalValue;
 export interface ProtocolUpgradeProposalValue extends ProposalValue {
     link: string;
+    reason: string;
 }
 export declare function isProtocolUpgradeProposalValue(value: ProposalValue): value is ProtocolUpgradeProposalValue;

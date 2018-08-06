@@ -46,6 +46,7 @@ export declare const getZeroFee: () => StdFee;
 export declare const getZeroFeeInSig: () => StdFeeInSig;
 export declare function encodeTx(msgs: StdMsg[], rawPubKey: string, rawSigDER: string, seq: number): string;
 export declare function decodeObject(result: any): any;
+export declare function encodeObject(result: any): any;
 export declare function encodeMsg(msg: any): any;
 export declare function encodeSignMsg(stdMsg: StdMsg[], chainId: string, seq: number): any;
 export declare function convertMsg(msg: any): any;

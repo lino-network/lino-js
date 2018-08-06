@@ -104,6 +104,7 @@ export interface AccountParam {
     register_fee: Coin;
     balance_history_bundle_size: string;
     reward_history_bundle_size: string;
+    first_deposit_full_stake_limit: Coin;
 }
 export declare function isAccountParam(param: object): param is AccountParam;
 export interface PostParam {

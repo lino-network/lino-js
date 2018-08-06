@@ -683,9 +683,9 @@ export default class Query {
    * getOngoingProposal returns all ongoing proposals.
    */
   getOngoingProposal(): Promise<Proposal[]> {
-    return this.getProposalList().then(list =>
-      Promise.all((list.ongoing_proposal || []).map(p => this.getProposal(p)))
-    );
+    return this.getProposalList().then(list => {
+      return Promise.all((list.ongoing_proposal || []).map(p => this.getProposal(p)));
+    });
   }
 
   /**
@@ -1274,11 +1274,12 @@ export interface ProposalValue {
 
 export interface ChangeParamProposalValue extends ProposalValue {
   param: Types.Parameter;
+  reason: string;
 }
 export function isChangeParamProposalValue(
   value: ProposalValue
 ): value is ChangeParamProposalValue {
-  return 'param' in value;
+  return 'param' in value && 'reason' in value;
 }
 
 export interface ContentCensorshipProposalValue extends ProposalValue {
@@ -1293,11 +1294,12 @@ export function isContentCensorshipProposalValue(
 
 export interface ProtocolUpgradeProposalValue extends ProposalValue {
   link: string;
+  reason: string;
 }
 export function isProtocolUpgradeProposalValue(
   value: ProposalValue
 ): value is ProtocolUpgradeProposalValue {
-  return 'link' in value;
+  return 'link' in value && 'reason' in value;
 }
 
 const _TIMECONST = {
