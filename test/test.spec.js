@@ -413,7 +413,7 @@ function addSuite(envName) {
               param.content_creator_allocation = '2/10';
               param.developer_allocation = '3/20';
               return broadcast
-                .changeGlobalAllocationParam('lino', param, testTxPrivHex, seq)
+                .changeGlobalAllocationParam('lino', param, 'reason', testTxPrivHex, seq)
                 .then(v => {
                   debug('changeGlobalAllocationParam', v);
                   expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
