@@ -513,6 +513,37 @@ function addSuite(envName) {
         const res = UTILS.isValidUsername('-register');
         expect(res).to.equal(false);
       });
+
+      it('sign with sha256 and verify', function() {
+        const msg = makeid(10);
+        const username = makeid(10);
+        const app = makeid(10);
+        const sig = UTILS.signWithSha256(msg, username, app, testTxPrivHex);
+        const result = UTILS.verifyWithSha256(
+          msg,
+          username,
+          app,
+          UTILS.pubKeyFromPrivate(testTxPrivHex),
+          sig
+        );
+        expect(result).to.equal(true);
+      });
+
+      it('sign with sha256 and verify different sig', function() {
+        const msg = makeid(10);
+        const username = makeid(10);
+        const app = makeid(10);
+        const fakeApp = makeid(10);
+        const sig = UTILS.signWithSha256(msg, username, app, testTxPrivHex);
+        const result = UTILS.verifyWithSha256(
+          msg,
+          username,
+          fakeApp,
+          UTILS.pubKeyFromPrivate(testTxPrivHex),
+          sig
+        );
+        expect(result).to.equal(false);
+      });
     });
   });
 }
