@@ -683,9 +683,9 @@ export default class Query {
    * getOngoingProposal returns all ongoing proposals.
    */
   getOngoingProposal(): Promise<Proposal[]> {
-    return this.getProposalList().then(list =>
-      Promise.all((list.ongoing_proposal || []).map(p => this.getProposal(p)))
-    );
+    return this.getProposalList().then(list => {
+      return Promise.all((list.ongoing_proposal || []).map(p => this.getProposal(p)));
+    });
   }
 
   /**
