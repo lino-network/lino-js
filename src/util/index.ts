@@ -36,3 +36,45 @@ export function derivePrivKey(privKeyHex): string {
   var key = ec.genKeyPair({ entropy: keyHash });
   return encodePrivKey(key.getPrivate('hex'));
 }
+
+// Sign msg
+export function signWithSha256(msg: any, username: string, app: string, privKeyHex: string): any {
+  // private key from hex
+  var ec = new EC('secp256k1');
+  var key = ec.keyFromPrivate(decodePrivKey(privKeyHex), 'hex');
+
+  // signmsg
+  const msgHash = shajs('sha256')
+    .update(JSON.stringify(msg))
+    .digest();
+  const signByte = shajs('sha256')
+    .update(JSON.stringify({ msg: msg, username: username, app: app, sha256Hash: msgHash }))
+    .digest();
+  // sign to get signature
+  const sig = key.sign(signByte, { canonical: true });
+  return sig;
+}
+
+// Sign msg
+export function verifyWithSha256(
+  msg: any,
+  username: string,
+  app: string,
+  pubKeyHex: string,
+  signature: any
+): boolean {
+  // private key from hex
+  var ec = new EC('secp256k1');
+  var key = ec.keyFromPublic(decodePubKey(pubKeyHex), 'hex');
+
+  // signmsg
+  const msgHash = shajs('sha256')
+    .update(JSON.stringify(msg))
+    .digest();
+  const signByte = shajs('sha256')
+    .update(JSON.stringify({ msg: msg, username: username, app: app, sha256Hash: msgHash }))
+    .digest();
+  // sign to get signature
+  const res = key.verify(signByte, signature);
+  return res;
+}

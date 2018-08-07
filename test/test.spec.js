@@ -413,7 +413,7 @@ function addSuite(envName) {
               param.content_creator_allocation = '2/10';
               param.developer_allocation = '3/20';
               return broadcast
-                .changeGlobalAllocationParam('lino', param, testTxPrivHex, seq)
+                .changeGlobalAllocationParam('lino', param, 'reason', testTxPrivHex, seq)
                 .then(v => {
                   debug('changeGlobalAllocationParam', v);
                   expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
@@ -512,6 +512,37 @@ function addSuite(envName) {
       it('invalid username', function() {
         const res = UTILS.isValidUsername('-register');
         expect(res).to.equal(false);
+      });
+
+      it('sign with sha256 and verify', function() {
+        const msg = makeid(10);
+        const username = makeid(10);
+        const app = makeid(10);
+        const sig = UTILS.signWithSha256(msg, username, app, testTxPrivHex);
+        const result = UTILS.verifyWithSha256(
+          msg,
+          username,
+          app,
+          UTILS.pubKeyFromPrivate(testTxPrivHex),
+          sig
+        );
+        expect(result).to.equal(true);
+      });
+
+      it('sign with sha256 and verify different sig', function() {
+        const msg = makeid(10);
+        const username = makeid(10);
+        const app = makeid(10);
+        const fakeApp = makeid(10);
+        const sig = UTILS.signWithSha256(msg, username, app, testTxPrivHex);
+        const result = UTILS.verifyWithSha256(
+          msg,
+          username,
+          fakeApp,
+          UTILS.pubKeyFromPrivate(testTxPrivHex),
+          sig
+        );
+        expect(result).to.equal(false);
       });
     });
   });
