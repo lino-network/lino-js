@@ -44,7 +44,7 @@ export function signWithSha256(msg: any, privKeyHex: string): string {
   var ec = new EC('secp256k1');
   var key = ec.keyFromPrivate(decodePrivKey(privKeyHex), 'hex');
   const signByte = shajs('sha256')
-    .update(JSON.stringify(msg))
+    .update(msg)
     .digest();
   // sign to get signature
   const sig = key.sign(signByte, { canonical: true });
@@ -59,7 +59,7 @@ export function verifyWithSha256(msg: any, pubKeyHex: string, signature: string)
 
   // signmsg
   const msgHash = shajs('sha256')
-    .update(JSON.stringify(msg))
+    .update(msg)
     .digest();
   // sign to get signature
   const res = key.verify(msgHash, ByteBuffer.fromBase64(signature).toHex());
