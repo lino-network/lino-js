@@ -1,5 +1,5 @@
 # Documentation
-<!-- * [Install](#install)  
+* [Install](#install)  
 * [Browser](#browser)  
     * [Config](#config)
     * [JSON RPC](#json-rpc)
@@ -22,7 +22,7 @@
         * [Vote](#broadcast-vote)  
         * [Developer](#broadcast-developer)  
         * [Infra](#broadcast-infra)  
-        * [Proposal](#broadcast-proposal)   -->
+        * [Proposal](#broadcast-proposal)  
 
 ## Install
 ```
@@ -33,9 +33,7 @@ npm install lino-js --save
 ```
 <script src="./.js"></script>
 <script>
-<!-- steem.api.getAccounts(['xx', 'xx'], function(err, response){
-    console.log(err, response); -->
-});
+xxxxx
 </script>
 ```
 
@@ -59,6 +57,7 @@ Remotely: chainID = "test-chain-BgWrtq" and nodeURL = "http://fullnode.linovalid
 Locally: chainID = "test-chain-q8lMWR" and nodeURL = "http://localhost:26657"  
 
 ### JSON-RPC
+xxxxx
 
 ## API
 
