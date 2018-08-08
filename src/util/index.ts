@@ -58,10 +58,10 @@ export function verifyWithSha256(msg: any, pubKeyHex: string, signature: string)
   var key = ec.keyFromPublic(decodePubKey(pubKeyHex), 'hex');
 
   // signmsg
-  const msgHash = shajs('sha256')
+  const signByte = shajs('sha256')
     .update(msg)
     .digest();
-  // sign to get signature
-  const res = key.verify(msgHash, ByteBuffer.fromBase64(signature).toHex());
+  // sign to get signaturegit stat
+  const res = key.verify(signByte, ByteBuffer.fromBase64(signature).toHex());
   return res;
 }
