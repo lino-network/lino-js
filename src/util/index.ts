@@ -62,7 +62,6 @@ export function verifyWithSha256(msg: any, pubKeyHex: string, signature: string)
     .update(msg)
     .digest();
   // sign to get signature
-  console.log('sign byte hex:', ByteBuffer.fromBase64(signature).toHex());
   const res = key.verify(msgHash, ByteBuffer.fromBase64(signature).toHex());
   return res;
 }
