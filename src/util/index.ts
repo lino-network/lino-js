@@ -1,3 +1,4 @@
+import ByteBuffer from 'bytebuffer';
 import { ec as EC } from 'elliptic';
 import shajs from 'sha.js';
 import { decodePrivKey, decodePubKey, encodePrivKey, encodePubKey } from '../transport/encoder';
@@ -38,31 +39,20 @@ export function derivePrivKey(privKeyHex): string {
 }
 
 // Sign msg
-export function signWithSha256(msg: any, username: string, app: string, privKeyHex: string): any {
+export function signWithSha256(msg: any, privKeyHex: string): string {
   // private key from hex
   var ec = new EC('secp256k1');
   var key = ec.keyFromPrivate(decodePrivKey(privKeyHex), 'hex');
-
-  // signmsg
-  const msgHash = shajs('sha256')
-    .update(JSON.stringify(msg))
-    .digest();
   const signByte = shajs('sha256')
-    .update(JSON.stringify({ msg: msg, username: username, app: app, sha256Hash: msgHash }))
+    .update(JSON.stringify(msg))
     .digest();
   // sign to get signature
   const sig = key.sign(signByte, { canonical: true });
-  return sig;
+  return ByteBuffer.fromHex(sig.toDER('hex')).toString('base64');
 }
 
 // Sign msg
-export function verifyWithSha256(
-  msg: any,
-  username: string,
-  app: string,
-  pubKeyHex: string,
-  signature: any
-): boolean {
+export function verifyWithSha256(msg: any, pubKeyHex: string, signature: string): boolean {
   // private key from hex
   var ec = new EC('secp256k1');
   var key = ec.keyFromPublic(decodePubKey(pubKeyHex), 'hex');
@@ -71,10 +61,7 @@ export function verifyWithSha256(
   const msgHash = shajs('sha256')
     .update(JSON.stringify(msg))
     .digest();
-  const signByte = shajs('sha256')
-    .update(JSON.stringify({ msg: msg, username: username, app: app, sha256Hash: msgHash }))
-    .digest();
   // sign to get signature
-  const res = key.verify(signByte, signature);
+  const res = key.verify(msgHash, ByteBuffer.fromBase64(signature).toHex());
   return res;
 }

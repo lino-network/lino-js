@@ -516,32 +516,30 @@ function addSuite(envName) {
 
       it('sign with sha256 and verify', function() {
         const msg = makeid(10);
-        const username = makeid(10);
-        const app = makeid(10);
-        const sig = UTILS.signWithSha256(msg, username, app, testTxPrivHex);
-        const result = UTILS.verifyWithSha256(
-          msg,
-          username,
-          app,
-          UTILS.pubKeyFromPrivate(testTxPrivHex),
-          sig
-        );
+        const sig = UTILS.signWithSha256(msg, testTxPrivHex);
+        console.log('base64 sig: ', sig);
+        const result = UTILS.verifyWithSha256(msg, UTILS.pubKeyFromPrivate(testTxPrivHex), sig);
         expect(result).to.equal(true);
       });
 
+      it('sign with sha256 and verify with stringify', function() {
+        const msg = makeid(10);
+        const sig = UTILS.signWithSha256(msg, testTxPrivHex);
+        const stringifySig = JSON.stringify(sig);
+        const parseSig = JSON.parse(stringifySig);
+        const result = UTILS.verifyWithSha256(
+          msg,
+          UTILS.pubKeyFromPrivate(testTxPrivHex),
+          parseSig
+        );
+        expect(result).to.equal(true);
+      });
       it('sign with sha256 and verify different sig', function() {
         const msg = makeid(10);
         const username = makeid(10);
-        const app = makeid(10);
-        const fakeApp = makeid(10);
-        const sig = UTILS.signWithSha256(msg, username, app, testTxPrivHex);
-        const result = UTILS.verifyWithSha256(
-          msg,
-          username,
-          fakeApp,
-          UTILS.pubKeyFromPrivate(testTxPrivHex),
-          sig
-        );
+        const fakemsg = makeid(10);
+        const sig = UTILS.signWithSha256(msg, testTxPrivHex);
+        const result = UTILS.verifyWithSha256(fakemsg, UTILS.pubKeyFromPrivate(testTxPrivHex), sig);
         expect(result).to.equal(false);
       });
     });
