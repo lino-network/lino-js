@@ -23,6 +23,7 @@ When you find issues, please report them!
 
 ## Developer Community
 
-Please join us on on:  
-[Gitter channel](https://gitter.im/Lino-Blockchain/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=share-link)  
-[Riot](https://matrix.to/#/!WAWAMHohvBlpTyVtSf:matrix.org)
+Please join us on on:
+
+- [Gitter channel](https://gitter.im/Lino-Blockchain/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
+- [Riot](https://matrix.to/#/!WAWAMHohvBlpTyVtSf:matrix.org)
