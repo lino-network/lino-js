@@ -517,6 +517,7 @@ function addSuite(envName) {
       it('sign with sha256 and verify', function() {
         const msg = makeid(10);
         const sig = UTILS.signWithSha256(msg, testTxPrivHex);
+        console.log('base64 sig: ', sig);
         const result = UTILS.verifyWithSha256(msg, UTILS.pubKeyFromPrivate(testTxPrivHex), sig);
         expect(result).to.equal(true);
       });
