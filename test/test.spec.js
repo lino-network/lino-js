@@ -1,5 +1,6 @@
 const NODE_URL = 'https://fullnode.linovalidator.io/';
 const testTxPrivHex = 'E1B0F79B2053E5D351A7137A2C48EDEEFBD60BBC824C50A1FA5256A31275BF2EA38868A969';
+const testAppPrivHex = 'E1B0F79B20490005A517EB5CA5C8BE22FB7865ADD64F01AAF9797440DE18F0260A2421E633';
 
 const myUser = 'lino';
 // test utils
@@ -516,9 +517,9 @@ function addSuite(envName) {
 
       it('sign with sha256 and verify', function() {
         const msg = makeid(10);
-        const sig = UTILS.signWithSha256(msg, testTxPrivHex);
-        console.log('base64 sig: ', sig);
-        const result = UTILS.verifyWithSha256(msg, UTILS.pubKeyFromPrivate(testTxPrivHex), sig);
+        const sig = UTILS.signWithSha256(msg, testAppPrivHex);
+        console.log('base64 sig: ', msg, sig);
+        const result = UTILS.verifyWithSha256(msg, UTILS.pubKeyFromPrivate(testAppPrivHex), sig);
         expect(result).to.equal(true);
       });
 
