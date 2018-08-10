@@ -48,7 +48,7 @@ export function signWithSha256(msg: any, privKeyHex: string): string {
     .digest();
   // sign to get signature
   const sig = key.sign(signByte, { canonical: true });
-  return ByteBuffer.fromHex(sig.toDER('hex')).toString('base64');
+  return sig.toDER('hex');
 }
 
 // Sign msg
@@ -62,6 +62,6 @@ export function verifyWithSha256(msg: any, pubKeyHex: string, signature: string)
     .update(msg)
     .digest();
   // sign to get signaturegit stat
-  const res = key.verify(signByte, ByteBuffer.fromBase64(signature).toHex());
+  const res = key.verify(signByte, signature);
   return res;
 }
