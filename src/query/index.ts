@@ -1082,15 +1082,10 @@ export interface View {
   times: string;
 }
 
-export interface Donation {
-  amount: Types.Coin;
-  created: string;
-  donation_type: string;
-}
-
 export interface Donations {
+  amount: Types.Coin;
   username: string;
-  donation_list: Donation[];
+  times: string;
 }
 
 export interface ReportOrUpvote {
@@ -1239,6 +1234,7 @@ export interface Detail {
   to: string;
   amount: Types.Coin;
   created_at: number;
+  balance: Types.Coin;
   memo: string;
 }
 
