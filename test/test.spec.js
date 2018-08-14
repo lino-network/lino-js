@@ -1,6 +1,6 @@
-const NODE_URL = 'https://fullnode.linovalidator.io/';
-const testTxPrivHex = 'E1B0F79B2053E5D351A7137A2C48EDEEFBD60BBC824C50A1FA5256A31275BF2EA38868A969';
-const testAppPrivHex = 'E1B0F79B20490005A517EB5CA5C8BE22FB7865ADD64F01AAF9797440DE18F0260A2421E633';
+const NODE_URL = 'http://localhost:26657/';
+const testTxPrivHex = 'E1B0F79B20D8C47F0A23DE7A2D8FDA7BF2886C3D8EC8A2DEF7F0395C38AEFAA13B452FE241';
+const testAppPrivHex = 'E1B0F79B203F8982F8B8AA4625991B68F13371B2F374B6BF462C42F6172F44709B9AEBFAEF';
 
 const myUser = 'lino';
 // test utils
@@ -65,7 +65,7 @@ function addSuite(envName) {
   describe('LINO', function() {
     const linoClient = new LINO({
       nodeUrl: NODE_URL,
-      chainId: 'test-chain-BgWrtq'
+      chainId: 'test-chain-oS6Ywt'
     });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
@@ -230,6 +230,12 @@ function addSuite(envName) {
         });
       });
 
+      it('getProposal', function() {
+        return query.getProposal('2').then(v => {
+          debug('getProposal', v);
+          expect(v).to.have.all.keys('type', 'value');
+        });
+      });
       it('getVote', function() {
         return query.getVote('1', 'lino').then(v => {
           debug('getVote', v);
@@ -243,6 +249,30 @@ function addSuite(envName) {
         });
       });
 
+      it('getAccountParam', function() {
+        return query.getAccountParam().then(v => {
+          debug('getAccountParam', v);
+        });
+      });
+      it('getAllEventAtAllTime', function() {
+        return query
+          .getAllEventAtAllTime()
+          .then(v => {
+            debug('getAllEventAtAllTime', v);
+          })
+          .catch(err => {});
+      });
+
+      it('getTxsInBlock', function() {
+        return query.getTxsInBlock('406428').then(v => {
+          debug('getTxsInBlock', v);
+        });
+      });
+      it('getConsumptionMeta', function() {
+        return query.getConsumptionMeta().then(v => {
+          debug('getConsumptionMeta', v);
+        });
+      });
       it('getExpiredProposal', function() {
         return query.getExpiredProposal().then(v => {
           debug('getExpiredProposal', v);
@@ -424,23 +454,39 @@ function addSuite(envName) {
         });
       });
 
-      it('changeAccParameter', function() {
+      // it('changeAccParameter', function() {
+      //   return runBroadcast(query, true, () => {
+      //     return query.getSeqNumber('lino').then(seq => {
+      //       return query.getAccountParam().then(param => {
+      //         console.log('changeAccParameter', param);
+      //         param.minimum_balance.amount = '10000';
+      //         return broadcast
+      //           .changeAccountParam('lino', param, 'reason', testTxPrivHex, seq)
+      //           .then(v => {
+      //             debug('changeAccParam', v);
+      //             expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+      //           });
+      //       });
+      //     });
+      //   });
+      // });
+
+      it('changeValidatorParam', function() {
         return runBroadcast(query, true, () => {
           return query.getSeqNumber('lino').then(seq => {
-            return query.getAccountParam().then(param => {
-              console.log('changeAccParameter', param);
-              param.balance_history_bundle_size = '10000';
+            return query.getValidatorParam().then(param => {
+              console.log('changeValidatorParam', param);
+              param.validator_list_size = '23';
               return broadcast
-                .changeAccountParam('lino', param, 'reason', testTxPrivHex, seq)
+                .changeValidatorParam('lino', param, 'reason', testTxPrivHex, seq)
                 .then(v => {
-                  debug('changeAccParam', v);
+                  debug('changeValidatorParam', v);
                   expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
                 });
             });
           });
         });
       });
-
       it('voteProposal', function() {
         return runBroadcast(query, true, () => {
           return query.getSeqNumber('lino').then(seq => {

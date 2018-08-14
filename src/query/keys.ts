@@ -65,6 +65,7 @@ namespace Keys {
     accountParamSubstore: '09',
     postParamSubStore: '0a',
 
+    timeEventListSubStore: '00',
     globalMetaSubStore: '01',
     inflationPoolSubStore: '02',
     consumptionMetaSubStore: '03',
@@ -372,6 +373,14 @@ namespace Keys {
 
   export function getConsumptionMetaKey(): string {
     return _KEYS.consumptionMetaSubStore;
+  }
+
+  export function getTimeEventKey(time: string): string {
+    return _KEYS.timeEventListSubStore.concat(time);
+  }
+
+  export function getTimeEventPrefix(): string {
+    return _KEYS.timeEventListSubStore;
   }
 
   export function getTPSKey(): string {

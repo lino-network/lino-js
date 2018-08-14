@@ -74,6 +74,8 @@ declare namespace Keys {
     function getGlobalMetaKey(): string;
     function getInflationPoolKey(): string;
     function getConsumptionMetaKey(): string;
+    function getTimeEventKey(time: string): string;
+    function getTimeEventPrefix(): string;
     function getTPSKey(): string;
 }
 export default Keys;

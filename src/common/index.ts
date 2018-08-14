@@ -187,16 +187,12 @@ export function isBandwidthParam(param: object): param is BandwidthParam {
 export interface AccountParam {
   minimum_balance: Coin;
   register_fee: Coin;
-  balance_history_bundle_size: string;
-  reward_history_bundle_size: string;
   first_deposit_full_stake_limit: Coin;
 }
 export function isAccountParam(param: object): param is AccountParam {
   return (
     'minimum_balance' in param &&
     'register_fee' in param &&
-    'balance_history_bundle_size' in param &&
-    'reward_history_bundle_size' in param &&
     'first_deposit_full_stake_limit' in param
   );
 }

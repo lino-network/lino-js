@@ -364,6 +364,18 @@ export default class Query {
      */
     getConsumptionMeta(): Promise<Types.ConsumptionMeta>;
     /**
+     * getAccountParam returns the AccountParam.
+     */
+    getEventAtTime(time: string): Promise<any>;
+    /**
+     * getAccountParam returns the AccountParam.
+     */
+    getAllEventAtAllTime(): Promise<any>;
+    /**
+     * getAccountParam returns the AccountParam.
+     */
+    getAllEventAtAllTimeAtCertainHeight(height: any): Promise<any>;
+    /**
      * getPostParam returns the PostParam.
      */
     getPostParam(): Promise<Types.PostParam>;
