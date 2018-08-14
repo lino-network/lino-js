@@ -75,7 +75,7 @@ export function encodeTx(
 ): string {
   const stdSig: StdSignature = {
     pub_key: convertToInternalPubKey(rawPubKey, _TYPE.PubKeySecp256k1),
-    signature: convertToInternalSig(rawSigDER, _TYPE.SignatureKeySecp256k1),
+    signature: ByteBuffer.fromHex(rawSigDER).toString('base64'),
     account_number: '0',
     sequence: String(seq)
   };
