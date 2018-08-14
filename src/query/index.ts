@@ -825,6 +825,35 @@ export default class Query {
   }
 
   /**
+   * getAccountParam returns the AccountParam.
+   */
+  getEventAtTime(time: string): Promise<any> {
+    const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
+    return this._transport.query<any>(Keys.getTimeEventKey(time), GlobalKVStoreKey);
+  }
+  /**
+   * getAccountParam returns the AccountParam.
+   */
+  getAllEventAtAllTime(): Promise<any> {
+    const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
+    return this._transport.querySubspace<any>(
+      Keys.getTimeEventPrefix(),
+      GlobalKVStoreKey,
+      GetKeyBy.GetSubstringAfterSubstore
+    );
+  }
+  /**
+   * getAccountParam returns the AccountParam.
+   */
+  getAllEventAtAllTimeAtCertainHeight(height): Promise<any> {
+    const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
+    return this._transport.querySubspace<any>(
+      Keys.getTimeEventPrefix(),
+      GlobalKVStoreKey,
+      GetKeyBy.GetSubstringAfterSubstore
+    );
+  }
+  /**
    * getPostParam returns the PostParam.
    */
   getPostParam(): Promise<Types.PostParam> {
