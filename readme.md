@@ -3,7 +3,6 @@
 lino-js is the JS library of the Lino Blockchain. It's created for ease use of building DApps on Lino blockchain, as well as providing more query APIs than blockchain supported.
 
 - [Documentation](/doc)
-- [Example](https://github.com/lino-network/lino-wallet-app)
 
 ## Preqrequisite
 
