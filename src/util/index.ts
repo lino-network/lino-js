@@ -17,7 +17,7 @@ export function pubKeyFromPrivate(privKeyHex: string): string {
 }
 
 export function isValidUsername(username: string): boolean {
-  const reg = /^[a-z0-9]([a-z0-9_-]){2,20}$/;
+  const reg = /^[a-z0-9]([a-z0-9_]){2,20}$/;
   const match = reg.exec(username);
   return match != null;
 }
