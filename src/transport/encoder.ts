@@ -108,7 +108,11 @@ export function decodeObject(result: any): any {
   } else {
     for (var index in keys) {
       var key = keys[index];
-      if (decodedResult[key] && typeof decodedResult[key] !== 'string') {
+      if (
+        decodedResult[key] !== null &&
+        typeof decodedResult[key] !== 'string' &&
+        typeof decodedResult[key] !== 'boolean'
+      ) {
         decodedResult[key] = decodeObject(result[key]);
       }
     }

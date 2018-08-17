@@ -1,6 +1,6 @@
-const NODE_URL = 'http://localhost:26657/';
-const testTxPrivHex = 'E1B0F79B20D8C47F0A23DE7A2D8FDA7BF2886C3D8EC8A2DEF7F0395C38AEFAA13B452FE241';
-const testAppPrivHex = 'E1B0F79B203F8982F8B8AA4625991B68F13371B2F374B6BF462C42F6172F44709B9AEBFAEF';
+const NODE_URL = 'http://54.227.154.0:26657/';
+const testTxPrivHex = 'E1B0F79B20149E17A2AF928AFE7774B93114E7EB62CCF56903E375EA1C4F62EAC5E4FE8D59';
+const testAppPrivHex = 'E1B0F79B203011994492CFDA9319DDC2A78E216B040200CD06BDC2B912EA04479C0AFEC1BC';
 
 const myUser = 'lino';
 // test utils
@@ -65,7 +65,7 @@ function addSuite(envName) {
   describe('LINO', function() {
     const linoClient = new LINO({
       nodeUrl: NODE_URL,
-      chainId: 'test-chain-oS6Ywt'
+      chainId: 'lino-staging'
     });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
