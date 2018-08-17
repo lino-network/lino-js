@@ -138,7 +138,11 @@ export function encodeObject(result: any): any {
   } else {
     for (var index in keys) {
       var key = keys[index];
-      if (encodeResult[key] && typeof encodeResult[key] !== 'string') {
+      if (
+        encodeResult[key] !== null &&
+        typeof encodeResult[key] !== 'string' &&
+        typeof encodeResult[key] !== 'boolean'
+      ) {
         encodeResult[key] = encodeObject(result[key]);
       }
     }
