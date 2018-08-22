@@ -108,6 +108,11 @@ export function decodeObject(result: any): any {
   } else {
     for (var index in keys) {
       var key = keys[index];
+      if (key === 'memo' || key === 'title' || key === 'content' || key === 'description') {
+        if (decodedResult[key] !== null) {
+          decodedResult[key] = decodeURIComponent(escape(result[key]));
+        }
+      }
       if (
         decodedResult[key] !== null &&
         typeof decodedResult[key] !== 'string' &&
