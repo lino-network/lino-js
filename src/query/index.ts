@@ -661,39 +661,51 @@ export default class Query {
   // proposal related query
 
   /**
-   * GetProposalList returns a list of all proposals, including onging
-   * proposals and past ones.
+   * GetProposalList returns a list of all ongoing proposals.
    */
-  getProposalList(): Promise<ProposalList> {
+  getOngoingProposalList(): Promise<ResultKV<string, Proposal>[]> {
     const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
-    return this._transport.query<ProposalList>(Keys.getProposalListKey(), ProposalKVStoreKey);
+    return this._transport.querySubspace<Proposal>(
+      Keys.getOngoingProposalPrefix(),
+      ProposalKVStoreKey,
+      GetKeyBy.GetSubstringAfterSubstore
+    );
   }
 
   /**
-   * getProposal returns proposal info of a specific proposalID.
+   * GetExpiredProposalList returns a list of all ongoing proposals.
+   */
+  getExpiredProposalList(): Promise<ResultKV<string, Proposal>[]> {
+    const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
+    return this._transport.querySubspace<Proposal>(
+      Keys.getExpiredProposalPrefix(),
+      ProposalKVStoreKey,
+      GetKeyBy.GetSubstringAfterSubstore
+    );
+  }
+
+  /**
+   * getProposal returns ongoing proposal info of a specific proposalID.
    *
    * @param proposalID
    */
-  getProposal(proposalID: string): Promise<Proposal> {
+  getOngoingProposal(proposalID: string): Promise<Proposal> {
     const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
-    return this._transport.query<Proposal>(Keys.getProposalKey(proposalID), ProposalKVStoreKey);
+    return this._transport.query<Proposal>(
+      Keys.getOngoingProposalKey(proposalID),
+      ProposalKVStoreKey
+    );
   }
 
   /**
-   * getOngoingProposal returns all ongoing proposals.
+   * getProposal returns expired proposal info of a specific proposalID.
+   * @param proposalID
    */
-  getOngoingProposal(): Promise<Proposal[]> {
-    return this.getProposalList().then(list => {
-      return Promise.all((list.ongoing_proposal || []).map(p => this.getProposal(p)));
-    });
-  }
-
-  /**
-   * getExpiredProposal returns all past proposals.
-   */
-  getExpiredProposal(): Promise<Proposal[]> {
-    return this.getProposalList().then(list =>
-      Promise.all((list.past_proposal || []).map(p => this.getProposal(p)))
+  getExpiredProposal(proposalID: string): Promise<Proposal> {
+    const ProposalKVStoreKey = Keys.KVSTOREKEYS.ProposalKVStoreKey;
+    return this._transport.query<Proposal>(
+      Keys.getExpiredProposalKey(proposalID),
+      ProposalKVStoreKey
     );
   }
 
@@ -1212,6 +1224,7 @@ export interface AccountMeta {
   transaction_capacity: Types.Coin;
   json_meta: string;
   last_report_or_upvote_at: string;
+  last_post_at: string;
 }
 
 export interface FollowerMeta {
@@ -1268,11 +1281,6 @@ export interface Detail {
 }
 
 // proposal related
-export interface ProposalList {
-  ongoing_proposal?: string[];
-  past_proposal?: string[];
-}
-
 export interface ProposalInfo {
   creator: string;
   proposal_id: string;
