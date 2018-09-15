@@ -1,5 +1,6 @@
-const NODE_URL = 'https://fullnode.linovalidator.io/';
-const testTxPrivHex = 'E1B0F79B2053E5D351A7137A2C48EDEEFBD60BBC824C50A1FA5256A31275BF2EA38868A969';
+const NODE_URL = 'http://54.227.154.0:26657/';
+const testTxPrivHex = 'E1B0F79B20149E17A2AF928AFE7774B93114E7EB62CCF56903E375EA1C4F62EAC5E4FE8D59';
+const testAppPrivHex = 'E1B0F79B203011994492CFDA9319DDC2A78E216B040200CD06BDC2B912EA04479C0AFEC1BC';
 
 const myUser = 'lino';
 // test utils
@@ -64,7 +65,7 @@ function addSuite(envName) {
   describe('LINO', function() {
     const linoClient = new LINO({
       nodeUrl: NODE_URL,
-      chainId: 'test-chain-BgWrtq'
+      chainId: 'lino-staging'
     });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
@@ -229,6 +230,12 @@ function addSuite(envName) {
         });
       });
 
+      it('getProposal', function() {
+        return query.getProposal('2').then(v => {
+          debug('getProposal', v);
+          expect(v).to.have.all.keys('type', 'value');
+        });
+      });
       it('getVote', function() {
         return query.getVote('1', 'lino').then(v => {
           debug('getVote', v);
@@ -242,6 +249,30 @@ function addSuite(envName) {
         });
       });
 
+      it('getAccountParam', function() {
+        return query.getAccountParam().then(v => {
+          debug('getAccountParam', v);
+        });
+      });
+      it('getAllEventAtAllTime', function() {
+        return query
+          .getAllEventAtAllTime()
+          .then(v => {
+            debug('getAllEventAtAllTime', v);
+          })
+          .catch(err => {});
+      });
+
+      it('getTxsInBlock', function() {
+        return query.getTxsInBlock('406428').then(v => {
+          debug('getTxsInBlock', v);
+        });
+      });
+      it('getConsumptionMeta', function() {
+        return query.getConsumptionMeta().then(v => {
+          debug('getConsumptionMeta', v);
+        });
+      });
       it('getExpiredProposal', function() {
         return query.getExpiredProposal().then(v => {
           debug('getExpiredProposal', v);
@@ -423,23 +454,39 @@ function addSuite(envName) {
         });
       });
 
-      it('changeAccParameter', function() {
+      // it('changeAccParameter', function() {
+      //   return runBroadcast(query, true, () => {
+      //     return query.getSeqNumber('lino').then(seq => {
+      //       return query.getAccountParam().then(param => {
+      //         console.log('changeAccParameter', param);
+      //         param.minimum_balance.amount = '10000';
+      //         return broadcast
+      //           .changeAccountParam('lino', param, 'reason', testTxPrivHex, seq)
+      //           .then(v => {
+      //             debug('changeAccParam', v);
+      //             expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+      //           });
+      //       });
+      //     });
+      //   });
+      // });
+
+      it('changeValidatorParam', function() {
         return runBroadcast(query, true, () => {
           return query.getSeqNumber('lino').then(seq => {
-            return query.getAccountParam().then(param => {
-              console.log('changeAccParameter', param);
-              param.balance_history_bundle_size = '10000';
+            return query.getValidatorParam().then(param => {
+              console.log('changeValidatorParam', param);
+              param.validator_list_size = '23';
               return broadcast
-                .changeAccountParam('lino', param, 'reason', testTxPrivHex, seq)
+                .changeValidatorParam('lino', param, 'reason', testTxPrivHex, seq)
                 .then(v => {
-                  debug('changeAccParam', v);
+                  debug('changeValidatorParam', v);
                   expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
                 });
             });
           });
         });
       });
-
       it('voteProposal', function() {
         return runBroadcast(query, true, () => {
           return query.getSeqNumber('lino').then(seq => {
@@ -516,9 +563,9 @@ function addSuite(envName) {
 
       it('sign with sha256 and verify', function() {
         const msg = makeid(10);
-        const sig = UTILS.signWithSha256(msg, testTxPrivHex);
-        console.log('base64 sig: ', sig);
-        const result = UTILS.verifyWithSha256(msg, UTILS.pubKeyFromPrivate(testTxPrivHex), sig);
+        const sig = UTILS.signWithSha256(msg, testAppPrivHex);
+        console.log('base64 sig: ', msg, sig);
+        const result = UTILS.verifyWithSha256(msg, UTILS.pubKeyFromPrivate(testAppPrivHex), sig);
         expect(result).to.equal(true);
       });
 

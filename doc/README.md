@@ -489,28 +489,38 @@ lino.query
         console.log('getProposalList: ', v);
     }); 
 ```
-##### Get Proposal 
+##### Get Ongoing Proposal 
 ```
 lino.query
-    .getProposal(proposalID)
+    .getOngoingProposal(proposalID)
     .then(v => {
-        console.log('getProposal: ', v);
+        console.log('getOngoingProposal: ', v);
     }); 
 ```
+
+##### Get Expired Proposal 
+```
+lino.query
+    .getExpiredProposal(proposalID)
+    .then(v => {
+        console.log('getExpiredProposal: ', v);
+    }); 
+```
+
 ##### Get Ongoing Proposals
 ```
 lino.query
-    .getOngoingProposal()
+    .getOngoingProposalList()
     .then(v => {
-        console.log('getOngoingProposal: ', v);
+        console.log('getOngoingProposalList: ', v);
     }); 
 ```
 ##### Get Expired Proposals
 ```
 lino.query
-    .getExpiredProposal()
+    .getExpiredProposalList()
     .then(v => {
-        console.log('getExpiredProposal: ', v);
+        console.log('getExpiredProposalList: ', v);
     }); 
 ```
 ##### Get Next Proposal ID

@@ -58,7 +58,6 @@ export class Transport implements ITransport {
       if (!result.response || !result.response.value) {
         throw new Error('Query failed: Empty result');
       }
-
       const jsonStr = ByteBuffer.atob(result.response.value);
       return decodeObject(JSON.parse(jsonStr) as T);
     });

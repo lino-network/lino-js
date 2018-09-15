@@ -52,6 +52,9 @@ export function isEvaluateOfContentValueParam(param: object): param is EvaluateO
 }
 
 export interface GlobalAllocationParam {
+  global_growth_rate: Rat;
+  ceiling: Rat;
+  floor: Rat;
   content_creator_allocation: Rat;
   developer_allocation: Rat;
   infra_allocation: Rat;
@@ -59,6 +62,9 @@ export interface GlobalAllocationParam {
 }
 export function isGlobalAllocationParam(param: object): param is GlobalAllocationParam {
   return (
+    'floor' in param &&
+    'ceiling' in param &&
+    'global_growth_rate' in param &&
     'infra_allocation' in param &&
     'content_creator_allocation' in param &&
     'developer_allocation' in param &&
@@ -187,25 +193,22 @@ export function isBandwidthParam(param: object): param is BandwidthParam {
 export interface AccountParam {
   minimum_balance: Coin;
   register_fee: Coin;
-  balance_history_bundle_size: string;
-  reward_history_bundle_size: string;
   first_deposit_full_stake_limit: Coin;
 }
 export function isAccountParam(param: object): param is AccountParam {
   return (
     'minimum_balance' in param &&
     'register_fee' in param &&
-    'balance_history_bundle_size' in param &&
-    'reward_history_bundle_size' in param &&
     'first_deposit_full_stake_limit' in param
   );
 }
 
 export interface PostParam {
   report_or_upvote_interval: string;
+  post_interval_sec: string;
 }
 export function isPostParam(param: object): param is PostParam {
-  return 'report_or_upvote_interval' in param;
+  return 'report_or_upvote_interval' in param && 'post_interval_sec' in param;
 }
 
 export interface GlobalMeta {

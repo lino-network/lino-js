@@ -2,6 +2,8 @@
 
 lino-js is the JS library of the Lino Blockchain. It's created for ease use of building DApps on Lino blockchain, as well as providing more query APIs than blockchain supported.
 
+- [Documentation](/doc)
+
 ## Preqrequisite
 
 - install [yarn](https://yarnpkg.com/en/docs/install#mac-stable)
@@ -24,7 +26,14 @@ When you find issues, please report them!
 ## Developer Community
 
 Please join us on on:
+<<<<<<< HEAD
 - [Gitter channel](https://gitter.im/Lino-Blockchain/Lobby?utm_source=share-link&utm_medium=link&utm_campaign=share-link)
 - [Riot](https://matrix.to/#/!WAWAMHohvBlpTyVtSf:matrix.org)  
 
 Subsribe to email list on our [website](https://lino.network).
+=======
+
+- [Discord](https://discord.gg/TUxp3ww)
+
+Subsribe to email list on our [website](https://lino.network).
+>>>>>>> a7b7c0b7d97e043f8a48c128aca745f05e6e17a3

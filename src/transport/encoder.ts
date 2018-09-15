@@ -75,7 +75,7 @@ export function encodeTx(
 ): string {
   const stdSig: StdSignature = {
     pub_key: convertToInternalPubKey(rawPubKey, _TYPE.PubKeySecp256k1),
-    signature: convertToInternalSig(rawSigDER, _TYPE.SignatureKeySecp256k1),
+    signature: ByteBuffer.fromHex(rawSigDER).toString('base64'),
     account_number: '0',
     sequence: String(seq)
   };
@@ -108,7 +108,16 @@ export function decodeObject(result: any): any {
   } else {
     for (var index in keys) {
       var key = keys[index];
-      if (decodedResult[key] && typeof decodedResult[key] !== 'string') {
+      if (key === 'memo' || key === 'title' || key === 'content' || key === 'description') {
+        if (decodedResult[key] !== null) {
+          decodedResult[key] = decodeURIComponent(escape(result[key]));
+        }
+      }
+      if (
+        decodedResult[key] !== null &&
+        typeof decodedResult[key] !== 'string' &&
+        typeof decodedResult[key] !== 'boolean'
+      ) {
         decodedResult[key] = decodeObject(result[key]);
       }
     }
@@ -134,7 +143,11 @@ export function encodeObject(result: any): any {
   } else {
     for (var index in keys) {
       var key = keys[index];
-      if (encodeResult[key] && typeof encodeResult[key] !== 'string') {
+      if (
+        encodeResult[key] !== null &&
+        typeof encodeResult[key] !== 'string' &&
+        typeof encodeResult[key] !== 'boolean'
+      ) {
         encodeResult[key] = encodeObject(result[key]);
       }
     }
