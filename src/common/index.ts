@@ -53,17 +53,13 @@ export function isEvaluateOfContentValueParam(param: object): param is EvaluateO
 
 export interface GlobalAllocationParam {
   global_growth_rate: Rat;
-  ceiling: Rat;
-  floor: Rat;
+  infra_allocation: Rat;
   content_creator_allocation: Rat;
   developer_allocation: Rat;
-  infra_allocation: Rat;
   validator_allocation: Rat;
 }
 export function isGlobalAllocationParam(param: object): param is GlobalAllocationParam {
   return (
-    'floor' in param &&
-    'ceiling' in param &&
     'global_growth_rate' in param &&
     'infra_allocation' in param &&
     'content_creator_allocation' in param &&
@@ -83,51 +79,47 @@ export function isInfraInternalAllocationParam(
 }
 
 export interface VoteParam {
-  delegator_min_withdraw: Coin;
-  voter_coin_return_interval: string;
+  voter_coin_return_interval_second: string;
   voter_coin_return_times: string;
-  voter_min_deposit: Coin;
-  voter_min_withdraw: Coin;
-  delegator_coin_return_interval: string;
+  DelegatorCoinReturnIntervalSec: string;
   delegator_coin_return_times: string;
 }
 export function isVoteParam(param: object): param is VoteParam {
   return (
-    'voter_min_deposit' in param &&
-    'voter_min_withdraw' in param &&
-    'delegator_min_withdraw' in param &&
-    'voter_coin_return_interval' in param &&
+    'voter_coin_return_interval_second' in param &&
     'voter_coin_return_times' in param &&
-    'delegator_coin_return_interval' in param &&
+    'DelegatorCoinReturnIntervalSec' in param &&
     'delegator_coin_return_times' in param
   );
 }
 
 export interface ProposalParam {
-  content_censorship_decide_hr: string;
+  content_censorship_decide_second: number;
   content_censorship_min_deposit: Coin;
   content_censorship_pass_ratio: Rat;
   content_censorship_pass_votes: Coin;
-  change_param_decide_hr: string;
+  ChangeParamDecideSec: number;
+  ChangeParamExecutionSec: number;
   change_param_min_deposit: Coin;
   change_param_pass_ratio: Rat;
   change_param_pass_votes: Coin;
-  protocol_upgrade_decide_hr: string;
+  protocol_upgrade_decide_second: number;
   protocol_upgrade_min_deposit: Coin;
   protocol_upgrade_pass_ratio: Rat;
   protocol_upgrade_pass_votes: Coin;
 }
 export function isProposalParam(param: object): param is ProposalParam {
   return (
-    'content_censorship_decide_hr' in param &&
+    'content_censorship_decide_second' in param &&
     'content_censorship_min_deposit' in param &&
     'content_censorship_pass_ratio' in param &&
     'content_censorship_pass_votes' in param &&
-    'change_param_decide_hr' in param &&
+    'ChangeParamDecideSec' in param &&
+    'ChangeParamExecutionSec' in param &&
     'change_param_min_deposit' in param &&
     'change_param_pass_ratio' in param &&
     'change_param_pass_votes' in param &&
-    'protocol_upgrade_decide_hr' in param &&
+    'protocol_upgrade_decide_second' in param &&
     'protocol_upgrade_min_deposit' in param &&
     'protocol_upgrade_pass_ratio' in param &&
     'protocol_upgrade_pass_votes' in param
@@ -148,23 +140,23 @@ export function isDeveloperParam(param: object): param is DeveloperParam {
 }
 
 export interface ValidatorParam {
+  validator_min_withdraw: Coin;
+  validator_min_voting_deposit: Coin;
+  validator_min_commiting_deposit: Coin;
+  validator_coin_return_second: number;
+  validator_coin_return_times: string;
   penalty_miss_vote: Coin;
   penalty_miss_commit: Coin;
   penalty_byzantine: Coin;
   validator_list_size: string;
   absent_commit_limitation: string;
-  validator_min_withdraw: Coin;
-  validator_min_voting_deposit: Coin;
-  validator_min_commiting_deposit: Coin;
-  validator_coin_return_interval: string;
-  validator_coin_return_times: string;
 }
 export function isValidatorParam(param: object): param is ValidatorParam {
   return (
     'validator_min_withdraw' in param &&
     'validator_min_voting_deposit' in param &&
     'validator_min_commiting_deposit' in param &&
-    'validator_coin_return_interval' in param &&
+    'validator_coin_return_second' in param &&
     'validator_coin_return_times' in param &&
     'penalty_miss_vote' in param &&
     'penalty_miss_commit' in param &&
@@ -175,19 +167,23 @@ export function isValidatorParam(param: object): param is ValidatorParam {
 }
 
 export interface CoinDayParam {
-  days_to_recover_coin_day_stake: number;
-  seconds_to_recover_coin_day_stake: number;
+  seconds_to_recover_coin_day: number;
 }
 export function isCoinDayParam(param: object): param is CoinDayParam {
-  return 'days_to_recover_coin_day_stake' in param && 'seconds_to_recover_coin_day_stake' in param;
+  return 'seconds_to_recover_coin_day' in param;
 }
 
 export interface BandwidthParam {
   seconds_to_recover_bandwidth: number;
   capacity_usage_per_transaction: Coin;
+  virtual_coin: Coin;
 }
 export function isBandwidthParam(param: object): param is BandwidthParam {
-  return 'seconds_to_recover_bandwidth' in param && 'capacity_usage_per_transaction' in param;
+  return (
+    'seconds_to_recover_bandwidth' in param &&
+    'capacity_usage_per_transaction' in param &&
+    'virtual_coin' in param
+  );
 }
 
 export interface AccountParam {
@@ -204,11 +200,11 @@ export function isAccountParam(param: object): param is AccountParam {
 }
 
 export interface PostParam {
-  report_or_upvote_interval: string;
+  report_or_upvote_interval_second: string;
   post_interval_sec: string;
 }
 export function isPostParam(param: object): param is PostParam {
-  return 'report_or_upvote_interval' in param && 'post_interval_sec' in param;
+  return 'report_or_upvote_interval_second' in param && 'post_interval_sec' in param;
 }
 
 export interface GlobalMeta {
@@ -243,15 +239,16 @@ export enum DETAILTYPE {
   InfraReturnCoin = '10',
   ProposalReturnCoin = '11',
   GenesisCoin = '12',
+  ClaimInterest = '13',
   // Different possible outcomes
-  TransferOut = '13',
-  DonationOut = '14',
-  Delegate = '15',
-  VoterDeposit = '16',
-  ValidatorDeposit = '17',
-  DeveloperDeposit = '18',
-  InfraDeposit = '19',
-  ProposalDeposit = '20'
+  TransferOut = '20',
+  DonationOut = '21',
+  Delegate = '22',
+  VoterDeposit = '23',
+  ValidatorDeposit = '24',
+  DeveloperDeposit = '25',
+  InfraDeposit = '26',
+  ProposalDeposit = '27'
 }
 
 // permission type

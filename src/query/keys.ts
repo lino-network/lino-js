@@ -40,7 +40,7 @@ namespace Keys {
     accountFollowerSubstore: '03',
     accountFollowingSubstore: '04',
     accountRewardSubstore: '05',
-    accountPendingStakeQueueSubstore: '06',
+    accountPendingCoinDayQueueSubstore: '06',
     accountRelationshipSubstore: '07',
     accountBalanceHistorySubstore: '08',
     accountGrantPubKeySubstore: '09',
@@ -216,6 +216,11 @@ namespace Keys {
   export function getRelationshipKey(me: string, other: string): string {
     const otherHex = ByteBuffer.fromUTF8(other).toHex();
     return getRelationshipPrefix(me).concat(otherHex);
+  }
+
+  export function getPendingCoinDayQueueKey(me: string): string {
+    const meHex = ByteBuffer.fromUTF8(me).toHex();
+    return _KEYS.accountRelationshipSubstore.concat(meHex).concat(_KEYS.sep);
   }
 
   export function getBalanceHistoryPrefix(me: string): string {

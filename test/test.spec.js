@@ -187,7 +187,7 @@ function addSuite(envName) {
           debug('getAccountBank', v);
           expect(v).to.have.all.keys(
             'saving',
-            'stake',
+            'coin_day',
             'frozen_money_list',
             'number_of_transaction',
             'number_of_reward'
