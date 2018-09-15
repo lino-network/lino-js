@@ -1095,8 +1095,9 @@ export interface AllValidators {
 // vote related struct
 export interface Voter {
   username: string;
-  deposit: Types.Coin;
+  lino_stake: Types.Coin;
   delegated_power: Types.Coin;
+  last_power_change_at: number;
 }
 
 export interface Vote {
@@ -1131,7 +1132,7 @@ export interface Donations {
 
 export interface ReportOrUpvote {
   username: string;
-  stake: Types.Coin;
+  coin_day: Types.Coin;
   created_at: string;
   is_report: boolean;
 }
@@ -1155,8 +1156,8 @@ export interface PostMeta {
   allow_replies: boolean;
   is_deleted: boolean;
   total_donate_count: string;
-  total_report_stake: Types.Coin;
-  total_upvote_stake: Types.Coin;
+  total_report_coin_day: Types.Coin;
+  total_upvote_coin_day: Types.Coin;
   total_view_count: string;
   total_reward: Types.Coin;
   redistribution_split_rate: Types.Rat;
@@ -1197,7 +1198,7 @@ export interface AccountInfo {
 
 export interface AccountBank {
   saving: Types.Coin;
-  stake: Types.Coin;
+  coin_day: Types.Coin;
   frozen_money_list: FrozenMoney[];
   number_of_transaction: string;
   number_of_reward: string;
@@ -1238,6 +1239,7 @@ export interface FollowingMeta {
 }
 
 export interface Reward {
+  interest: Types.Coin;
   original_income: Types.Coin;
   friction_income: Types.Coin;
   actual_reward: Types.Coin;
