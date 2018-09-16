@@ -449,7 +449,7 @@ export default class Broadcast {
    * @param privKeyHex: the private key of the validator
    * @param seq: the sequence number of the validator
    */
-  ValidatorRevoke(username: string, privKeyHex: string, seq: number) {
+  validatorRevoke(username: string, privKeyHex: string, seq: number) {
     const msg: ValidatorRevokeMsg = {
       username
     };
@@ -468,7 +468,7 @@ export default class Broadcast {
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the user for the next transaction
    */
-  StakeIn(username: string, deposit: string, privKeyHex: string, seq: number) {
+  stakeIn(username: string, deposit: string, privKeyHex: string, seq: number) {
     const msg: StakeInMsg = {
       deposit: deposit,
       username: username
@@ -486,7 +486,7 @@ export default class Broadcast {
    * @param privKeyHex: the private key of the voter
    * @param seq: the sequence number of the voter for the next transaction
    */
-  StakeOut(username: string, amount: string, privKeyHex: string, seq: number) {
+  stakeOut(username: string, amount: string, privKeyHex: string, seq: number) {
     const msg: StakeOutMsg = {
       amount: amount,
       username: username

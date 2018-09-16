@@ -205,7 +205,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the validator
      * @param seq: the sequence number of the validator
      */
-    ValidatorRevoke(username: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    validatorRevoke(username: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * StakeIn deposits a certain amount of LINO token for a user
      * in order to become a voter.
@@ -216,7 +216,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the user
      * @param seq: the sequence number of the user for the next transaction
      */
-    StakeIn(username: string, deposit: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    stakeIn(username: string, deposit: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * StakeOut withdraws part of LINO token from a voter's deposit,
      * while still keep being a voter.
@@ -227,7 +227,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the voter
      * @param seq: the sequence number of the voter for the next transaction
      */
-    StakeOut(username: string, amount: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    stakeOut(username: string, amount: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * Delegate delegates a certain amount of LINO token of delegator to a voter, so
      * the voter will have more voting power.
