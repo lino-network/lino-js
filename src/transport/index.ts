@@ -143,7 +143,6 @@ export class Transport implements ITransport {
     const sigDERHex = sig.toDER('hex');
     // build tx
     const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq);
-
     // return broadcast
     return this._rpc.broadcastTxCommit(tx).then(result => {
       if (result.check_tx.code !== undefined) {

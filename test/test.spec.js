@@ -1,4 +1,4 @@
-const NODE_URL = 'http://54.227.154.0:26657/';
+const NODE_URL = 'http://18.222.237.254:26657/';
 const testTxPrivHex = 'E1B0F79B20149E17A2AF928AFE7774B93114E7EB62CCF56903E375EA1C4F62EAC5E4FE8D59';
 const testAppPrivHex = 'E1B0F79B203011994492CFDA9319DDC2A78E216B040200CD06BDC2B912EA04479C0AFEC1BC';
 
@@ -65,7 +65,7 @@ function addSuite(envName) {
   describe('LINO', function() {
     const linoClient = new LINO({
       nodeUrl: NODE_URL,
-      chainId: 'lino-staging'
+      chainId: 'test-chain-9P33lh'
     });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
@@ -294,7 +294,7 @@ function addSuite(envName) {
 
       it('getAllPosts', function() {
         this.timeout(0);
-        return query.getAllPosts('lino').then(v => {
+        return query.getAllPosts('carrioner').then(v => {
           debug('getAllPosts', v);
         });
       });

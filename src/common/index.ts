@@ -190,21 +190,35 @@ export interface AccountParam {
   minimum_balance: Coin;
   register_fee: Coin;
   first_deposit_full_stake_limit: Coin;
+  max_num_frozen_money: number;
 }
 export function isAccountParam(param: object): param is AccountParam {
   return (
     'minimum_balance' in param &&
     'register_fee' in param &&
-    'first_deposit_full_stake_limit' in param
+    'first_deposit_full_stake_limit' in param &&
+    'max_num_frozen_money' in param
   );
 }
 
 export interface PostParam {
   report_or_upvote_interval_second: string;
   post_interval_sec: string;
+  max_report_reputation: Coin;
 }
 export function isPostParam(param: object): param is PostParam {
-  return 'report_or_upvote_interval_second' in param && 'post_interval_sec' in param;
+  return (
+    'report_or_upvote_interval_second' in param &&
+    'post_interval_sec' in param &&
+    'first_deposit_full_stake_limit' in param
+  );
+}
+
+export interface ReputationParam {
+  best_content_index_n: string;
+}
+export function isReputationParam(param: object): param is ReputationParam {
+  return 'best_content_index_n' in param;
 }
 
 export interface GlobalMeta {

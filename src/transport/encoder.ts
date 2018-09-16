@@ -86,7 +86,11 @@ export function encodeTx(
     fee: getZeroFee()
   };
 
-  const jsonStr = JSON.stringify(number2StringInObject(stdTx));
+  const authStdTx: StdMsg = {
+    type: 'auth/StdTx',
+    value: number2StringInObject(stdTx)
+  };
+  const jsonStr = JSON.stringify(authStdTx);
   return ByteBuffer.btoa(jsonStr);
 }
 
@@ -341,7 +345,7 @@ function sortObject(object) {
   return sortedObj;
 }
 
-function number2StringInObject(object) {
+function number2StringInObject(object): any {
   var resultObj = {},
     keys = Object.keys(object);
 
