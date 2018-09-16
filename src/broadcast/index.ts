@@ -126,6 +126,21 @@ export default class Broadcast {
   }
 
   /**
+   * ClaimInterest claims interest of a certain user.
+   * It composes ClaimInterestMsg and then broadcasts the transaction to blockchain.
+   *
+   * @param username: the user who wants to claim interest
+   * @param privKeyHex: the private key of username
+   * @param seq: the sequence number of user for the next transaction
+   */
+  claimInterest(username: string, privKeyHex: string, seq: number) {
+    const msg: ClaimInterestMsg = {
+      username
+    };
+    return this._broadcastTransaction(msg, _MSGTYPE.ClaimInterestMsgType, privKeyHex, seq);
+  }
+
+  /**
    * UpdateAccount updates account related info in jsonMeta which are not
    * included in AccountInfo or AccountBank.
    * It composes UpdateAccountMsg and then broadcasts the transaction to blockchain.
@@ -340,7 +355,6 @@ export default class Broadcast {
    * @param title: new titile of the post
    * @param post_id: the id of the post
    * @param content: new content of the post
-   * @param redistribution_split_rate: new re-spot split rate
    * @param links: new links of the post
    * @param privKeyHex: the private key of the author
    * @param seq: the sequence number of the author for the next transaction
@@ -350,7 +364,6 @@ export default class Broadcast {
     title: string,
     post_id: string,
     content: string,
-    redistribution_split_rate: string,
     links: Map<string, string>,
     privKeyHex: string,
     seq: number
@@ -372,7 +385,6 @@ export default class Broadcast {
       content: content,
       links: mLinks,
       post_id: post_id,
-      redistribution_split_rate: redistribution_split_rate,
       title: title
     };
     return this._broadcastTransaction(msg, _MSGTYPE.UpdatePostMsgType, privKeyHex, seq);
@@ -447,55 +459,39 @@ export default class Broadcast {
   // vote related
 
   /**
-   * VoterDeposit deposits a certain amount of LINO token for a user
+   * StakeIn deposits a certain amount of LINO token for a user
    * in order to become a voter.
-   * It composes VoterDepositMsg and then broadcasts the transaction to blockchain.
+   * It composes model.StakeInMsg and then broadcasts the transaction to blockchain.
    *
    * @param username: the user whot wants to deposit money for being a voter
    * @param deposit: the amount of LINO token the user wants to deposit
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the user for the next transaction
    */
-  voterDeposit(username: string, deposit: string, privKeyHex: string, seq: number) {
-    const msg: VoterDepositMsg = {
+  StakeIn(username: string, deposit: string, privKeyHex: string, seq: number) {
+    const msg: StakeInMsg = {
       deposit: deposit,
       username: username
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.VoteDepositMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.StakeInMsgType, privKeyHex, seq);
   }
 
   /**
-   * VoterWithdraw withdraws part of LINO token from a voter's deposit,
+   * StakeOut withdraws part of LINO token from a voter's deposit,
    * while still keep being a voter.
-   * It composes VoterWithdrawMsg and then broadcasts the transaction to blockchain.
+   * It composes StakeOutMsg and then broadcasts the transaction to blockchain.
    *
    * @param username: the voter username
    * @param amount: the amount of LINO token the voter wants to withdraw
    * @param privKeyHex: the private key of the voter
    * @param seq: the sequence number of the voter for the next transaction
    */
-  voterWithdraw(username: string, amount: string, privKeyHex: string, seq: number) {
-    const msg: VoterWithdrawMsg = {
+  StakeOut(username: string, amount: string, privKeyHex: string, seq: number) {
+    const msg: StakeOutMsg = {
       amount: amount,
       username: username
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.VoteWithdrawMsgType, privKeyHex, seq);
-  }
-
-  /**
-   * VoterRevoke reovkes all deposited LINO token of a voter
-   * so the user will not be a voter anymore.
-   * It composes VoterRevokeMsg and then broadcasts the transaction to blockchain.
-   *
-   * @param username: the voter username
-   * @param privKeyHex: the private key of the voter
-   * @param seq: the sequence number of the voter for the next transaction
-   */
-  voterRevoke(username: string, privKeyHex: string, seq: number) {
-    const msg: VoterRevokeMsg = {
-      username
-    };
-    return this._broadcastTransaction(msg, _MSGTYPE.VoteRevokeMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.StakeOutMsgType, privKeyHex, seq);
   }
 
   /**
@@ -544,25 +540,6 @@ export default class Broadcast {
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.DelegateWithdrawMsgType, privKeyHex, seq);
-  }
-
-  /**
-   * RevokeDelegation reovkes all delegated LINO token of a delegator to a voter
-   * so there is no delegation between the two users.
-   * It composes RevokeDelegationMsg and then broadcasts the transaction to blockchain    *
-   *
-   * @param delegator: the delegator username
-   * @param voter: the voter username
-   * @param privKeyHex: the private key of the delegator
-   * @param seq: the sequence number of the delegator for the next transaction
-   */
-  revokeDelegation(delegator: string, voter: string, privKeyHex: string, seq: number) {
-    const msg: RevokeDelegationMsg = {
-      delegator,
-      voter
-    };
-
-    return this._broadcastTransaction(msg, _MSGTYPE.DelegateRevokeMsgType, privKeyHex, seq);
   }
 
   // developer related
@@ -1116,6 +1093,10 @@ export interface ClaimMsg {
   username: string;
 }
 
+export interface ClaimInterestMsg {
+  username: string;
+}
+
 export interface RecoverMsg {
   username: string;
   new_reset_public_key: string;
@@ -1175,7 +1156,6 @@ export interface UpdatePostMsg {
   title: string;
   content: string;
   links: Types.IDToURLMapping[] | null;
-  redistribution_split_rate: string;
 }
 
 // validator related messages
@@ -1196,18 +1176,14 @@ export interface ValidatorRevokeMsg {
 }
 
 // vote related messages
-export interface VoterDepositMsg {
+export interface StakeInMsg {
   username: string;
   deposit: string;
 }
 
-export interface VoterWithdrawMsg {
+export interface StakeOutMsg {
   username: string;
   amount: string;
-}
-
-export interface VoterRevokeMsg {
-  username: string;
 }
 
 export interface DelegateMsg {
@@ -1220,11 +1196,6 @@ export interface DelegatorWithdrawMsg {
   delegator: string;
   voter: string;
   amount: string;
-}
-
-export interface RevokeDelegationMsg {
-  delegator: string;
-  voter: string;
 }
 
 // developer related messages
@@ -1357,6 +1328,7 @@ const _MSGTYPE = {
   UnfollowMsgType: 'lino/unfollow',
   TransferMsgType: 'lino/transfer',
   ClaimMsgType: 'lino/claim',
+  ClaimInterestMsgType: 'lino/claimInterest',
   RecoverMsgType: 'lino/recover',
   UpdateAccMsgType: 'lino/updateAcc',
   DevRegisterMsgType: 'lino/devRegister',
@@ -1371,12 +1343,11 @@ const _MSGTYPE = {
   DonateMsgType: 'lino/donate',
   ViewMsgType: 'lino/view',
   ReportOrUpvoteMsgType: 'lino/reportOrUpvote',
-  VoteDepositMsgType: 'lino/voteDeposit',
-  VoteRevokeMsgType: 'lino/voteRevoke',
+  StakeInMsgType: 'lino/stakeIn',
+  StakeOutMsgType: 'lino/stakeOut',
   VoteWithdrawMsgType: 'lino/voteWithdraw',
   DelegateMsgType: 'lino/delegate',
   DelegateWithdrawMsgType: 'lino/delegateWithdraw',
-  DelegateRevokeMsgType: 'lino/delegateRevoke',
   ValDepositMsgType: 'lino/valDeposit',
   ValWithdrawMsgType: 'lino/valWithdraw',
   ValRevokeMsgType: 'lino/valRevoke',

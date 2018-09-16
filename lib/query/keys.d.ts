@@ -40,6 +40,7 @@ declare namespace Keys {
     function getRewardHistoryKey(me: string, bucketSlot: string): string;
     function getRelationshipPrefix(me: string): string;
     function getRelationshipKey(me: string, other: string): string;
+    function getPendingCoinDayQueueKey(me: string): string;
     function getBalanceHistoryPrefix(me: string): string;
     function getBalanceHistoryKey(me: string, bucketSlot: string): string;
     function getGrantPubKeyPrefix(me: string): string;
@@ -57,9 +58,11 @@ declare namespace Keys {
     function getPostCommentKey(permlink: string, commentPermlink: string): string;
     function getPostDonationsPrefix(permlink: string): string;
     function getPostDonationsKey(permlink: string, donateUser: string): string;
-    function getProposalKey(proposalID: string): string;
-    function getProposalListKey(): string;
+    function getOngoingProposalKey(proposalID: string): string;
+    function getExpiredProposalKey(proposalID: string): string;
     function getNextProposalIDKey(): string;
+    function getOngoingProposalPrefix(): string;
+    function getExpiredProposalPrefix(): string;
     function getEvaluateOfContentValueParamKey(): string;
     function getGlobalAllocationParamKey(): string;
     function getInfraInternalAllocationParamKey(): string;

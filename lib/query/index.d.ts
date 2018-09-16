@@ -293,24 +293,24 @@ export default class Query {
      */
     getInfraProviders(): Promise<InfraProviderList>;
     /**
-     * GetProposalList returns a list of all proposals, including onging
-     * proposals and past ones.
+     * GetProposalList returns a list of all ongoing proposals.
      */
-    getProposalList(): Promise<ProposalList>;
+    getOngoingProposalList(): Promise<ResultKV<string, Proposal>[]>;
     /**
-     * getProposal returns proposal info of a specific proposalID.
+     * GetExpiredProposalList returns a list of all ongoing proposals.
+     */
+    getExpiredProposalList(): Promise<ResultKV<string, Proposal>[]>;
+    /**
+     * getProposal returns ongoing proposal info of a specific proposalID.
      *
      * @param proposalID
      */
-    getProposal(proposalID: string): Promise<Proposal>;
+    getOngoingProposal(proposalID: string): Promise<Proposal>;
     /**
-     * getOngoingProposal returns all ongoing proposals.
+     * getProposal returns expired proposal info of a specific proposalID.
+     * @param proposalID
      */
-    getOngoingProposal(): Promise<Proposal[]>;
-    /**
-     * getExpiredProposal returns all past proposals.
-     */
-    getExpiredProposal(): Promise<Proposal[]>;
+    getExpiredProposal(proposalID: string): Promise<Proposal>;
     /**
      * getNextProposalID returns the next proposal id
      */
@@ -455,8 +455,9 @@ export interface AllValidators {
 }
 export interface Voter {
     username: string;
-    deposit: Types.Coin;
+    lino_stake: Types.Coin;
     delegated_power: Types.Coin;
+    last_power_change_at: number;
 }
 export interface Vote {
     voter: string;
@@ -484,7 +485,7 @@ export interface Donations {
 }
 export interface ReportOrUpvote {
     username: string;
-    stake: Types.Coin;
+    coin_day: Types.Coin;
     created_at: string;
     is_report: boolean;
 }
@@ -506,8 +507,8 @@ export interface PostMeta {
     allow_replies: boolean;
     is_deleted: boolean;
     total_donate_count: string;
-    total_report_stake: Types.Coin;
-    total_upvote_stake: Types.Coin;
+    total_report_coin_day: Types.Coin;
+    total_upvote_coin_day: Types.Coin;
     total_view_count: string;
     total_reward: Types.Coin;
     redistribution_split_rate: Types.Rat;
@@ -539,7 +540,7 @@ export interface AccountInfo {
 }
 export interface AccountBank {
     saving: Types.Coin;
-    stake: Types.Coin;
+    coin_day: Types.Coin;
     frozen_money_list: FrozenMoney[];
     number_of_transaction: string;
     number_of_reward: string;
@@ -563,6 +564,7 @@ export interface AccountMeta {
     transaction_capacity: Types.Coin;
     json_meta: string;
     last_report_or_upvote_at: string;
+    last_post_at: string;
 }
 export interface FollowerMeta {
     created_at: string;
@@ -573,6 +575,7 @@ export interface FollowingMeta {
     following_name: string;
 }
 export interface Reward {
+    interest: Types.Coin;
     original_income: Types.Coin;
     friction_income: Types.Coin;
     actual_reward: Types.Coin;
@@ -607,10 +610,6 @@ export interface Detail {
     created_at: number;
     balance: Types.Coin;
     memo: string;
-}
-export interface ProposalList {
-    ongoing_proposal?: string[];
-    past_proposal?: string[];
 }
 export interface ProposalInfo {
     creator: string;

@@ -24,9 +24,9 @@ namespace Keys {
     referenceListSubStore: '03',
     delegateeSubStore: '04',
 
-    proposalSubstore: '00',
-    proposalListSubStore: '01',
-    nextProposalIDSubstore: '02',
+    nextProposalIDSubstore: '00',
+    ongoingProposalSubStore: '01',
+    expiredProposalSubStore: '02',
 
     developerSubstore: '00',
     developerListSubstore: '01',
@@ -40,7 +40,7 @@ namespace Keys {
     accountFollowerSubstore: '03',
     accountFollowingSubstore: '04',
     accountRewardSubstore: '05',
-    accountPendingStakeQueueSubstore: '06',
+    accountPendingCoinDayQueueSubstore: '06',
     accountRelationshipSubstore: '07',
     accountBalanceHistorySubstore: '08',
     accountGrantPubKeySubstore: '09',
@@ -80,7 +80,7 @@ namespace Keys {
   }
 
   export function getSubstringAfterKeySeparator(key: string): string {
-    return key.substr(key.indexOf(_KEYS.separator) + 1, key.length);
+    return key.substr(key.lastIndexOf(_KEYS.separator) + 1, key.length);
   }
 
   export function getSubstringAfterSubstore(key: string): string {
@@ -218,6 +218,11 @@ namespace Keys {
     return getRelationshipPrefix(me).concat(otherHex);
   }
 
+  export function getPendingCoinDayQueueKey(me: string): string {
+    const meHex = ByteBuffer.fromUTF8(me).toHex();
+    return _KEYS.accountRelationshipSubstore.concat(meHex).concat(_KEYS.sep);
+  }
+
   export function getBalanceHistoryPrefix(me: string): string {
     const meHex = ByteBuffer.fromUTF8(me).toHex();
     return _KEYS.accountBalanceHistorySubstore.concat(meHex).concat(_KEYS.sep);
@@ -305,17 +310,26 @@ namespace Keys {
   }
 
   // proposal related
-  export function getProposalKey(proposalID: string): string {
+  export function getOngoingProposalKey(proposalID: string): string {
     const proposalIDHex = ByteBuffer.fromUTF8(proposalID).toHex();
-    return _KEYS.proposalSubstore.concat(proposalIDHex);
+    return _KEYS.ongoingProposalSubStore.concat(proposalIDHex);
   }
 
-  export function getProposalListKey(): string {
-    return _KEYS.proposalListSubStore;
+  export function getExpiredProposalKey(proposalID: string): string {
+    const proposalIDHex = ByteBuffer.fromUTF8(proposalID).toHex();
+    return _KEYS.expiredProposalSubStore.concat(proposalIDHex);
   }
 
   export function getNextProposalIDKey(): string {
     return _KEYS.nextProposalIDSubstore;
+  }
+
+  export function getOngoingProposalPrefix(): string {
+    return _KEYS.ongoingProposalSubStore;
+  }
+
+  export function getExpiredProposalPrefix(): string {
+    return _KEYS.expiredProposalSubStore;
   }
 
   // param related
