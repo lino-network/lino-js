@@ -79,6 +79,7 @@ export function isInfraInternalAllocationParam(
 }
 
 export interface VoteParam {
+  min_stake_in: Coin;
   voter_coin_return_interval_second: string;
   voter_coin_return_times: string;
   DelegatorCoinReturnIntervalSec: string;
@@ -86,6 +87,7 @@ export interface VoteParam {
 }
 export function isVoteParam(param: object): param is VoteParam {
   return (
+    'min_stake_in' in param &&
     'voter_coin_return_interval_second' in param &&
     'voter_coin_return_times' in param &&
     'DelegatorCoinReturnIntervalSec' in param &&
