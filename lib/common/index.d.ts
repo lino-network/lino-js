@@ -47,6 +47,7 @@ export interface InfraInternalAllocationParam {
 }
 export declare function isInfraInternalAllocationParam(param: object): param is InfraInternalAllocationParam;
 export interface VoteParam {
+    min_stake_in: Coin;
     voter_coin_return_interval_second: string;
     voter_coin_return_times: string;
     DelegatorCoinReturnIntervalSec: string;

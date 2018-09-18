@@ -1097,7 +1097,9 @@ export interface Voter {
   username: string;
   lino_stake: Types.Coin;
   delegated_power: Types.Coin;
+  delegate_to_others: Types.Coin;
   last_power_change_at: number;
+  interest: Types.Coin;
 }
 
 export interface Vote {
