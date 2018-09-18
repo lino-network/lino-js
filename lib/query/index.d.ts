@@ -360,19 +360,31 @@ export default class Query {
      */
     getGlobalMeta(): Promise<Types.GlobalMeta>;
     /**
-     * getAccountParam returns the AccountParam.
+     * getConsumptionMeta returns the consumption meta.
      */
     getConsumptionMeta(): Promise<Types.ConsumptionMeta>;
     /**
-     * getAccountParam returns the AccountParam.
+     * getGlobalTime returns the time in global storage.
+     */
+    getGlobalTime(): Promise<Types.GlobalTime>;
+    /**
+     * getInterest returns the interest a voter can get.
+     */
+    getInterest(username: string): any;
+    /**
+     * getEventAtTime returns the events at certain second.
+     */
+    getLinoStakeStat(day: string): Promise<Types.LinoStakeStat>;
+    /**
+     * getEventAtTime returns the events at certain second.
      */
     getEventAtTime(time: string): Promise<any>;
     /**
-     * getAccountParam returns the AccountParam.
+     * getAllEventAtAllTime returns all registered events.
      */
     getAllEventAtAllTime(): Promise<any>;
     /**
-     * getAccountParam returns the AccountParam.
+     * getAllEventAtAllTimeAtCertainHeight returns all registered events at certain height.
      */
     getAllEventAtAllTimeAtCertainHeight(height: any): Promise<any>;
     /**

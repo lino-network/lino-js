@@ -299,6 +299,13 @@ function addSuite(envName) {
         });
       });
 
+      it('getInterest', function() {
+        this.timeout(0);
+        return query.getInterest('validator1').then(v => {
+          debug('getInterest', v);
+        });
+      });
+
       it('getAccountBank', function() {
         this.timeout(0);
         return query.getAccountBank('lino').then(v => {

@@ -239,6 +239,19 @@ export interface ConsumptionMeta {
   consumption_freezing_period: string;
 }
 
+export interface GlobalTime {
+  chain_start_time: string;
+  last_block_time: string;
+  past_minutes: string;
+}
+
+export interface LinoStakeStat {
+  total_consumption_friction: Coin;
+  unclaimed_friction: Coin;
+  total_lino_power: Coin;
+  unclaimed_lino_power: Coin;
+}
+
 // tx detail type
 export enum DETAILTYPE {
   // Different possible incomes

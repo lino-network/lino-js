@@ -826,7 +826,7 @@ export default class Query {
   }
 
   /**
-   * getAccountParam returns the AccountParam.
+   * getConsumptionMeta returns the consumption meta.
    */
   getConsumptionMeta(): Promise<Types.ConsumptionMeta> {
     const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
@@ -837,14 +837,71 @@ export default class Query {
   }
 
   /**
-   * getAccountParam returns the AccountParam.
+   * getGlobalTime returns the time in global storage.
+   */
+  getGlobalTime(): Promise<Types.GlobalTime> {
+    const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
+    return this._transport.query<Types.GlobalTime>(Keys.getTimeKey(), GlobalKVStoreKey);
+  }
+
+  /**
+   * getInterest returns the interest a voter can get.
+   */
+  getInterest(username: string): any {
+    return new Promise((resolve, reject) => {
+      this.getVoter(username)
+        .then(voter => {
+          this.getGlobalTime()
+            .then(globalTime => {
+              var pastDay =
+                (Number(voter.last_power_change_at) - Number(globalTime.chain_start_time)) /
+                (3600 * 24);
+              pastDay = pastDay > 0 ? pastDay : 0;
+              var currentDay =
+                (Number(globalTime.last_block_time) - Number(globalTime.chain_start_time)) /
+                (3600 * 24);
+              currentDay = currentDay > 0 ? currentDay : 0;
+              var promises: Array<Promise<Types.LinoStakeStat | null>> = [];
+              for (var day = pastDay; day < currentDay; day++) {
+                const stat = this.getLinoStakeStat(String(day)).then(linoStakeStat => {
+                  return linoStakeStat;
+                });
+                promises.push(stat);
+              }
+              var interest = Number(voter.interest.amount);
+              console.log('get interest ', interest);
+              resolve(interest);
+            })
+            .catch(err => {
+              reject(err);
+            });
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
+   * getEventAtTime returns the events at certain second.
+   */
+  getLinoStakeStat(day: string): Promise<Types.LinoStakeStat> {
+    const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
+    return this._transport.query<Types.LinoStakeStat>(
+      Keys.getLinoStakeStatKey(day),
+      GlobalKVStoreKey
+    );
+  }
+
+  /**
+   * getEventAtTime returns the events at certain second.
    */
   getEventAtTime(time: string): Promise<any> {
     const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
     return this._transport.query<any>(Keys.getTimeEventKey(time), GlobalKVStoreKey);
   }
   /**
-   * getAccountParam returns the AccountParam.
+   * getAllEventAtAllTime returns all registered events.
    */
   getAllEventAtAllTime(): Promise<any> {
     const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
@@ -855,7 +912,7 @@ export default class Query {
     );
   }
   /**
-   * getAccountParam returns the AccountParam.
+   * getAllEventAtAllTimeAtCertainHeight returns all registered events at certain height.
    */
   getAllEventAtAllTimeAtCertainHeight(height): Promise<any> {
     const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;

@@ -80,5 +80,7 @@ declare namespace Keys {
     function getTimeEventKey(time: string): string;
     function getTimeEventPrefix(): string;
     function getTPSKey(): string;
+    function getTimeKey(): string;
+    function getLinoStakeStatKey(day: string): string;
 }
 export default Keys;

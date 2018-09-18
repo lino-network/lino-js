@@ -70,6 +70,8 @@ namespace Keys {
     inflationPoolSubStore: '02',
     consumptionMetaSubStore: '03',
     tpsSubStore: '04',
+    timeSubStore: '05',
+    linoStakeStatSubStore: '06',
 
     sep: ByteBuffer.fromUTF8('/').toHex(),
     separator: '/'
@@ -399,6 +401,15 @@ namespace Keys {
 
   export function getTPSKey(): string {
     return _KEYS.tpsSubStore;
+  }
+
+  export function getTimeKey(): string {
+    return _KEYS.timeSubStore;
+  }
+
+  export function getLinoStakeStatKey(day: string): string {
+    const dayHex = ByteBuffer.fromUTF8(day).toHex();
+    return _KEYS.linoStakeStatSubStore.concat(dayHex);
   }
 }
 
