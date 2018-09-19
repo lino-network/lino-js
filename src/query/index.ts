@@ -869,7 +869,21 @@ export default class Query {
                 promises.push(stat);
               }
               var interest = Number(voter.interest.amount);
-              console.log('get interest ', interest);
+
+              Promise.all(promises).then(allInterest => {
+                if (allInterest != null) {
+                  allInterest.forEach(stat => {
+                    if (stat !== null && Number(stat.unclaimed_lino_power) > 0) {
+                      interest += Number(
+                        (
+                          (Number(voter.lino_stake) / Number(stat.unclaimed_lino_power)) *
+                          Number(stat.unclaimed_friction)
+                        ).toFixed(5)
+                      );
+                    }
+                  });
+                }
+              });
               resolve(interest);
             })
             .catch(err => {
