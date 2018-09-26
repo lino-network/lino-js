@@ -108,7 +108,7 @@ export class Rpc {
         id: 'jsonrpc-client',
         method: 'block',
         params: {
-          height: height
+          height: String(height)
         }
       }),
       method: 'POST',
