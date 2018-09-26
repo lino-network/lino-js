@@ -853,13 +853,15 @@ export default class Query {
         .then(voter => {
           this.getGlobalTime()
             .then(globalTime => {
-              var pastDay =
+              var pastDay = Math.floor(
                 (Number(voter.last_power_change_at) - Number(globalTime.chain_start_time)) /
-                (3600 * 24);
+                  (3600 * 24)
+              );
               pastDay = pastDay > 0 ? pastDay : 0;
-              var currentDay =
+              var currentDay = Math.floor(
                 (Number(globalTime.last_block_time) - Number(globalTime.chain_start_time)) /
-                (3600 * 24);
+                  (3600 * 24)
+              );
               currentDay = currentDay > 0 ? currentDay : 0;
               var promises: Array<Promise<Types.LinoStakeStat | null>> = [];
               for (var day = pastDay; day < currentDay; day++) {
@@ -869,22 +871,22 @@ export default class Query {
                 promises.push(stat);
               }
               var interest = Number(voter.interest.amount);
-
               Promise.all(promises).then(allInterest => {
                 if (allInterest != null) {
                   allInterest.forEach(stat => {
-                    if (stat !== null && Number(stat.unclaimed_lino_power) > 0) {
+                    if (stat !== null && Number(stat.unclaimed_lino_power.amount) > 0) {
                       interest += Number(
                         (
-                          (Number(voter.lino_stake) / Number(stat.unclaimed_lino_power)) *
-                          Number(stat.unclaimed_friction)
+                          (Number(voter.lino_stake.amount) /
+                            Number(stat.unclaimed_lino_power.amount)) *
+                          Number(stat.unclaimed_friction.amount)
                         ).toFixed(5)
                       );
                     }
                   });
+                  resolve(interest);
                 }
               });
-              resolve(interest);
             })
             .catch(err => {
               reject(err);
@@ -960,14 +962,11 @@ export default class Query {
    * @param height
    */
   getTxsInBlock(height: number): Promise<StdTx[]> {
-    return this._transport
-      .block(height)
-      .then(
-        v =>
-          v && v.block && v.block.data && v.block.data.txs
-            ? v.block.data.txs.map(tx => JSON.parse(ByteBuffer.atob(tx)))
-            : []
-      );
+    return this._transport.block(height).then(v => {
+      return v && v.block && v.block.data && v.block.data.txs
+        ? v.block.data.txs.map(tx => JSON.parse(ByteBuffer.atob(tx)))
+        : [];
+    });
   }
 
   /**
