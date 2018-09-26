@@ -372,6 +372,10 @@ export default class Query {
      */
     getInterest(username: string): any;
     /**
+     * getPastDay returns the blockchain past day.
+     */
+    getPastDay(): any;
+    /**
      * getEventAtTime returns the events at certain second.
      */
     getLinoStakeStat(day: string): Promise<Types.LinoStakeStat>;
