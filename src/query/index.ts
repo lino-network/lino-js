@@ -899,6 +899,25 @@ export default class Query {
   }
 
   /**
+   * getPastDay returns the blockchain past day.
+   */
+  getPastDay(): any {
+    return new Promise((resolve, reject) => {
+      this.getGlobalTime()
+        .then(globalTime => {
+          var currentDay = Math.floor(
+            (Number(globalTime.last_block_time) - Number(globalTime.chain_start_time)) / (3600 * 24)
+          );
+          currentDay = currentDay > 0 ? currentDay : 0;
+          resolve(currentDay);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
+  }
+
+  /**
    * getEventAtTime returns the events at certain second.
    */
   getLinoStakeStat(day: string): Promise<Types.LinoStakeStat> {
