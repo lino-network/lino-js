@@ -75,191 +75,203 @@ function addSuite(envName) {
       this.timeout(20000);
       const query = linoClient.query;
 
-      it('getAllValidators', function() {
-        return query.getAllValidators().then(v => {
-          debug('getAllValidators', v);
-          expect(v).to.have.all.keys(
-            'oncall_validators',
-            'all_validators',
-            'pre_block_validators',
-            'lowest_power',
-            'lowest_validator'
-          );
-        });
-      });
+      // it('getAllValidators', function() {
+      //   return query.getAllValidators().then(v => {
+      //     debug('getAllValidators', v);
+      //     expect(v).to.have.all.keys(
+      //       'oncall_validators',
+      //       'all_validators',
+      //       'pre_block_validators',
+      //       'lowest_power',
+      //       'lowest_validator'
+      //     );
+      //   });
+      // });
 
-      it('getFollowingMeta', function() {
-        return query.getFollowingMeta(myUser, 'lino').then(v => {
-          debug('getFollowingMeta', v);
+      // it('getFollowingMeta', function() {
+      //   return query.getFollowingMeta(myUser, 'lino').then(v => {
+      //     debug('getFollowingMeta', v);
+      //     expect(v).to.have.all.keys('created_at', 'following_name');
+      //   });
+      // });
+
+      it('getEventAtTime', function() {
+        return query.getEventAtTime('1538452001').then(v => {
+          debug('getEventAtTime', v);
           expect(v).to.have.all.keys('created_at', 'following_name');
         });
       });
 
-      it('getTxsInBlock', function() {
-        return query.getTxsInBlock(17187).then(v => {
-          console.log('getTxsInBlock', v);
+      // it('getTxsInBlock', function() {
+      //   return query.getTxsInBlock(17187).then(v => {
+      //     console.log('getTxsInBlock', v);
+      //   });
+      // });
+
+      // // TODO: figure out how to check the results in array
+      // it.skip('getAllFollowingMeta', function() {
+      //   return query.getAllFollowingMeta(myUser).then(v => {
+      //     console.log('>>> test getAllFollowingMeta v: ', v);
+      //     debug('getAllFollowingMeta', v);
+      //     expect(v).to.have.all.keys('created_at', 'following_name');
+      //   });
+      // });
+
+      // it('getValidator', function() {
+      //   return query.getValidator('lino').then(v => {
+      //     debug('getValidator', v);
+      //     expect(v).to.have.all.keys(
+      //       'ABCIValidator',
+      //       'username',
+      //       'deposit',
+      //       'absent_commit',
+      //       'byzantine_commit',
+      //       'produced_blocks',
+      //       'link'
+      //     );
+      //   });
+      // });
+
+      // it('getDevelopers', function() {
+      //   return query.getDevelopers().then(v => {
+      //     debug('getDevelopers', v);
+      //   });
+      // });
+
+      // it('getDeveloper', function() {
+      //   return query.getDeveloper('lino').then(v => {
+      //     debug('getDeveloper', v);
+      //     expect(v).to.have.all.keys(
+      //       'username',
+      //       'web_site',
+      //       'app_meta_data',
+      //       'description',
+      //       'deposit',
+      //       'app_consumption'
+      //     );
+      //   });
+      // });
+
+      // it('getInfraProviders', function() {
+      //   return query.getInfraProviders().then(v => {
+      //     debug('getInfraProviders', v);
+      //     expect(v).to.have.all.keys('all_infra_providers');
+      //   });
+      // });
+
+      // it('getInfraProvider', function() {
+      //   return query.getInfraProvider('lino').then(v => {
+      //     debug('getInfraProvider', v);
+      //     expect(v).to.have.all.keys('username', 'usage');
+      //   });
+      // });
+
+      // it('getGlobalAllocationParam', function() {
+      //   return query.getGlobalAllocationParam().then(v => {
+      //     debug('getGlobalAllocationParam', v);
+      //     expect(v).to.have.all.keys(
+      //       'infra_allocation',
+      //       'content_creator_allocation',
+      //       'developer_allocation',
+      //       'validator_allocation'
+      //     );
+      //   });
+      // });
+
+      // it('getValidatorParam', function() {
+      //   return query.getValidatorParam().then(v => {
+      //     debug('getValidatorParam', v);
+      //     expect(v).to.have.all.keys(
+      //       'validator_min_withdraw',
+      //       'validator_min_voting_deposit',
+      //       'validator_min_commiting_deposit',
+      //       'validator_coin_return_interval',
+      //       'validator_coin_return_times',
+      //       'penalty_miss_vote',
+      //       'penalty_miss_commit',
+      //       'penalty_byzantine',
+      //       'validator_list_size',
+      //       'absent_commit_limitation'
+      //     );
+      //   });
+      // });
+      // it('getAccountBank', function() {
+      //   return query.getAccountBank('lino').then(v => {
+      //     debug('getAccountBank', v);
+      //     expect(v).to.have.all.keys(
+      //       'saving',
+      //       'coin_day',
+      //       'frozen_money_list',
+      //       'number_of_transaction',
+      //       'number_of_reward'
+      //     );
+      //   });
+      // });
+
+      // it('getSeqNumber', function() {
+      //   return query.getSeqNumber('lino').then(v => {
+      //     debug('getSeqNumber', v);
+      //     expect(v).to.be.a('number');
+      //   });
+      // });
+
+      // it('getAllBalanceHistory', function() {
+      //   return query.getAllBalanceHistory('lino').then(v => {
+      //     debug('getAllBalanceHistory', v);
+      //     expect(v).to.have.all.keys('details');
+      //   });
+      // });
+
+      // it('getBalanceHistoryFromTo', function() {
+      //   return query.getBalanceHistoryFromTo('lino', 0, 20).then(v => {
+      //     debug('getBalanceHistoryFromTo', v);
+      //     expect(v).to.have.all.keys('details');
+      //   });
+      // });
+
+      // it('getRecentBalanceHistory', function() {
+      //   return query.getRecentBalanceHistory('lino', 10).then(v => {
+      //     debug('getRecentBalanceHistory', v);
+      //     expect(v).to.have.all.keys('details');
+      //   });
+      // });
+
+      // it('getProposal', function() {
+      //   return query.getProposal('1').then(v => {
+      //     debug('getProposal', v);
+      //     expect(v).to.have.all.keys('type', 'value');
+      //   });
+      // });
+
+      // it('getProposal', function() {
+      //   return query.getProposal('2').then(v => {
+      //     debug('getProposal', v);
+      //     expect(v).to.have.all.keys('type', 'value');
+      //   });
+      // });
+      // it('getVote', function() {
+      //   return query.getVote('1', 'lino').then(v => {
+      //     debug('getVote', v);
+      //     expect(v).to.have.all.keys('voter', 'result', 'voting_power');
+      //   });
+      // });
+
+      it('getOngoingProposalList', function() {
+        return query.getOngoingProposalList().then(v => {
+          debug('getOngoingProposalList', v);
+        });
+      });
+      it('getExpiredProposalList', function() {
+        return query.getExpiredProposalList().then(v => {
+          debug('getExpiredProposalList', v);
         });
       });
 
-      // TODO: figure out how to check the results in array
-      it.skip('getAllFollowingMeta', function() {
-        return query.getAllFollowingMeta(myUser).then(v => {
-          console.log('>>> test getAllFollowingMeta v: ', v);
-          debug('getAllFollowingMeta', v);
-          expect(v).to.have.all.keys('created_at', 'following_name');
-        });
-      });
-
-      it('getValidator', function() {
-        return query.getValidator('lino').then(v => {
-          debug('getValidator', v);
-          expect(v).to.have.all.keys(
-            'ABCIValidator',
-            'username',
-            'deposit',
-            'absent_commit',
-            'byzantine_commit',
-            'produced_blocks',
-            'link'
-          );
-        });
-      });
-
-      it('getDevelopers', function() {
-        return query.getDevelopers().then(v => {
-          debug('getDevelopers', v);
-        });
-      });
-
-      it('getDeveloper', function() {
-        return query.getDeveloper('lino').then(v => {
-          debug('getDeveloper', v);
-          expect(v).to.have.all.keys(
-            'username',
-            'web_site',
-            'app_meta_data',
-            'description',
-            'deposit',
-            'app_consumption'
-          );
-        });
-      });
-
-      it('getInfraProviders', function() {
-        return query.getInfraProviders().then(v => {
-          debug('getInfraProviders', v);
-          expect(v).to.have.all.keys('all_infra_providers');
-        });
-      });
-
-      it('getInfraProvider', function() {
-        return query.getInfraProvider('lino').then(v => {
-          debug('getInfraProvider', v);
-          expect(v).to.have.all.keys('username', 'usage');
-        });
-      });
-
-      it('getGlobalAllocationParam', function() {
-        return query.getGlobalAllocationParam().then(v => {
-          debug('getGlobalAllocationParam', v);
-          expect(v).to.have.all.keys(
-            'infra_allocation',
-            'content_creator_allocation',
-            'developer_allocation',
-            'validator_allocation'
-          );
-        });
-      });
-
-      it('getValidatorParam', function() {
-        return query.getValidatorParam().then(v => {
-          debug('getValidatorParam', v);
-          expect(v).to.have.all.keys(
-            'validator_min_withdraw',
-            'validator_min_voting_deposit',
-            'validator_min_commiting_deposit',
-            'validator_coin_return_interval',
-            'validator_coin_return_times',
-            'penalty_miss_vote',
-            'penalty_miss_commit',
-            'penalty_byzantine',
-            'validator_list_size',
-            'absent_commit_limitation'
-          );
-        });
-      });
-      it('getAccountBank', function() {
-        return query.getAccountBank('lino').then(v => {
-          debug('getAccountBank', v);
-          expect(v).to.have.all.keys(
-            'saving',
-            'coin_day',
-            'frozen_money_list',
-            'number_of_transaction',
-            'number_of_reward'
-          );
-        });
-      });
-
-      it('getSeqNumber', function() {
-        return query.getSeqNumber('lino').then(v => {
-          debug('getSeqNumber', v);
-          expect(v).to.be.a('number');
-        });
-      });
-
-      it('getAllBalanceHistory', function() {
-        return query.getAllBalanceHistory('lino').then(v => {
-          debug('getAllBalanceHistory', v);
-          expect(v).to.have.all.keys('details');
-        });
-      });
-
-      it('getBalanceHistoryFromTo', function() {
-        return query.getBalanceHistoryFromTo('lino', 0, 20).then(v => {
-          debug('getBalanceHistoryFromTo', v);
-          expect(v).to.have.all.keys('details');
-        });
-      });
-
-      it('getRecentBalanceHistory', function() {
-        return query.getRecentBalanceHistory('lino', 10).then(v => {
-          debug('getRecentBalanceHistory', v);
-          expect(v).to.have.all.keys('details');
-        });
-      });
-
-      it('getProposal', function() {
-        return query.getProposal('1').then(v => {
-          debug('getProposal', v);
-          expect(v).to.have.all.keys('type', 'value');
-        });
-      });
-
-      it('getProposal', function() {
-        return query.getProposal('2').then(v => {
-          debug('getProposal', v);
-          expect(v).to.have.all.keys('type', 'value');
-        });
-      });
-      it('getVote', function() {
-        return query.getVote('1', 'lino').then(v => {
-          debug('getVote', v);
-          expect(v).to.have.all.keys('voter', 'result', 'voting_power');
-        });
-      });
-
-      it('getOngoingProposal', function() {
-        return query.getOngoingProposal().then(v => {
-          debug('getOngoingProposal', v);
-        });
-      });
-
-      it('getAccountParam', function() {
-        return query.getAccountParam().then(v => {
-          debug('getAccountParam', v);
-        });
-      });
+      // it('getAccountParam', function() {
+      //   return query.getAccountParam().then(v => {
+      //     debug('getAccountParam', v);
+      //   });
+      // });
       it('getAllEventAtAllTime', function() {
         return query
           .getAllEventAtAllTime()
@@ -268,63 +280,71 @@ function addSuite(envName) {
           })
           .catch(err => {});
       });
-
-      it('getTxsInBlock', function() {
-        return query.getTxsInBlock('406428').then(v => {
-          debug('getTxsInBlock', v);
-        });
-      });
-      it('getConsumptionMeta', function() {
-        return query.getConsumptionMeta().then(v => {
-          debug('getConsumptionMeta', v);
-        });
-      });
-      it('getExpiredProposal', function() {
-        return query.getExpiredProposal().then(v => {
-          debug('getExpiredProposal', v);
-        });
+      it('getProposalParam', function() {
+        return query
+          .getProposalParam()
+          .then(v => {
+            debug('getProposalParam', v);
+          })
+          .catch(err => {});
       });
 
-      it('doesUsernameMatchPrivKey', function() {
-        return query.doesUsernameMatchResetPrivKey('lino', testTxPrivHex).then(v => {
-          debug('doesUsernameMatchPrivKey', v);
-          expect(v).to.be.false;
-        });
-      });
+      // it('getTxsInBlock', function() {
+      //   return query.getTxsInBlock('406428').then(v => {
+      //     debug('getTxsInBlock', v);
+      //   });
+      // });
+      // it('getConsumptionMeta', function() {
+      //   return query.getConsumptionMeta().then(v => {
+      //     debug('getConsumptionMeta', v);
+      //   });
+      // });
+      // it('getExpiredProposal', function() {
+      //   return query.getExpiredProposal().then(v => {
+      //     debug('getExpiredProposal', v);
+      //   });
+      // });
 
-      it('getAllGrantPubKeys', function() {
-        return query.getAllGrantPubKeys('lino').then(v => {
-          debug('getAllGrantPubKeys', v);
-        });
-      });
+      // it('doesUsernameMatchPrivKey', function() {
+      //   return query.doesUsernameMatchResetPrivKey('lino', testTxPrivHex).then(v => {
+      //     debug('doesUsernameMatchPrivKey', v);
+      //     expect(v).to.be.false;
+      //   });
+      // });
 
-      it('getAllPosts', function() {
-        this.timeout(0);
-        return query.getAllPosts('carrioner').then(v => {
-          debug('getAllPosts', v);
-        });
-      });
+      // it('getAllGrantPubKeys', function() {
+      //   return query.getAllGrantPubKeys('lino').then(v => {
+      //     debug('getAllGrantPubKeys', v);
+      //   });
+      // });
+
+      // it('getAllPosts', function() {
+      //   this.timeout(0);
+      //   return query.getAllPosts('carrioner').then(v => {
+      //     debug('getAllPosts', v);
+      //   });
+      // });
 
       it('getInterest', function() {
         this.timeout(0);
-        return query.getInterest('validator1').then(v => {
+        return query.getInterest('sq7').then(v => {
           debug('getInterest', v);
         });
       });
 
-      it('getAccountBank', function() {
-        this.timeout(0);
-        return query.getAccountBank('lino').then(v => {
-          debug('get acc bank', v);
-        });
-      });
+      // it('getAccountBank', function() {
+      //   this.timeout(0);
+      //   return query.getAccountBank('lino').then(v => {
+      //     debug('get acc bank', v);
+      //   });
+      // });
 
-      it('getDevelopers', function() {
-        this.timeout(0);
-        return query.getDevelopers().then(v => {
-          debug('getDevelopers', v);
-        });
-      });
+      // it('getDevelopers', function() {
+      //   this.timeout(0);
+      //   return query.getDevelopers().then(v => {
+      //     debug('getDevelopers', v);
+      //   });
+      // });
     });
 
     describe('broadcast', function() {
@@ -467,28 +487,28 @@ function addSuite(envName) {
       //   });
       // });
 
-      it('changeBandwidthParameter', function() {
-        return runBroadcast(query, true, () => {
-          return query.getSeqNumber('validator1').then(seq => {
-            return query.getBandwidthParam().then(param => {
-              console.log('changeBandwidthParameter', param);
-              param.capacity_usage_per_transaction.amount = '1';
-              return broadcast
-                .changeBandwidthParam(
-                  'validator1',
-                  param,
-                  'reason',
-                  'E1B0F79B201881AA64D6104FAFAB67E6C5EB23AB381F3F04D417444A94B39EDC7347F83A65',
-                  seq
-                )
-                .then(v => {
-                  debug('changeBandwidthParameter', v);
-                  expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
-                });
-            });
-          });
-        });
-      });
+      // it('changeBandwidthParameter', function() {
+      //   return runBroadcast(query, true, () => {
+      //     return query.getSeqNumber('validator1').then(seq => {
+      //       return query.getBandwidthParam().then(param => {
+      //         console.log('changeBandwidthParameter', param);
+      //         param.capacity_usage_per_transaction.amount = '1';
+      //         return broadcast
+      //           .changeBandwidthParam(
+      //             'validator1',
+      //             param,
+      //             'reason',
+      //             'E1B0F79B201881AA64D6104FAFAB67E6C5EB23AB381F3F04D417444A94B39EDC7347F83A65',
+      //             seq
+      //           )
+      //           .then(v => {
+      //             debug('changeBandwidthParameter', v);
+      //             expect(v).to.have.all.keys('check_tx', 'deliver_tx', 'hash', 'height');
+      //           });
+      //       });
+      //     });
+      //   });
+      // });
 
       // it('changeValidatorParam', function() {
       //   return runBroadcast(query, true, () => {
