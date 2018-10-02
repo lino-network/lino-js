@@ -884,7 +884,7 @@ export default class Query {
                       );
                     }
                   });
-                  resolve(interest);
+                  resolve(interest.toFixed(5));
                 }
               });
             })
