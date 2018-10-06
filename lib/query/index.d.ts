@@ -442,6 +442,12 @@ export default class Query {
      * @param numReward: the number of reward history are wanted
      */
     getRecentRewardHistory(username: string, numReward: number): Promise<RewardHistory>;
+    /**
+     * getUserReputationMeta returns a user's reputation meta.
+     *
+     * @param username: user name
+     */
+    getUserReputationMeta(username: string): Promise<UserRepMeta>;
     isValidNat(num: number): boolean;
 }
 export interface PubKey {
@@ -648,6 +654,15 @@ export interface Proposal {
 export interface ProposalValue {
     ProposalInfo: ProposalInfo;
     [propName: string]: any;
+}
+export interface UserRepMeta {
+    CustomerScore: number;
+    FreeScore: number;
+    LastSettled: string;
+    LastDonationRound: string;
+}
+export interface PostRepMeta {
+    SumRep: string;
 }
 export interface ChangeParamProposalValue extends ProposalValue {
     param: Types.Parameter;

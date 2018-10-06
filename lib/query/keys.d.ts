@@ -10,6 +10,7 @@ declare namespace Keys {
         DeveloperKVStoreKey: string;
         ParamKVStoreKey: string;
         ProposalKVStoreKey: string;
+        ReputationKVStoreKey: string;
     };
     function getHexSubstringAfterKeySeparator(key: string): string;
     function getSubstringAfterKeySeparator(key: string): string;
@@ -82,5 +83,7 @@ declare namespace Keys {
     function getTPSKey(): string;
     function getTimeKey(): string;
     function getLinoStakeStatKey(day: string): string;
+    function getUserReputationMetaKey(username: string): string;
+    function getPostReputationMetaKey(permlink: string): string;
 }
 export default Keys;

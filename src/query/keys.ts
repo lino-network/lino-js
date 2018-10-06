@@ -12,7 +12,8 @@ namespace Keys {
     InfraKVStoreKey: 'infra',
     DeveloperKVStoreKey: 'developer',
     ParamKVStoreKey: 'param',
-    ProposalKVStoreKey: 'proposal'
+    ProposalKVStoreKey: 'proposal',
+    ReputationKVStoreKey: 'reputation'
   };
   const _KEYS = {
     validatorSubstore: '00',
@@ -72,6 +73,14 @@ namespace Keys {
     tpsSubStore: '04',
     timeSubStore: '05',
     linoStakeStatSubStore: '06',
+
+    repUserMetaSubStore: '00',
+    repPostMetaSubStore: '01',
+    repUserPostMetaSubStore: '02',
+    repRoundMetaSubstore: '03',
+    repRoundPostMetaSubstore: '04',
+    repRoundUserPostMetaPrefix: '05',
+    repGameMetaPrefix: '06',
 
     sep: ByteBuffer.fromUTF8('/').toHex(),
     separator: '/'
@@ -410,6 +419,16 @@ namespace Keys {
   export function getLinoStakeStatKey(day: string): string {
     const dayHex = ByteBuffer.fromUTF8(day).toHex();
     return _KEYS.linoStakeStatSubStore.concat(dayHex);
+  }
+
+  export function getUserReputationMetaKey(username: string): string {
+    const usernameHex = ByteBuffer.fromUTF8(username).toHex();
+    return _KEYS.repUserMetaSubStore.concat(usernameHex);
+  }
+
+  export function getPostReputationMetaKey(permlink: string): string {
+    const permlinkHex = ByteBuffer.fromUTF8(permlink).toHex();
+    return _KEYS.repPostMetaSubStore.concat(permlinkHex);
   }
 }
 
