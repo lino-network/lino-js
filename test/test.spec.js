@@ -95,10 +95,9 @@ function addSuite(envName) {
       //   });
       // });
 
-      it('getEventAtTime', function() {
-        return query.getEventAtTime('1538452001').then(v => {
-          debug('getEventAtTime', v);
-          expect(v).to.have.all.keys('created_at', 'following_name');
+      it('getUserReputationMeta', function() {
+        return query.getUserReputationMeta('ytu').then(v => {
+          debug('getUserReputationMeta', v);
         });
       });
 
@@ -272,14 +271,14 @@ function addSuite(envName) {
       //     debug('getAccountParam', v);
       //   });
       // });
-      it('getAllEventAtAllTime', function() {
-        return query
-          .getAllEventAtAllTime()
-          .then(v => {
-            debug('getAllEventAtAllTime', v);
-          })
-          .catch(err => {});
-      });
+      // it('getAllEventAtAllTime', function() {
+      //   return query
+      //     .getAllEventAtAllTime()
+      //     .then(v => {
+      //       debug('getAllEventAtAllTime', v);
+      //     })
+      //     .catch(err => {});
+      // });
       it('getProposalParam', function() {
         return query
           .getProposalParam()
@@ -325,13 +324,12 @@ function addSuite(envName) {
       //   });
       // });
 
-      it('getInterest', function() {
+      it('getInterestAgain', function() {
         this.timeout(0);
         return query.getInterest('sq7').then(v => {
-          debug('getInterest', v);
+          debug('getInterestAgain', v);
         });
       });
-
       // it('getAccountBank', function() {
       //   this.timeout(0);
       //   return query.getAccountBank('lino').then(v => {
@@ -398,23 +396,27 @@ function addSuite(envName) {
         });
       });
 
-      // it('transfer', function() {
-      //   return runBroadcast(query, true, () => {
-      //     return query
-      //       .getSeqNumber('lino')
-      //       .then(seq => {
-      //         debug('query seq number before transfer', seq);
-      //         debug(getUnixTime());
-      //         expect(seq).to.be.a('number');
-      //         return seq;
-      //       })
-      //       .then(seq => {
-      //         return broadcast
-      //           .transfer('lino', userName, '10', 'memo1', testTxPrivHex, seq)
-      //           .then(v => console.log(v));
-      //       });
-      //   });
-      // });
+      it('claim interest', function() {
+        return runBroadcast(query, true, () => {
+          return query
+            .getSeqNumber('validator7')
+            .then(seq => {
+              debug('query seq number before transfer', seq);
+              debug(getUnixTime());
+              expect(seq).to.be.a('number');
+              return seq;
+            })
+            .then(seq => {
+              return broadcast
+                .claimInterest(
+                  'validator7',
+                  'E1B0F79B20797F9D3E44BFDBCB8C5016E9A2F75C5207A3E42EF662DBB93CF6033CF81D1A26',
+                  seq
+                )
+                .then(v => console.log(v));
+            });
+        });
+      });
       // // it('grantPermission', function() {
       // //   return runBroadcast(query, true, () => {
       // //     return query

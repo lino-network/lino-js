@@ -1140,6 +1140,19 @@ export default class Query {
     return this.getRewardHistoryFromTo(username, from, maxTxNo);
   }
 
+  /**
+   * getUserReputationMeta returns a user's reputation meta.
+   *
+   * @param username: user name
+   */
+  getUserReputationMeta(username: string): Promise<UserRepMeta> {
+    const repKVStoreKey = Keys.KVSTOREKEYS.ReputationKVStoreKey;
+    return this._transport.query<UserRepMeta>(
+      Keys.getUserReputationMetaKey(username),
+      repKVStoreKey
+    );
+  }
+
   // @return false negative or larger than safe int.
   isValidNat(num: number): boolean {
     // XXX(yumin): js's MAX_SAFE_INTEGER is less than 2^64.
@@ -1396,6 +1409,17 @@ export interface Proposal {
 export interface ProposalValue {
   ProposalInfo: ProposalInfo;
   [propName: string]: any;
+}
+
+export interface UserRepMeta {
+  CustomerScore: number;
+  FreeScore: number;
+  LastSettled: string;
+  LastDonationRound: string;
+}
+
+export interface PostRepMeta {
+  SumRep: string;
 }
 
 export interface ChangeParamProposalValue extends ProposalValue {

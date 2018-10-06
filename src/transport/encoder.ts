@@ -120,7 +120,8 @@ export function decodeObject(result: any): any {
       if (
         decodedResult[key] !== null &&
         typeof decodedResult[key] !== 'string' &&
-        typeof decodedResult[key] !== 'boolean'
+        typeof decodedResult[key] !== 'boolean' &&
+        typeof decodedResult[key] !== 'number'
       ) {
         decodedResult[key] = decodeObject(result[key]);
       }
