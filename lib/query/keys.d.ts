@@ -32,6 +32,7 @@ declare namespace Keys {
     function getAccountInfoKey(accKey: string): string;
     function getAccountBankKey(accKey: string): string;
     function getAccountMetaKey(accKey: string): string;
+    function getAccountPendingCoinDayQueueKey(accKey: string): string;
     function getFollowerPrefix(me: string): string;
     function getFollowingPrefix(me: string): string;
     function getFollowerKey(me: string, myFollower: string): string;

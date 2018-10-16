@@ -184,6 +184,11 @@ namespace Keys {
     return _KEYS.accountMetaSubstore.concat(accKeyHex);
   }
 
+  export function getAccountPendingCoinDayQueueKey(accKey: string): string {
+    const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
+    return _KEYS.accountPendingCoinDayQueueSubstore.concat(accKeyHex);
+  }
+
   export function getFollowerPrefix(me: string): string {
     const meHex = ByteBuffer.fromUTF8(me).toHex();
     return _KEYS.accountFollowerSubstore.concat(meHex).concat(_KEYS.sep);
