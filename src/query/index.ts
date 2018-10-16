@@ -149,6 +149,19 @@ export default class Query {
   }
 
   /**
+   * getPendingCoinDayQueue returns account pending coin day for a specific user.
+   *
+   * @param username
+   */
+  getPendingCoinDayQueue(username: string): Promise<PendingCoinDayQueue> {
+    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
+    return this._transport.query<PendingCoinDayQueue>(
+      Keys.getAccountPendingCoinDayQueueKey(username),
+      AccountKVStoreKey
+    );
+  }
+
+  /**
    * getAccountBank returns account bank info for a specific user.
    *
    * @param username
@@ -1306,6 +1319,19 @@ export interface AccountBank {
   frozen_money_list: FrozenMoney[];
   number_of_transaction: string;
   number_of_reward: string;
+}
+
+export interface PendingCoinDayQueue {
+  last_updated_at: string;
+  total_coin_day: Types.Rat;
+  total_coin: Types.Coin;
+  pending_coin_days: PendingCoinDay[];
+}
+
+export interface PendingCoinDay {
+  end_time: string;
+  start_time: string;
+  coin: Types.Coin;
 }
 
 export interface FrozenMoney {
