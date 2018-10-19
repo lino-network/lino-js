@@ -43,7 +43,7 @@ import { LINO, UTILS } from 'lino-js';
 
 export const lino = new LINO({
   nodeUrl: 'https://fullnode.linovalidator.io/',
-  chainId: 'test-chain-BgWrtq',
+  chainId: 'lino-testnet',
 });
 
 export const linoUtils = UTILS;
