@@ -49,11 +49,11 @@ export const lino = new LINO({
 export const linoUtils = UTILS;
 ```
 
-chanId and nodeUrl can be found remotely from https://linotracker.io/ 
+chanId and nodeUrl can be found remotely from https://tracker.lino.network/ 
 or locally from ~/.lino/config/genesis.json
 
 For example,  
-Remotely: chainID = "test-chain-BgWrtq" and nodeURL = "http://fullnode.linovalidator.io"  
+Remotely: chainID = "lino-testnet" and nodeURL = "https://fullnode.linovalidator.io"  
 Locally: chainID = "test-chain-q8lMWR" and nodeURL = "http://localhost:26657"  
 
 ### JSON-RPC
