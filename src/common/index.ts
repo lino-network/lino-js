@@ -212,7 +212,7 @@ export function isPostParam(param: object): param is PostParam {
   return (
     'report_or_upvote_interval_second' in param &&
     'post_interval_sec' in param &&
-    'first_deposit_full_stake_limit' in param
+    'max_report_reputation' in param
   );
 }
 

@@ -65,6 +65,7 @@ namespace Keys {
     bandwidthParamSubStore: '08',
     accountParamSubstore: '09',
     postParamSubStore: '0a',
+    reputationParamSubStore: '0b',
 
     timeEventListSubStore: '00',
     globalMetaSubStore: '01',
@@ -391,6 +392,10 @@ namespace Keys {
 
   export function getPostParamKey(): string {
     return _KEYS.postParamSubStore;
+  }
+
+  export function getReputationParamKey(): string {
+    return _KEYS.reputationParamSubStore;
   }
 
   export function getGlobalMetaKey(): string {

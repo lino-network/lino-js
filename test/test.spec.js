@@ -101,6 +101,22 @@ function addSuite(envName) {
         });
       });
 
+      it('getPostReputationMeta', function() {
+        return query.getPostReputationMeta('vloger', 'hGAUOxmgg').then(v => {
+          debug('getPostReputationMeta', v);
+        });
+      });
+
+      it('getPostPenaltyScore', function() {
+        return query.getPenaltyScore('vloger', 'hL6CDxigg').then(v => {
+          debug('getPostPenaltyScore', v);
+        });
+      });
+      it('getPostPenaltyScore1', function() {
+        return query.getPenaltyScore('vloger', 'hGAUOxmgg').then(v => {
+          debug('getPostPenaltyScore1', v);
+        });
+      });
       // it('getTxsInBlock', function() {
       //   return query.getTxsInBlock(17187).then(v => {
       //     console.log('getTxsInBlock', v);

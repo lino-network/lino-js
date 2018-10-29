@@ -970,12 +970,24 @@ export default class Query {
       GetKeyBy.GetSubstringAfterSubstore
     );
   }
+
   /**
    * getPostParam returns the PostParam.
    */
   getPostParam(): Promise<Types.PostParam> {
     const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
     return this._transport.query<Types.PostParam>(Keys.getPostParamKey(), ParamKVStoreKey);
+  }
+
+  /**
+   * getReputationParam returns the ReputationParam.
+   */
+  getReputationParam(): Promise<Types.ReputationParam> {
+    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
+    return this._transport.query<Types.ReputationParam>(
+      Keys.getReputationParamKey(),
+      ParamKVStoreKey
+    );
   }
 
   // block related
@@ -1164,6 +1176,56 @@ export default class Query {
       Keys.getUserReputationMetaKey(username),
       repKVStoreKey
     );
+  }
+
+  /**
+   * getPostReputationMeta returns a post's reputation meta.
+   *
+   * @param author: author of the post
+   * @param postID: post ID of the post
+   */
+  getPostReputationMeta(author: string, postID: string): Promise<PostRepMeta> {
+    const repKVStoreKey = Keys.KVSTOREKEYS.ReputationKVStoreKey;
+    const Permlink = Keys.getPermlink(author, postID);
+    return this._transport.query<PostRepMeta>(
+      Keys.getPostReputationMetaKey(Permlink),
+      repKVStoreKey
+    );
+  }
+
+  /**
+   * getPenaltyScore returns a post's penalty score.
+   *
+   * @param author: author of the post
+   * @param postID: post ID of the post
+   */
+  getPenaltyScore(author: string, postID: string): Promise<number> {
+    return new Promise((resolve, reject) => {
+      const repKVStoreKey = Keys.KVSTOREKEYS.ReputationKVStoreKey;
+      const Permlink = Keys.getPermlink(author, postID);
+      this.getPostReputationMeta(author, postID)
+        .then(meta => {
+          if (Number(meta.SumRep) > 0) {
+            resolve(0);
+            return;
+          }
+          this.getPostParam()
+            .then(param => {
+              console.log(param);
+              if (-Number(meta.SumRep) > Number(param.max_report_reputation.amount) * 100000) {
+                resolve(1);
+                return;
+              }
+              resolve(-Number(meta.SumRep) / (Number(param.max_report_reputation.amount) * 100000));
+            })
+            .catch(err => {
+              reject(err);
+            });
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   // @return false negative or larger than safe int.
