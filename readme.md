@@ -6,11 +6,18 @@ lino-js is the JS library of the Lino Blockchain. It's created for ease use of b
 
 ## Preqrequisite
 
-- install [yarn](https://yarnpkg.com/en/docs/install#mac-stable)
+- install [npm](https://www.npmjs.com/get-npm) or [yarn](https://yarnpkg.com/en/docs/install#mac-stable)
 - install [node@8](https://nodejs.org/en/)
 - install [prettier](https://github.com/prettier/prettier) and enable editor `format on save`
 
-## Install
+## Install via NPM
+
+- install: `npm install lino-js`
+- test: `npm test`
+
+More information on [https://www.npmjs.com/package/lino-js](https://www.npmjs.com/package/lino-js)
+
+## Install via Yarn
 
 - install: `yarn`
 - test: `yarn test:browser`
