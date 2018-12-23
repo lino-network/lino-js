@@ -57,3 +57,9 @@ Please join us on on:
 - [Discord](https://discord.gg/TUxp3ww)
 
 Subsribe to email list on our [website](https://lino.network).
+
+To enable the private key check hook:
+
+```
+$ git config core.hooksPath .githook
+```
