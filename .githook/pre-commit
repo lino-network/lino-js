@@ -42,18 +42,28 @@ quit() {
 # Redirect output to stderr.
 exec 1>&2
 
-files_with_nocommit=$(git diff --cached --name-only --diff-filter=ACM $against | xargs -I{} grep -i "E1B0F79B20" -l {} | tr '\n' ' ')
+files_with_aws=$(git diff --cached --name-only --diff-filter=ACM $against | xargs -I{} grep -E "AKIA[[:alnum:]]{16}" -l {} | tr '\n' ' ') 
+files_with_privkey=$(git diff --cached --name-only --diff-filter=ACM $against | xargs -I{} grep -E "E1B0F79B20[[:alnum:]]{64}" -l {} | tr '\n' ' ') 
 
-if [ "x${files_with_nocommit}x" != "xx" ]; then
+if [ "x${files_with_aws}x" != "xx" ]; then
     tput setaf 1
-    echo "File being committed with private key in it:"
+    echo "File being committed with aws credential in it:"
     IFS=$'\n'
-    for f in $(git diff --cached --name-only --diff-filter=ACM $against | xargs -I{} grep -i "E1B0F79B20" -l {}); do
+    for f in $(git diff --cached --name-only --diff-filter=ACM $against | xargs -I{} grep -E "AKIA[[:alnum:]]{16}" -l {}); do
         echo $f
     done
     tput sgr0
     quit 1
 fi
 
+if [ "x${files_with_privkey}x" != "xx" ]; then
+    tput setaf 1
+    echo "File being committed with private key in it:"
+    IFS=$'\n'
+    for f in $(git diff --cached --name-only --diff-filter=ACM $against | xargs -I{} grep -E "E1B0F79B20[[:alnum:]]{64}" -l {}); do
+        echo $f
+    done
+    tput sgr0
+    quit 1
+fi
 quit 0
-
