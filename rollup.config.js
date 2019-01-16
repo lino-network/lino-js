@@ -5,6 +5,7 @@ import pkg from './package.json';
 import builtins from 'rollup-plugin-node-builtins';
 import globals from 'rollup-plugin-node-globals';
 import json from 'rollup-plugin-json';
+import babel from 'rollup-plugin-babel';
 
 export default [
   // browser-friendly UMD build
@@ -17,6 +18,9 @@ export default [
       sourcemap: true
     },
     plugins: [
+      babel({
+        exclude: 'node_modules/**'
+      }),
       builtins(),
       globals(),
       json(),
