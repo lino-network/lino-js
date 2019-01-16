@@ -21,6 +21,7 @@
     "sha.js": "^2.4.11"
   },
   "devDependencies": {
+    "@babel/core": "^7.2.2",
     "@types/debug": "^0.0.30",
     "@types/long": "^4.0.0",
     "babel-plugin-external-helpers": "^6.22.0",
