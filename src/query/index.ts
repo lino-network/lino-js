@@ -1211,7 +1211,6 @@ export default class Query {
           }
           this.getPostParam()
             .then(param => {
-              console.log(param);
               if (-Number(meta.SumRep) > Number(param.max_report_reputation.amount) * 100000) {
                 resolve(1);
                 return;

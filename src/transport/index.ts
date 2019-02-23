@@ -11,6 +11,7 @@ import {
 } from './encoder';
 import { ResultBlock, ResultBroadcastTxCommit, Rpc } from './rpc';
 import Keys from '../query/keys';
+import utils from 'minimalistic-crypto-utils';
 
 export interface ITransport {
   query<T = any>(key: string, storeName: string): Promise<T>;
@@ -140,7 +141,7 @@ export class Transport implements ITransport {
     const signMsgHash = encodeSignMsg(msgs, this._chainId, seq);
     // sign to get signature
     const sig = key.sign(signMsgHash, { canonical: true });
-    const sigDERHex = sig.toDER('hex');
+    const sigDERHex = utils.encode(sig.r.toArray().concat(sig.s.toArray()), 'hex');
     // build tx
     const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq);
     // return broadcast
