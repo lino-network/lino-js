@@ -1,6 +1,6 @@
-const NODE_URL = 'http://18.222.228.141:26657/';
-const testTxPrivHex = 'E1B0F79B20149E17A2AF928AFE7774B93114E7EB62CCF56903E375EA1C4F62EAC5E4FE8D59';
-const testAppPrivHex = 'E1B0F79B203011994492CFDA9319DDC2A78E216B040200CD06BDC2B912EA04479C0AFEC1BC';
+const NODE_URL = 'http://localhost:26657/';
+const testTxPrivHex = 'E1B0F79B206DC4A58E823454AE1B9B9EA27EA72A6AA6B0AF9DFAB4891EC80A9C663B3259F6';
+const testAppPrivHex = 'E1B0F79B20850EC21A9C05E4836E16C4A9462E19F9815EA431A6D3E70FCF5217AD81EE54AC';
 
 const myUser = 'lino';
 // test utils
@@ -65,7 +65,7 @@ function addSuite(envName) {
   describe('LINO', function() {
     const linoClient = new LINO({
       nodeUrl: NODE_URL,
-      chainId: 'lino-testnet'
+      chainId: 'test-chain-dUhCxV'
     });
     it('remote nodeUrl works', async function() {
       const result = await fetch(`${NODE_URL}block?height=1`).then(resp => resp.json());
@@ -320,12 +320,17 @@ function addSuite(envName) {
       //   });
       // });
 
-      // it('doesUsernameMatchPrivKey', function() {
-      //   return query.doesUsernameMatchResetPrivKey('lino', testTxPrivHex).then(v => {
-      //     debug('doesUsernameMatchPrivKey', v);
-      //     expect(v).to.be.false;
-      //   });
-      // });
+      it('doesUsernameMatchPrivKey', function() {
+        return query
+          .doesUsernameMatchTxPrivKey(
+            'lino',
+            'E1B0F79B206DC4A58E823454AE1B9B9EA27EA72A6AA6B0AF9DFAB4891EC80A9C663B3259F6'
+          )
+          .then(v => {
+            debug('doesUsernameMatchTxPrivKey', v);
+            expect(v).to.be.true;
+          });
+      });
 
       // it('getAllGrantPubKeys', function() {
       //   return query.getAllGrantPubKeys('lino').then(v => {
@@ -377,8 +382,8 @@ function addSuite(envName) {
         const appPubKey = UTILS.pubKeyFromPrivate(derivedAppPrivKey);
 
         debug('register: ', userName);
-        debug('resetKey: ', randomResetPrivKey);
-        debug('txPrivKey: ', derivedTxPrivKey);
+        debug('resetKey: ', resetPubKey);
+        debug('txPrivKey: ', txPubKey);
         debug('appKey ', appPubKey);
 
         return runBroadcast(query, true, () => {
@@ -389,14 +394,15 @@ function addSuite(envName) {
               return seq;
             })
             .then(seq => {
+              console.log('seq:', seq);
               return broadcast
                 .register(
                   'lino',
                   '10',
-                  userName,
-                  resetPubKey,
-                  txPubKey,
-                  appPubKey,
+                  'bxypjreuim',
+                  'EB5AE98721022E9A92A09640B311570271ADEDBB322851C514578D06A6E8340E10E78B6A7059',
+                  'EB5AE9872102BF4499D7CB7A8DF1063A6C81F96FACEFD663C7B911BFA0C45AE1CB9671BB7B68',
+                  'EB5AE98721022BE37D05168839FCB61319E2B3A1B658B064565CD469EF775F4E3E82763133C3',
                   testTxPrivHex,
                   seq
                 )
@@ -431,6 +437,21 @@ function addSuite(envName) {
                 )
                 .then(v => console.log(v));
             });
+        });
+      });
+      it('transfer', function() {
+        return runBroadcast(query, true, () => {
+          return query.getSeqNumber('lino').then(seq => {
+            debug('query seq number before transfer', seq);
+            expect(seq).to.be.a('number');
+            return broadcast
+              .transfer('lino', 'lino', '100', 'hi', testTxPrivHex, seq)
+              .catch(err => {
+                debug('transfer error', err);
+                expect(err).to.have.all.keys('code', 'type');
+                expect(err).to.be.an.instanceOf(lino.BroadcastError);
+              });
+          });
         });
       });
       // // it('grantPermission', function() {
