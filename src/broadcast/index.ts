@@ -639,6 +639,7 @@ export default class Broadcast {
     authorized_app: string,
     validity_period_second: number,
     grant_level: Types.PERMISSION_TYPE,
+    amount: string,
     privKeyHex: string,
     seq: number
   ) {
@@ -646,7 +647,8 @@ export default class Broadcast {
       username,
       authorized_app,
       validity_period_second,
-      grant_level
+      grant_level,
+      amount
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.GrantPermissionMsgType, privKeyHex, seq);
@@ -1223,6 +1225,7 @@ export interface GrantPermissionMsg {
   authorized_app: string;
   validity_period_second: number;
   grant_level: Types.PERMISSION_TYPE;
+  amount: string;
 }
 
 export interface RevokePermissionMsg {
