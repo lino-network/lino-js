@@ -13,7 +13,62 @@ namespace Keys {
     DeveloperKVStoreKey: 'developer',
     ParamKVStoreKey: 'param',
     ProposalKVStoreKey: 'proposal',
-    ReputationKVStoreKey: 'reputation'
+    ReputationKVStoreKey: 'reputation',
+
+    AccountInfoSubStore: 'info',
+    AccountBankSubStore: 'bank',
+    AccountMetaSubStore: 'meta',
+    AccountRewardSubStore: 'reward',
+    AccountPendingCoinDaySubStore: 'pendingCoinDay',
+    AccountGrantPubKeySubStore: 'grantPubKey',
+    AccountAllGrantPubKeys: 'allGrantPubKey',
+
+    DeveloperSubStore: 'dev',
+    DeveloperListSubStore: 'devList',
+
+    TimeEventListSubStore: 'timeEventList',
+    GlobalMetaSubStore: 'globalMeta',
+    InflationPoolSubStore: 'inflationPool',
+    ConsumptionMetaSubStore: 'consumptionMeta',
+    TpsSubStore: 'tps',
+    LinoStakeStatSubStore: 'linoStakeStat',
+    GlobalTimeSubStore: 'linoStakeStat',
+
+    InfraProviderSubStore: 'infra',
+    InfraListSubStore: 'infraList',
+
+    PostInfoSubStore: 'info',
+    PostMetaSubStore: 'meta',
+    PostReportOrUpvoteSubStore: 'reportOrUpvote',
+    PostCommentSubStore: 'comment',
+    PostViewSubStore: 'view',
+
+    NextProposalIDSubStore: 'next',
+    OngoingProposalSubStore: 'ongoing',
+    ExpiredProposalSubStore: 'expired',
+
+    ValidatorSubStore: 'validator',
+    ValidatorListSubStore: 'valList',
+
+    DelegationSubStore: 'delegation',
+    VoterSubStore: 'voter',
+    VoteSubStore: 'vote',
+    ReferenceListSubStore: 'refList',
+    DelegateeSubStore: 'delegatee',
+
+    AllocationParamSubStore: 'allocation',
+    InfraInternalAllocationParamSubStore: 'infraInternal',
+    DeveloperParamSubStore: 'developer',
+    VoteParamSubStore: 'vote',
+    ProposalParamSubStore: 'proposal',
+    ValidatorParamSubStore: 'validator',
+    CoinDayParamSubStore: 'coinday',
+    BandwidthParamSubStore: 'bandwidth',
+    AccountParamSubStore: 'account',
+    PostParamSubStore: 'post',
+    ReputationParamSubStore: 'reputation',
+
+    ReputationSubStore: 'rep'
   };
   const _KEYS = {
     validatorSubstore: '00',
