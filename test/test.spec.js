@@ -88,6 +88,12 @@ function addSuite(envName) {
         });
       });
 
+      it('getAllGrantPubKeys', function() {
+        return query.getAllGrantPubKeys('dlivetv').then(v => {
+          debug('getAllGrantPubKeys', v);
+        });
+      });
+
       it('getUserReputation', function() {
         return query.getUserReputation('lino').then(v => {
           debug('getUserReputation', v);
@@ -176,8 +182,9 @@ function addSuite(envName) {
 
       it('getGlobalAllocationParam', function() {
         return query.getGlobalAllocationParam().then(v => {
-          debug('getGlobalAllocationParam', v);
+          debug('getGlobalAllocationParam');
           expect(v).to.have.all.keys(
+            'global_growth_rate',
             'infra_allocation',
             'content_creator_allocation',
             'developer_allocation',
@@ -189,30 +196,12 @@ function addSuite(envName) {
       it('getValidatorParam', function() {
         return query.getValidatorParam().then(v => {
           debug('getValidatorParam', v);
-          expect(v).to.have.all.keys(
-            'validator_min_withdraw',
-            'validator_min_voting_deposit',
-            'validator_min_commiting_deposit',
-            'validator_coin_return_interval',
-            'validator_coin_return_times',
-            'penalty_miss_vote',
-            'penalty_miss_commit',
-            'penalty_byzantine',
-            'validator_list_size',
-            'absent_commit_limitation'
-          );
         });
       });
       it('getAccountBank', function() {
         return query.getAccountBank('lino').then(v => {
           debug('getAccountBank', v);
-          expect(v).to.have.all.keys(
-            'saving',
-            'coin_day',
-            'frozen_money_list',
-            'number_of_transaction',
-            'number_of_reward'
-          );
+          expect(v).to.have.all.keys('saving', 'coin_day', 'frozen_money_list');
         });
       });
 

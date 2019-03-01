@@ -477,10 +477,11 @@ export default class Query {
    */
   getDevelopers(): Promise<ResultKV<string, Developer>[]> {
     const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
-    return this._transport.querySubspace<Developer>(
-      Keys.getDeveloperPrefix(),
+    const DeveloperListSubStore = Keys.KVSTOREKEYS.DeveloperListSubStore;
+    return this._transport.query<ResultKV<string, Developer>[]>(
+      [],
       DeveloperKVStoreKey,
-      GetKeyBy.GetSubstringAfterSubstore
+      DeveloperListSubStore
     );
   }
 
