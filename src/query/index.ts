@@ -159,14 +159,18 @@ export default class Query {
    * that has given to the pubKey.
    *
    * @param username
-   * @param pubKeyHex
+   * @param grantTo
+   * @param permission
    */
-  getGrantPubKey(username: string, pubKeyHex: string): Promise<GrantPubKey> {
+  getGrantPubKey(
+    username: string,
+    grantTo: string,
+    permission: Types.PERMISSION_TYPE
+  ): Promise<GrantPubKey> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     const AccountGrantPubKeySubStore = Keys.KVSTOREKEYS.AccountGrantPubKeySubStore;
-    const publicKey = decodePubKey(pubKeyHex);
     return this._transport.query<GrantPubKey>(
-      [username, publicKey],
+      [username, grantTo, permission],
       AccountKVStoreKey,
       AccountGrantPubKeySubStore
     );
@@ -177,10 +181,10 @@ export default class Query {
    *
    * @param username
    */
-  getAllGrantPubKeys(username: string): Promise<ResultKV<string, GrantPubKey>[]> {
+  getAllGrantPubKeys(username: string): Promise<GrantPubKey[]> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     const AccountAllGrantPubKeys = Keys.KVSTOREKEYS.AccountAllGrantPubKeys;
-    return this._transport.query<ResultKV<string, GrantPubKey>[]>(
+    return this._transport.query<GrantPubKey[]>(
       [username],
       AccountKVStoreKey,
       AccountAllGrantPubKeys

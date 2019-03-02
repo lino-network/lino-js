@@ -89,7 +89,7 @@ function addSuite(envName) {
       });
 
       it('getAllGrantPubKeys', function() {
-        return query.getAllGrantPubKeys('dlivetv').then(v => {
+        return query.getAllGrantPubKeys('dlive').then(v => {
           debug('getAllGrantPubKeys', v);
         });
       });
