@@ -1134,7 +1134,7 @@ export interface FrozenMoney {
 }
 
 export interface GrantPubKey {
-  username: string;
+  grant_to: string;
   permission: Types.PERMISSION_TYPE;
   created_at: string;
   expires_at: string;
