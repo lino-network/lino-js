@@ -32,7 +32,7 @@ namespace Keys {
     ConsumptionMetaSubStore: 'consumptionMeta',
     TpsSubStore: 'tps',
     LinoStakeStatSubStore: 'linoStakeStat',
-    GlobalTimeSubStore: 'linoStakeStat',
+    GlobalTimeSubStore: 'globalTime',
 
     InfraProviderSubStore: 'infra',
     InfraListSubStore: 'infraList',
