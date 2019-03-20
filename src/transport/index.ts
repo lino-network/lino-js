@@ -1,4 +1,5 @@
 import ByteBuffer from 'bytebuffer';
+import shajs from 'sha.js';
 import { ec as EC } from 'elliptic';
 import {
   decodePrivKey,
@@ -141,8 +142,11 @@ export class Transport implements ITransport {
 
     // signmsg
     var msgs = new Array<StdMsg>(stdMsg);
-    const signMsgHash = encodeSignMsg(msgs, this._chainId, seq);
+    const jsonStr = encodeSignMsg(msgs, this._chainId, seq);
     // sign to get signature
+    const signMsgHash = shajs('sha256')
+      .update(jsonStr)
+      .digest();
     const sig = key.sign(signMsgHash, { canonical: true });
     const sigDERHex = utils.encode(sig.r.toArray().concat(sig.s.toArray()), 'hex');
     // build tx
