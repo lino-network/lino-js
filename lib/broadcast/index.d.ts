@@ -299,7 +299,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the user
      * @param seq: the sequence number of the user for the next transaction
      */
-    grantPermission(username: string, authorized_app: string, validity_period_second: number, grant_level: Types.PERMISSION_TYPE, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    grantPermission(username: string, authorized_app: string, validity_period_second: number, grant_level: Types.PERMISSION_TYPE, amount: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * RevokePermission revokes the permission given previously to a app.
      * It composes RevokePermissionMsg and then broadcasts the transaction to blockchain.
@@ -309,7 +309,7 @@ export default class Broadcast {
      * @param privKeyHex: the private key of the user
      * @param seq: the sequence number of the user for the next transaction
      */
-    revokePermission(username: string, public_key: string, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
+    revokePermission(username: string, appName: string, permission: Types.PERMISSION_TYPE, privKeyHex: string, seq: number): Promise<ResultBroadcastTxCommit>;
     /**
      * preAuthorizationPermission grants pre authorization permission to
      * an authorized app with a certain period of time and amount.
@@ -610,10 +610,12 @@ export interface GrantPermissionMsg {
     authorized_app: string;
     validity_period_second: number;
     grant_level: Types.PERMISSION_TYPE;
+    amount: string;
 }
 export interface RevokePermissionMsg {
     username: string;
-    public_key: string;
+    revoke_from: string;
+    permission: Types.PERMISSION_TYPE;
 }
 export interface PreAuthorizationMsg {
     username: string;

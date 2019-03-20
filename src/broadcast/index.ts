@@ -639,6 +639,7 @@ export default class Broadcast {
     authorized_app: string,
     validity_period_second: number,
     grant_level: Types.PERMISSION_TYPE,
+    amount: string,
     privKeyHex: string,
     seq: number
   ) {
@@ -646,7 +647,8 @@ export default class Broadcast {
       username,
       authorized_app,
       validity_period_second,
-      grant_level
+      grant_level,
+      amount
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.GrantPermissionMsgType, privKeyHex, seq);
@@ -661,10 +663,17 @@ export default class Broadcast {
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the user for the next transaction
    */
-  revokePermission(username: string, public_key: string, privKeyHex: string, seq: number) {
+  revokePermission(
+    username: string,
+    appName: string,
+    permission: Types.PERMISSION_TYPE,
+    privKeyHex: string,
+    seq: number
+  ) {
     const msg: RevokePermissionMsg = {
       username: username,
-      public_key: decodePubKey(public_key)
+      revoke_from: appName,
+      permission: permission
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.RevokePermissionMsgType, privKeyHex, seq);
@@ -1223,11 +1232,13 @@ export interface GrantPermissionMsg {
   authorized_app: string;
   validity_period_second: number;
   grant_level: Types.PERMISSION_TYPE;
+  amount: string;
 }
 
 export interface RevokePermissionMsg {
   username: string;
-  public_key: string;
+  revoke_from: string;
+  permission: Types.PERMISSION_TYPE;
 }
 
 export interface PreAuthorizationMsg {

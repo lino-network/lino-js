@@ -43,17 +43,17 @@ import { LINO, UTILS } from 'lino-js';
 
 export const lino = new LINO({
   nodeUrl: 'https://fullnode.linovalidator.io/',
-  chainId: 'test-chain-BgWrtq',
+  chainId: 'lino-testnet',
 });
 
 export const linoUtils = UTILS;
 ```
 
-chanId and nodeUrl can be found remotely from https://linotracker.io/ 
+chanId and nodeUrl can be found remotely from https://tracker.lino.network/ 
 or locally from ~/.lino/config/genesis.json
 
 For example,  
-Remotely: chainID = "test-chain-BgWrtq" and nodeURL = "http://fullnode.linovalidator.io"  
+Remotely: chainID = "lino-testnet" and nodeURL = "https://fullnode.linovalidator.io"  
 Locally: chainID = "test-chain-q8lMWR" and nodeURL = "http://localhost:26657"  
 
 ### JSON-RPC
@@ -227,7 +227,7 @@ lino.query
 ```
 lino.query
     .getAllGrantPubKeys(username)
-    .then((v: ResultKV<string, GrantPubKey>[]) => {
+    .then(v => {
         console.log('getAllGrantPubKeys: ', v);
     });
 ```
@@ -235,7 +235,7 @@ lino.query
 ```
 lino.query
     .getAllRelationships(me)
-    .then((v: ResultKV<string, Relationship>[]) => {
+    .then(v => {
         console.log('getRelationship: ', v);
     }); 
 ```
@@ -243,7 +243,7 @@ lino.query
 ```
 lino.query
     .getAllFollowerMeta(username)
-    .then(((v: ResultKV<string, FollowerMeta>[])) => {
+    .then(v => {
         console.log('getAllFollowerMeta: ', v);
     });
 ```
@@ -251,7 +251,7 @@ lino.query
 ```
 lino.query
     .getAllFollowingMeta(username)
-    .then((v: ResultKV<string, FollowingMeta>[]) => {
+    .then(v => {
         console.log('getAllFollowingMeta: ', v);
     }); 
 ```
@@ -269,7 +269,7 @@ lino.query
 ```
 lino.query
     .getDevelopers()
-    .then((v: ResultKV<string, Developer>[]) => {
+    .then(v => {
         console.log('getDevelopers: ', v);
     }); 
 ```
@@ -443,7 +443,7 @@ lino.query
 ```
 lino.query
     .getAllPosts(author)
-    .then((v: ResultKV<string, PostInfo>[]) => {
+    .then(v => {
         console.log('getAllPosts: ', v);
     });
 ```
@@ -451,7 +451,7 @@ lino.query
 ```
 lino.query
     .getPostAllComments(author, postID)
-    .then((v: ResultKV<string, Comment>[]) => {
+    .then(v => {
         console.log('getPostAllComments: ', v);
     });
 ```
@@ -459,7 +459,7 @@ lino.query
 ```
 lino.query
     .getPostAllViews(author, postID)
-    .then((v: ResultKV<string, View>[]) => {
+    .then(v => {
         console.log('getPostAllViews: ', v);
     });
 ```
@@ -467,7 +467,7 @@ lino.query
 ```
 lino.query
     .getPostAllDonations(author, postID)
-    .then((v: ResultKV<string, Donations>[]) => {
+    .then(v => {
         console.log('getPostAllDonations: ', v);
     });
 ```
@@ -475,7 +475,7 @@ lino.query
 ```
 lino.query
     .getPostAllReportOrUpvotes(author, postID)
-    .then((v: ResultKV<string, ReportOrUpvote>[]) => {
+    .then(v => {
         console.log('getPostAllReportOrUpvotes: ', v);
     });
 ```
@@ -599,7 +599,7 @@ lino.query
 ```
 lino.query
     .getVoterAllDelegation(voter)
-    .then((v: ResultKV<string, Delegation>[]) => {
+    .then(v => {
         console.log('getVoterAllDelegation: ', v);
     });
 ```
@@ -607,7 +607,7 @@ lino.query
 ```
 lino.query
     .getDelegatorAllDelegation(delegatorName)
-    .then((v: ResultKV<string, Delegation>[]) => {
+    .then(v => {
         console.log('getDelegatorAllDelegation: ', v);
     });
 ```
@@ -631,7 +631,7 @@ lino.query
 ```
 lino.query
     .getProposalAllVotes(proposalID)
-    .then((v: ResultKV<string, Vote>[]) => {
+    .then(v => {
         console.log('getProposalAllVotes: ', v);
     });
 ```

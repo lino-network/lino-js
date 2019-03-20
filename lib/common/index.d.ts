@@ -171,5 +171,6 @@ export declare enum PERMISSION_TYPE {
     TransactionPermission = "2",
     ResetPermission = "3",
     GrantAppPermissio = "4",
-    PreAuthorizationPermission = "5"
+    PreAuthorizationPermission = "5",
+    AppAndPreAuthorizationPermission = "6"
 }

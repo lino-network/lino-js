@@ -11,9 +11,10 @@ import {
 } from './encoder';
 import { ResultBlock, ResultBroadcastTxCommit, Rpc } from './rpc';
 import Keys from '../query/keys';
+import utils from 'minimalistic-crypto-utils';
 
 export interface ITransport {
-  query<T = any>(key: string, storeName: string): Promise<T>;
+  query<T = any>(key: string[], storeName: string, subStoreName: string): Promise<T>;
   querySubspace<T = any>(
     subspace: string,
     storeName: string,
@@ -48,13 +49,16 @@ export class Transport implements ITransport {
     this._chainId = opt.chainId || 'test-chain-z0QKeL';
   }
 
-  query<T>(key: string, storeName: string): Promise<T> {
+  query<T>(keys: string[], storeName: string, subStoreName: string): Promise<T> {
     // transport: get path and key for ABCIQuery and return result
     // get transport's node and do ABCIQuery
     // rpc client do rpc call
     // check resp
-    const path = `/store/${storeName}/key`;
-    return this._rpc.abciQuery(path, key).then(result => {
+    var path = `/custom/${storeName}/${subStoreName}`;
+    keys.forEach(key => {
+      path += '/' + key;
+    });
+    return this._rpc.abciQuery(path, '').then(result => {
       if (!result.response || !result.response.value) {
         throw new Error('Query failed: Empty result');
       }
@@ -140,7 +144,7 @@ export class Transport implements ITransport {
     const signMsgHash = encodeSignMsg(msgs, this._chainId, seq);
     // sign to get signature
     const sig = key.sign(signMsgHash, { canonical: true });
-    const sigDERHex = sig.toDER('hex');
+    const sigDERHex = utils.encode(sig.r.toArray().concat(sig.s.toArray()), 'hex');
     // build tx
     const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq);
     // return broadcast

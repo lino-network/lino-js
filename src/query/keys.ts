@@ -13,7 +13,62 @@ namespace Keys {
     DeveloperKVStoreKey: 'developer',
     ParamKVStoreKey: 'param',
     ProposalKVStoreKey: 'proposal',
-    ReputationKVStoreKey: 'reputation'
+    ReputationKVStoreKey: 'reputation',
+
+    AccountInfoSubStore: 'info',
+    AccountBankSubStore: 'bank',
+    AccountMetaSubStore: 'meta',
+    AccountRewardSubStore: 'reward',
+    AccountPendingCoinDaySubStore: 'pendingCoinDay',
+    AccountGrantPubKeySubStore: 'grantPubKey',
+    AccountAllGrantPubKeys: 'allGrantPubKey',
+
+    DeveloperSubStore: 'dev',
+    DeveloperListSubStore: 'devList',
+
+    TimeEventListSubStore: 'timeEventList',
+    GlobalMetaSubStore: 'globalMeta',
+    InflationPoolSubStore: 'inflationPool',
+    ConsumptionMetaSubStore: 'consumptionMeta',
+    TpsSubStore: 'tps',
+    LinoStakeStatSubStore: 'linoStakeStat',
+    GlobalTimeSubStore: 'globalTime',
+
+    InfraProviderSubStore: 'infra',
+    InfraListSubStore: 'infraList',
+
+    PostInfoSubStore: 'info',
+    PostMetaSubStore: 'meta',
+    PostReportOrUpvoteSubStore: 'reportOrUpvote',
+    PostCommentSubStore: 'comment',
+    PostViewSubStore: 'view',
+
+    NextProposalIDSubStore: 'next',
+    OngoingProposalSubStore: 'ongoing',
+    ExpiredProposalSubStore: 'expired',
+
+    ValidatorSubStore: 'validator',
+    ValidatorListSubStore: 'valList',
+
+    DelegationSubStore: 'delegation',
+    VoterSubStore: 'voter',
+    VoteSubStore: 'vote',
+    ReferenceListSubStore: 'refList',
+    DelegateeSubStore: 'delegatee',
+
+    AllocationParamSubStore: 'allocation',
+    InfraInternalAllocationParamSubStore: 'infraInternal',
+    DeveloperParamSubStore: 'developer',
+    VoteParamSubStore: 'vote',
+    ProposalParamSubStore: 'proposal',
+    ValidatorParamSubStore: 'validator',
+    CoinDayParamSubStore: 'coinday',
+    BandwidthParamSubStore: 'bandwidth',
+    AccountParamSubStore: 'account',
+    PostParamSubStore: 'post',
+    ReputationParamSubStore: 'reputation',
+
+    ReputationSubStore: 'rep'
   };
   const _KEYS = {
     validatorSubstore: '00',
@@ -38,14 +93,9 @@ namespace Keys {
     accountInfoSubstore: '00',
     accountBankSubstore: '01',
     accountMetaSubstore: '02',
-    accountFollowerSubstore: '03',
-    accountFollowingSubstore: '04',
-    accountRewardSubstore: '05',
-    accountPendingCoinDayQueueSubstore: '06',
-    accountRelationshipSubstore: '07',
-    accountBalanceHistorySubstore: '08',
-    accountGrantPubKeySubstore: '09',
-    accountRewardHistorySubstore: '0a',
+    accountRewardSubstore: '03',
+    accountPendingCoinDayQueueSubstore: '04',
+    accountGrantPubKeySubstore: '05',
 
     postInfoSubStore: '00',
     postMetaSubStore: '01',
@@ -65,6 +115,7 @@ namespace Keys {
     bandwidthParamSubStore: '08',
     accountParamSubstore: '09',
     postParamSubStore: '0a',
+    reputationParamSubStore: '0b',
 
     timeEventListSubStore: '00',
     globalMetaSubStore: '01',
@@ -189,64 +240,14 @@ namespace Keys {
     return _KEYS.accountPendingCoinDayQueueSubstore.concat(accKeyHex);
   }
 
-  export function getFollowerPrefix(me: string): string {
-    const meHex = ByteBuffer.fromUTF8(me).toHex();
-    return _KEYS.accountFollowerSubstore.concat(meHex).concat(_KEYS.sep);
-  }
-
-  export function getFollowingPrefix(me: string): string {
-    const meHex = ByteBuffer.fromUTF8(me).toHex();
-    return _KEYS.accountFollowingSubstore.concat(meHex).concat(_KEYS.sep);
-  }
-
-  export function getFollowerKey(me: string, myFollower: string): string {
-    const myFollowerHex = ByteBuffer.fromUTF8(myFollower).toHex();
-    return getFollowerPrefix(me).concat(myFollowerHex);
-  }
-
-  export function getFollowingKey(me: string, myFollowing: string): string {
-    const myFollowingHex = ByteBuffer.fromUTF8(myFollowing).toHex();
-    return getFollowingPrefix(me).concat(myFollowingHex);
-  }
-
   export function getRewardKey(accKey: string): string {
     const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
     return _KEYS.accountRewardSubstore.concat(accKeyHex);
   }
 
-  export function getRewardHistoryPrefix(me: string): string {
-    const meHex = ByteBuffer.fromUTF8(me).toHex();
-    return _KEYS.accountRewardHistorySubstore.concat(meHex).concat(_KEYS.sep);
-  }
-
-  export function getRewardHistoryKey(me: string, bucketSlot: string): string {
-    const bucketSlotHex = ByteBuffer.fromUTF8(bucketSlot).toHex();
-    return getRewardHistoryPrefix(me).concat(bucketSlotHex);
-  }
-
-  export function getRelationshipPrefix(me: string): string {
-    const meHex = ByteBuffer.fromUTF8(me).toHex();
-    return _KEYS.accountRelationshipSubstore.concat(meHex).concat(_KEYS.sep);
-  }
-
-  export function getRelationshipKey(me: string, other: string): string {
-    const otherHex = ByteBuffer.fromUTF8(other).toHex();
-    return getRelationshipPrefix(me).concat(otherHex);
-  }
-
   export function getPendingCoinDayQueueKey(me: string): string {
     const meHex = ByteBuffer.fromUTF8(me).toHex();
-    return _KEYS.accountRelationshipSubstore.concat(meHex).concat(_KEYS.sep);
-  }
-
-  export function getBalanceHistoryPrefix(me: string): string {
-    const meHex = ByteBuffer.fromUTF8(me).toHex();
-    return _KEYS.accountBalanceHistorySubstore.concat(meHex).concat(_KEYS.sep);
-  }
-
-  export function getBalanceHistoryKey(me: string, bucketSlot: string): string {
-    const bucketSlotHex = ByteBuffer.fromUTF8(bucketSlot).toHex();
-    return getBalanceHistoryPrefix(me).concat(bucketSlotHex);
+    return _KEYS.accountPendingCoinDayQueueSubstore.concat(meHex).concat(_KEYS.sep);
   }
 
   export function getGrantPubKeyPrefix(me: string): string {
@@ -255,7 +256,7 @@ namespace Keys {
   }
 
   // TODO: should the pubKey be string or crypto.PubKey?
-  export function getgrantPubKeyKey(me: string, pubKey: string): string {
+  export function getGrantPubKeyKey(me: string, pubKey: string): string {
     const pubKeyHex = ByteBuffer.fromUTF8(pubKey).toHex();
     return getGrantPubKeyPrefix(me).concat(pubKeyHex);
   }
@@ -391,6 +392,10 @@ namespace Keys {
 
   export function getPostParamKey(): string {
     return _KEYS.postParamSubStore;
+  }
+
+  export function getReputationParamKey(): string {
+    return _KEYS.reputationParamSubStore;
   }
 
   export function getGlobalMetaKey(): string {

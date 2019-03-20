@@ -44,20 +44,6 @@ export default class Query {
      */
     getSeqNumber(username: string): Promise<number>;
     /**
-     * getAllBalanceHistory returns all transaction history related to
-     * a user's account balance, in reverse-chronological order.
-     *
-     * @param username
-     */
-    getAllBalanceHistory(username: string): Promise<BalanceHistory>;
-    /**
-     * getBalanceHistoryBundle returns all balance history in a certain bucket.
-     *
-     * @param username
-     * @param index
-     */
-    getBalanceHistoryBundle(username: string, index: number): Promise<BalanceHistory>;
-    /**
      * getAccountMeta returns account meta info for a specific user.
      *
      * @param username
@@ -86,15 +72,16 @@ export default class Query {
      * that has given to the pubKey.
      *
      * @param username
-     * @param pubKeyHex
+     * @param grantTo
+     * @param permission
      */
-    getGrantPubKey(username: string, pubKeyHex: string): Promise<GrantPubKey>;
+    getGrantPubKey(username: string, grantTo: string, permission: Types.PERMISSION_TYPE): Promise<GrantPubKey>;
     /**
      * getAllGrantPubKeys returns a list of all granted public keys of a user.
      *
      * @param username
      */
-    getAllGrantPubKeys(username: string): Promise<ResultKV<string, GrantPubKey>[]>;
+    getAllGrantPubKeys(username: string): Promise<GrantPubKey[]>;
     /**
      * getReward returns rewards of a user.
      *
@@ -102,64 +89,10 @@ export default class Query {
      */
     getReward(username: string): Promise<Reward>;
     /**
-     * getAllRewardHistory returns all reward history related to
-     * a user's posts reward, in reverse-chronological order.
-     *
-     * @param username
-     */
-    getAllRewardHistory(username: string): Promise<RewardHistory>;
-    /**
-     * getRewardHistoryBundle returns all reward history in a certain bucket.
-     *
-     * @param username
-     * @param index
-     */
-    getRewardHistoryBundle(username: string, index: number): Promise<RewardHistory>;
-    /**
-     * getRelationship returns the donation times of two users.
-     *
-     * @param me
-     * @param other
-     */
-    getRelationship(me: string, other: string): Promise<Relationship>;
-    /**
-     * getAllRelationships returns all donation relationship of a user.
-     *
-     * @param username
-     */
-    getAllRelationships(username: string): Promise<ResultKV<string, Relationship>[]>;
-    /**
-     * getFollowerMeta returns the follower meta of two users.
-     *
-     * @param me
-     * @param myFollower
-     */
-    getFollowerMeta(me: string, myFollower: string): Promise<FollowerMeta>;
-    /**
-     * getAllFollowerMeta returns all follower meta of a user.
-     *
-     * @param username
-     */
-    getAllFollowerMeta(username: string): Promise<ResultKV<string, FollowerMeta>[]>;
-    /**
-     * getFollowingMeta returns the following meta of two users.
-     *
-     * @param me
-     * @param myFollowing
-     */
-    getFollowingMeta(me: string, myFollowing: string): Promise<FollowingMeta>;
-    /**
-     * getAllFollowingMeta returns all following meta of a user.
-     *
-     * @param username
-     */
-    getAllFollowingMeta(username: string): Promise<ResultKV<string, FollowingMeta>[]>;
-    /**
      * getAllPosts returns all posts the author created.
      *
      * @param author
      */
-    getAllPosts(author: string): Promise<ResultKV<string, PostInfo>[]>;
     /**
      * getPostComment returns a specific comment of a post given the post permlink
      * and comment permlink.
@@ -168,14 +101,12 @@ export default class Query {
      * @param postID
      * @param commentPermlink
      */
-    getPostComment(author: string, postID: string, commentPermlink: string): Promise<Comment>;
     /**
      * getPostAllComments returns all comments that a post has.
      *
      * @param author
      * @param postID
      */
-    getPostAllComments(author: string, postID: string): Promise<ResultKV<string, Comment>[]>;
     /**
      * getPostView returns a view of a post performed by a user.
      *
@@ -183,14 +114,12 @@ export default class Query {
      * @param postID
      * @param viewUser
      */
-    getPostView(author: string, postID: string, viewUser: string): Promise<View>;
     /**
      * getPostAllViews returns all views that a post has.
      *
      * @param author
      * @param postID
      */
-    getPostAllViews(author: string, postID: string): Promise<ResultKV<string, View>[]>;
     /**
      * getPostDonations returns all donations that a user has given to a post.
      *
@@ -198,14 +127,12 @@ export default class Query {
      * @param postID
      * @param donateUser
      */
-    getPostDonations(author: string, postID: string, donateUser: string): Promise<Donations>;
     /**
      * getPostAllDonations returns all donations that a post has received.
      *
      * @param author
      * @param postID
      */
-    getPostAllDonations(author: string, postID: string): Promise<ResultKV<string, Donations>[]>;
     /**
      * getPostReportOrUpvote returns report or upvote that a user has given to a post.
      *
@@ -220,7 +147,6 @@ export default class Query {
      * @param author
      * @param postID
      */
-    getPostAllReportOrUpvotes(author: string, postID: string): Promise<ResultKV<string, ReportOrUpvote>[]>;
     /**
      * getPostInfo returns post info given a permlink(author#postID).
      *
@@ -248,13 +174,11 @@ export default class Query {
      *
      * @param voter
      */
-    getVoterAllDelegation(voter: string): Promise<ResultKV<string, Delegation>[]>;
     /**
      * getDelegatorAllDelegation returns all delegations that a delegator has delegated to.
      *
      * @param delegatorName
      */
-    getDelegatorAllDelegation(delegatorName: string): Promise<ResultKV<string, Delegation>[]>;
     /**
      * getVoter returns voter info given a voter name from blockchain.
      *
@@ -273,7 +197,6 @@ export default class Query {
      *
      * @param proposalID
      */
-    getProposalAllVotes(proposalID: string): Promise<ResultKV<string, Vote>[]>;
     /**
      * getDeveloper returns a specific developer info from blockchain
      *
@@ -324,7 +247,6 @@ export default class Query {
     /**
      * getEvaluateOfContentValueParam returns the EvaluateOfContentValueParam.
      */
-    getEvaluateOfContentValueParam(): Promise<Types.EvaluateOfContentValueParam>;
     /**
      * getGlobalAllocationParam returns the GlobalAllocationParam.
      */
@@ -392,15 +314,17 @@ export default class Query {
     /**
      * getAllEventAtAllTime returns all registered events.
      */
-    getAllEventAtAllTime(): Promise<any>;
     /**
      * getAllEventAtAllTimeAtCertainHeight returns all registered events at certain height.
      */
-    getAllEventAtAllTimeAtCertainHeight(height: any): Promise<any>;
     /**
      * getPostParam returns the PostParam.
      */
     getPostParam(): Promise<Types.PostParam>;
+    /**
+     * getReputationParam returns the ReputationParam.
+     */
+    getReputationParam(): Promise<Types.ReputationParam>;
     /**
      * getBlock returns a block at a certain height from blockchain.
      *
@@ -413,47 +337,28 @@ export default class Query {
      */
     getTxsInBlock(height: number): Promise<StdTx[]>;
     /**
-     * getBalanceHistoryFromTo returns a list of transaction history in the range of [from, to],
-     * that if to is larger than the number of tx, tx will be replaced by the larget tx number,
-     * related to a user's account balance, in reverse-chronological order.
+     * getUserReputationMeta returns a user's reputation meta.
      *
      * @param username: user name
-     * @param from: the start index of the balance history, inclusively
-     * @param to: the end index of the balance history, inclusively
      */
-    getBalanceHistoryFromTo(username: string, from: number, to: number): Promise<BalanceHistory>;
-    /**
-     * getRecentBalanceHistory returns a certain number of recent transaction history
-     * related to a user's account balance, in reverse-chronological order.
-     *
-     * @param username: user name
-     * @param numHistory: the number of balance history are wanted
-     */
-    getRecentBalanceHistory(username: string, numHistory: number): Promise<BalanceHistory>;
-    /**
-     * getRewardHistoryFromTo returns a list of reward history in the range of [from, to],
-     * that if to is larger than the number of tx, tx will be replaced by the largest tx number,
-     * related to a user's posts rewards, in reverse-chronological order.
-     *
-     * @param username: user name
-     * @param from: the start index of the reward history, inclusively
-     * @param to: the end index of the reward history, inclusively
-     */
-    getRewardHistoryFromTo(username: string, from: number, to: number): Promise<RewardHistory>;
-    /**
-     * getRecentRewardHistory returns a certain number of recent reward history
-     * related to a user's posts reward, in reverse-chronological order.
-     *
-     * @param username: user name
-     * @param numReward: the number of reward history are wanted
-     */
-    getRecentRewardHistory(username: string, numReward: number): Promise<RewardHistory>;
     /**
      * getUserReputationMeta returns a user's reputation meta.
      *
      * @param username: user name
      */
-    getUserReputationMeta(username: string): Promise<UserRepMeta>;
+    getUserReputation(username: string): Promise<Types.Coin>;
+    /**
+     * getPostReputationMeta returns a post's reputation meta.
+     *
+     * @param author: author of the post
+     * @param postID: post ID of the post
+     */
+    /**
+     * getPenaltyScore returns a post's penalty score.
+     *
+     * @param author: author of the post
+     * @param postID: post ID of the post
+     */
     isValidNat(num: number): boolean;
 }
 export interface PubKey {
@@ -593,7 +498,7 @@ export interface FrozenMoney {
     interval: string;
 }
 export interface GrantPubKey {
-    username: string;
+    grant_to: string;
     permission: Types.PERMISSION_TYPE;
     created_at: string;
     expires_at: string;
