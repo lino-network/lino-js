@@ -209,7 +209,7 @@ export function encodeSignMsg(stdMsg: StdMsg[], chainId: string, seq: number): a
   };
 
   const jsonStr = JSON.stringify(number2StringInObject(sortObject(stdSignMsg)));
-
+  console.log('sign byte:', jsonStr);
   const signMsgHash = shajs('sha256')
     .update(jsonStr)
     .digest();
