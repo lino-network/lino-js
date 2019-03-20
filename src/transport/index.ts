@@ -144,7 +144,7 @@ export class Transport implements ITransport {
     const signMsgHash = encodeSignMsg(msgs, this._chainId, seq);
     // sign to get signature
     const sig = key.sign(signMsgHash, { canonical: true });
-    const sigDERHex = utils.encode(sig.r.toArray().concat(sig.s.toArray()), 'hex');
+    const sigDERHex = utils.encode(sig.r.toArray('be', 32).concat(sig.s.toArray('be', 32)), 'hex');
     // build tx
     const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq);
     // return broadcast
