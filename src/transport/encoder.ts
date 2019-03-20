@@ -197,7 +197,7 @@ export function encodeMsg(msg: any): any {
   return encodedMsg;
 }
 
-export function encodeSignMsg(stdMsg: StdMsg[], chainId: string, seq: number): any {
+export function encodeSignMsg(stdMsg: StdMsg[], chainId: string, seq: number): string {
   const fee = getZeroFee();
   const stdSignMsg: StdSignMsg = {
     account_number: '0',
@@ -213,7 +213,7 @@ export function encodeSignMsg(stdMsg: StdMsg[], chainId: string, seq: number): a
   const signMsgHash = shajs('sha256')
     .update(jsonStr)
     .digest();
-  return signMsgHash;
+  return jsonStr;
 }
 
 export function convertMsg(msg: any): any {
