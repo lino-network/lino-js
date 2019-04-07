@@ -1138,7 +1138,7 @@ export interface GrantPubKey {
   permission: Types.PERMISSION_TYPE;
   created_at: string;
   expires_at: string;
-  amount: string;
+  amount: Types.Coin;
 }
 
 export interface AccountMeta {
