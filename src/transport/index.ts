@@ -9,7 +9,7 @@ import {
   encodeMsg,
   decodeObject
 } from './encoder';
-import { ResultBlock, ResultBroadcastTxCommit, Rpc } from './rpc';
+import { ResultBlock, ResultBroadcastTx, ResultBroadcastTxCommit, Rpc } from './rpc';
 import Keys from '../query/keys';
 import utils from 'minimalistic-crypto-utils';
 
@@ -27,6 +27,8 @@ export interface ITransport {
     privKeyHex: string,
     seq: number
   ): Promise<ResultBroadcastTxCommit>;
+  signAndBuild(msg: any, msgType: string, privKeyHex: string, seq: number): string;
+  broadcastRawMsgBytesSync(tx: string, seq: number): Promise<ResultBroadcastTx>;
 }
 
 export interface ITransportOptions {
@@ -164,6 +166,40 @@ export class Transport implements ITransport {
       }
       return result;
     });
+  }
+
+  broadcastRawMsgBytesSync(tx: string, seq: number): Promise<ResultBroadcastTx> {
+    return this._rpc.broadcastTxSync(tx).then(result => {
+      if (result.code !== 0) {
+        throw new BroadcastError(BroadCastErrorEnum.CheckTx, result.log, result.code);
+      }
+      return result;
+    });
+  }
+
+  // Does the private key decoding from hex, sign message,
+  // build transaction to broadcast
+  signAndBuild(msg: any, msgType: string, privKeyHex: string, seq: number): string {
+    // private key from hex
+    var ec = new EC('secp256k1');
+    var key = ec.keyFromPrivate(decodePrivKey(privKeyHex), 'hex');
+
+    // XXX: side effect on msg
+    convertMsg(msg);
+    const stdMsg: StdMsg = {
+      type: msgType,
+      value: encodeMsg(msg)
+    };
+
+    // signmsg
+    var msgs = new Array<StdMsg>(stdMsg);
+    const signMsgHash = encodeSignMsg(msgs, this._chainId, seq);
+    // sign to get signature
+    const sig = key.sign(signMsgHash, { canonical: true });
+    const sigDERHex = utils.encode(sig.r.toArray('be', 32).concat(sig.s.toArray('be', 32)), 'hex');
+    // build tx
+    const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq);
+    return tx;
   }
 }
 

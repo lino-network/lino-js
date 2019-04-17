@@ -292,3 +292,15 @@ export enum PERMISSION_TYPE {
   PreAuthorizationPermission = '5',
   AppAndPreAuthorizationPermission = '6'
 }
+
+export interface TxAndSequenceNumber {
+  username: string;
+  sequence: number;
+  tx: TxResult;
+}
+
+export interface TxResult {
+  hash: string;
+  height: number;
+  Code: number;
+}

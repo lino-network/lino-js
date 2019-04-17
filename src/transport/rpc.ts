@@ -23,6 +23,13 @@ export interface ResultBroadcastTxCommit {
   height: number;
 }
 
+export interface ResultBroadcastTx {
+  code: number;
+  data: any;
+  log: string;
+  hash: any;
+}
+
 export interface ResultBlock {
   block: Block;
   block_meta: BlockMeta;
@@ -94,6 +101,30 @@ export class Rpc {
       .then((data: JsonRpcResponse<ResultBroadcastTxCommit>) => {
         if (isJsonRpcSuccess(data)) {
           return data.result as ResultBroadcastTxCommit;
+        } else {
+          throw data.error;
+        }
+      });
+  }
+
+  broadcastTxSync(tx: string): Promise<ResultBroadcastTx> {
+    return fetch(this._nodeUrl, {
+      headers: { 'Content-Type': 'text/json' },
+      body: JSON.stringify({
+        jsonrpc: '2.0',
+        id: 'jsonrpc-client',
+        method: 'broadcast_tx_sync',
+        params: {
+          tx: tx
+        }
+      }),
+      method: 'POST',
+      mode: 'cors'
+    })
+      .then(response => response.json())
+      .then((data: JsonRpcResponse<ResultBroadcastTx>) => {
+        if (isJsonRpcSuccess(data)) {
+          return data.result as ResultBroadcastTx;
         } else {
           throw data.error;
         }

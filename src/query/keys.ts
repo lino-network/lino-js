@@ -22,6 +22,7 @@ namespace Keys {
     AccountPendingCoinDaySubStore: 'pendingCoinDay',
     AccountGrantPubKeySubStore: 'grantPubKey',
     AccountAllGrantPubKeys: 'allGrantPubKey',
+    AccountTxAndSequence: 'txAndSeq',
 
     DeveloperSubStore: 'dev',
     DeveloperListSubStore: 'devList',

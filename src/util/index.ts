@@ -56,7 +56,6 @@ export function signWithSha256(msg: any, privKeyHex: string): string {
     .digest();
   // sign to get signature
   const sig = key.sign(signByte, { canonical: true });
-  console.log('======>', utils.encode(sig.r.toArray().concat(sig.s.toArray()), 'hex'));
   const sigDERHex = utils.encode(sig.r.toArray().concat(sig.s.toArray()), 'hex');
   return sigDERHex;
 }

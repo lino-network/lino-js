@@ -861,6 +861,16 @@ export default class Query {
     );
   }
 
+  getTxAndSequence(username: string, hash: string): Promise<Types.TxAndSequenceNumber> {
+    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
+    const AccountTxAndSequence = Keys.KVSTOREKEYS.AccountTxAndSequence;
+    return this._transport.query<Types.TxAndSequenceNumber>(
+      [username, hash],
+      AccountKVStoreKey,
+      AccountTxAndSequence
+    );
+  }
+
   // block related
 
   /**

@@ -1,7 +1,7 @@
 import * as Types from '../common';
 import { ITransport } from '../transport';
 import { encodeObject, decodePubKey } from '../transport/encoder';
-import { ResultBroadcastTxCommit } from '../transport/rpc';
+import { ResultBroadcastTx, ResultBroadcastTxCommit } from '../transport/rpc';
 
 const InvalidSeqErrCode = 3;
 
@@ -28,6 +28,27 @@ export default class Broadcast {
    * @param seq: the sequence number of referrer for the next transaction
    */
   register(
+    referrer: string,
+    register_fee: string,
+    username: string,
+    resetPubKey: string,
+    transactionPubKeyHex: string,
+    appPubKeyHex: string,
+    referrerPrivKeyHex: string,
+    seq: number
+  ) {
+    const msg: RegisterMsg = {
+      referrer: referrer,
+      register_fee: register_fee,
+      new_username: username,
+      new_reset_public_key: decodePubKey(resetPubKey),
+      new_transaction_public_key: decodePubKey(transactionPubKeyHex),
+      new_app_public_key: decodePubKey(appPubKeyHex)
+    };
+    return this._broadcastTransaction(msg, _MSGTYPE.RegisterMsgType, referrerPrivKeyHex, seq);
+  }
+
+  makeRegister(
     referrer: string,
     register_fee: string,
     username: string,
@@ -76,38 +97,21 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.TransferMsgType, privKeyHex, seq);
   }
 
-  /**
-   * Follow creates a social relationship between follower and followee.
-   * It composes FollowMsg and then broadcasts the transaction to blockchain.
-   *
-   * @param follower: follower
-   * @param followee: followee
-   * @param privKeyHex: the private key of follower
-   * @param seq: the sequence number of follower for the next transaction
-   */
-  follow(follower: string, followee: string, privKeyHex: string, seq: number) {
-    const msg: FollowMsg = {
-      followee: followee,
-      follower: follower
+  makeTransferMsg(
+    sender: string,
+    receiver: string,
+    amount: string,
+    memo: string,
+    privKeyHex: string,
+    seq: number
+  ): string {
+    const msg: TransferMsg = {
+      amount: amount,
+      memo: memo,
+      receiver: receiver,
+      sender: sender
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.FollowMsgType, privKeyHex, seq);
-  }
-
-  /**
-   * Unfollow revokes the social relationship between follower and followee.
-   * It composes UnfollowMsg and then broadcasts the transaction to blockchain.
-   *
-   * @param follower: follower
-   * @param followee: followee
-   * @param privKeyHex: the private key of follower
-   * @param seq: the sequence number of follower for the next transaction
-   */
-  unfollow(follower: string, followee: string, privKeyHex: string, seq: number) {
-    const msg: UnfollowMsg = {
-      followee: followee,
-      follower: follower
-    };
-    return this._broadcastTransaction(msg, _MSGTYPE.UnfollowMsgType, privKeyHex, seq);
+    return this._transport.signAndBuild(msg, _MSGTYPE.TransferMsgType, privKeyHex, seq);
   }
 
   /**
@@ -125,6 +129,13 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ClaimMsgType, privKeyHex, seq);
   }
 
+  makeClaim(username: string, privKeyHex: string, seq: number) {
+    const msg: ClaimMsg = {
+      username
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.ClaimMsgType, privKeyHex, seq);
+  }
+
   /**
    * ClaimInterest claims interest of a certain user.
    * It composes ClaimInterestMsg and then broadcasts the transaction to blockchain.
@@ -138,6 +149,13 @@ export default class Broadcast {
       username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.ClaimInterestMsgType, privKeyHex, seq);
+  }
+
+  makeClaimInterest(username: string, privKeyHex: string, seq: number) {
+    const msg: ClaimInterestMsg = {
+      username
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.ClaimInterestMsgType, privKeyHex, seq);
   }
 
   /**
@@ -156,6 +174,14 @@ export default class Broadcast {
       username: username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.UpdateAccMsgType, privKeyHex, seq);
+  }
+
+  makeUpdateAccount(username: string, json_meta: string, privKeyHex: string, seq: number) {
+    const msg: UpdateAccountMsg = {
+      json_meta: json_meta,
+      username: username
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.UpdateAccMsgType, privKeyHex, seq);
   }
 
   /**
@@ -184,6 +210,23 @@ export default class Broadcast {
       new_app_public_key: decodePubKey(new_app_public_key)
     };
     return this._broadcastTransaction(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
+  }
+
+  makeRecover(
+    username: string,
+    new_reset_public_key: string,
+    new_transaction_public_key: string,
+    new_app_public_key: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: RecoverMsg = {
+      username: username,
+      new_reset_public_key: decodePubKey(new_reset_public_key),
+      new_transaction_public_key: decodePubKey(new_transaction_public_key),
+      new_app_public_key: decodePubKey(new_app_public_key)
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
   }
 
   // post related
@@ -247,6 +290,48 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.CreatePostMsgType, privKeyHex, seq);
   }
 
+  makePost(
+    author: string,
+    postID: string,
+    title: string,
+    content: string,
+    parentAuthor: string,
+    parentPostID: string,
+    sourceAuthor: string,
+    sourcePostID: string,
+    redistributionSplitRate: string,
+    links: Map<string, string>,
+    privKeyHex: string,
+    seq: number
+  ) {
+    let mLinks: Types.IDToURLMapping[] | null = null;
+    if (links != null) {
+      mLinks = [];
+      for (let entry of links.entries()) {
+        const mapping: Types.IDToURLMapping = {
+          identifier: entry[0],
+          url: entry[1]
+        };
+        mLinks.push(mapping);
+      }
+    }
+
+    const msg: CreatePostMsg = {
+      author: author,
+      content: content,
+      links: mLinks,
+      parent_author: parentAuthor,
+      parent_postID: parentPostID,
+      post_id: postID,
+      redistribution_split_rate: redistributionSplitRate,
+      source_author: sourceAuthor,
+      source_postID: sourcePostID,
+      title: title
+    };
+
+    return this._transport.signAndBuild(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
+  }
+
   /**
    * Donate adds a money donation to a post by a user.
    * It composes DonateMsg and then broadcasts the transaction to blockchain.
@@ -271,14 +356,35 @@ export default class Broadcast {
     seq: number
   ) {
     const msg: DonateMsg = {
+      username,
       amount,
       author,
-      from_app,
-      memo,
       post_id,
-      username
+      from_app,
+      memo
     };
     return this._broadcastTransaction(msg, _MSGTYPE.DonateMsgType, privKeyHex, seq);
+  }
+
+  makeDonate(
+    username: string,
+    author: string,
+    amount: string,
+    post_id: string,
+    from_app: string,
+    memo: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: DonateMsg = {
+      username,
+      amount,
+      author,
+      post_id,
+      from_app,
+      memo
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.DonateMsgType, privKeyHex, seq);
   }
 
   /**
@@ -309,6 +415,23 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ReportOrUpvoteMsgType, privKeyHex, seq);
   }
 
+  makeReportOrUpvote(
+    username: string,
+    author: string,
+    post_id: string,
+    is_report: boolean,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: ReportOrUpvoteMsg = {
+      author,
+      is_report,
+      post_id,
+      username
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.ReportOrUpvoteMsgType, privKeyHex, seq);
+  }
+
   /**
    * DeletePost deletes a post from the blockchain. It doesn't actually
    * remove the post from the blockchain, instead it sets IsDeleted to true
@@ -328,6 +451,14 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.DeletePostMsgType, privKeyHex, seq);
   }
 
+  makeDeletePost(author: string, post_id: string, privKeyHex: string, seq: number) {
+    const msg: DeletePostMsg = {
+      author,
+      post_id
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.DeletePostMsgType, privKeyHex, seq);
+  }
+
   /**
    * View increases the view count of a post by one.
    * It composes ViewMsg and then broadcasts the transaction to blockchain.
@@ -345,6 +476,15 @@ export default class Broadcast {
       username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.ViewMsgType, privKeyHex, seq);
+  }
+
+  makeView(username: string, author: string, post_id: string, privKeyHex: string, seq: number) {
+    const msg: ViewMsg = {
+      author,
+      post_id,
+      username
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.ViewMsgType, privKeyHex, seq);
   }
 
   /**
@@ -390,6 +530,36 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.UpdatePostMsgType, privKeyHex, seq);
   }
 
+  makeUpdatePost(
+    author: string,
+    title: string,
+    post_id: string,
+    content: string,
+    links: Map<string, string>,
+    privKeyHex: string,
+    seq: number
+  ) {
+    let mLinks: Types.IDToURLMapping[] | null = null;
+    if (links != null) {
+      mLinks = [];
+      for (let entry of links.entries()) {
+        const mapping: Types.IDToURLMapping = {
+          identifier: entry[0],
+          url: entry[1]
+        };
+        mLinks.push(mapping);
+      }
+    }
+
+    const msg: UpdatePostMsg = {
+      author: author,
+      content: content,
+      links: mLinks,
+      post_id: post_id,
+      title: title
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.UpdatePostMsgType, privKeyHex, seq);
+  }
   // validator related
 
   /**
@@ -422,6 +592,23 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ValDepositMsgType, privKeyHex, seq);
   }
 
+  makeValidatorDeposit(
+    username: string,
+    deposit: string,
+    validator_public_key: string,
+    link: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: ValidatorDepositMsg = {
+      deposit: deposit,
+      link: link,
+      username: username,
+      validator_public_key: decodePubKey(validator_public_key)
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.ValDepositMsgType, privKeyHex, seq);
+  }
+
   /**
    * ValidatorWithdraw withdraws part of LINO token from a validator's deposit,
    * while still keep being a validator.
@@ -440,6 +627,13 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ValWithdrawMsgType, privKeyHex, seq);
   }
 
+  makeValidatorWithdraw(username: string, amount: string, privKeyHex: string, seq: number) {
+    const msg: ValidatorWithdrawMsg = {
+      amount: amount,
+      username: username
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.ValWithdrawMsgType, privKeyHex, seq);
+  }
   /**
    * ValidatorRevoke revokes all deposited LINO token of a validator
    * so that the user will not be a validator anymore.
@@ -454,6 +648,13 @@ export default class Broadcast {
       username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.ValRevokeMsgType, privKeyHex, seq);
+  }
+
+  makeValidatorRevoke(username: string, privKeyHex: string, seq: number) {
+    const msg: ValidatorRevokeMsg = {
+      username
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.ValRevokeMsgType, privKeyHex, seq);
   }
 
   // vote related
@@ -476,6 +677,14 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.StakeInMsgType, privKeyHex, seq);
   }
 
+  makeStakeIn(username: string, deposit: string, privKeyHex: string, seq: number) {
+    const msg: StakeInMsg = {
+      deposit: deposit,
+      username: username
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.StakeInMsgType, privKeyHex, seq);
+  }
+
   /**
    * StakeOut withdraws part of LINO token from a voter's deposit,
    * while still keep being a voter.
@@ -492,6 +701,14 @@ export default class Broadcast {
       username: username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.StakeOutMsgType, privKeyHex, seq);
+  }
+
+  makeStakeOut(username: string, amount: string, privKeyHex: string, seq: number) {
+    const msg: StakeOutMsg = {
+      amount: amount,
+      username: username
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.StakeOutMsgType, privKeyHex, seq);
   }
 
   /**
@@ -513,6 +730,15 @@ export default class Broadcast {
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.DelegateMsgType, privKeyHex, seq);
+  }
+
+  makeDelegate(delegator: string, voter: string, amount: string, privKeyHex: string, seq: number) {
+    const msg: DelegateMsg = {
+      delegator,
+      voter,
+      amount
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.DelegateMsgType, privKeyHex, seq);
   }
 
   /**
@@ -542,6 +768,20 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.DelegateWithdrawMsgType, privKeyHex, seq);
   }
 
+  makeDelegatorWithdraw(
+    delegator: string,
+    voter: string,
+    amount: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: DelegatorWithdrawMsg = {
+      delegator,
+      voter,
+      amount
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.DelegateWithdrawMsgType, privKeyHex, seq);
+  }
   // developer related
 
   /**
@@ -576,6 +816,24 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.DevRegisterMsgType, privKeyHex, seq);
   }
 
+  makeDeveloperRegister(
+    username: string,
+    deposit: string,
+    website: string,
+    description: string,
+    app_meta_data: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: DeveloperRegisterMsg = {
+      app_meta_data,
+      deposit,
+      description,
+      username,
+      website
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.DevRegisterMsgType, privKeyHex, seq);
+  }
   /**
    * DeveloperUpdate updates a developer info on blockchain.
    * It composes DeveloperUpdateMsg and then broadcasts the transaction to blockchain.
@@ -605,6 +863,22 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.DevUpdateMsgType, privKeyHex, seq);
   }
 
+  makeDeveloperUpdate(
+    username: string,
+    website: string,
+    description: string,
+    app_meta_data: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: DeveloperUpdateMsg = {
+      username,
+      website,
+      description,
+      app_meta_data
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.DevUpdateMsgType, privKeyHex, seq);
+  }
   /**
    * DeveloperRevoke reovkes all deposited LINO token of a developer
    * so the user will not be a developer anymore.
@@ -622,6 +896,13 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.DevRevokeMsgType, privKeyHex, seq);
   }
 
+  makeDeveloperRevoke(username: string, privKeyHex: string, seq: number) {
+    const msg: DeveloperRevokeMsg = {
+      username
+    };
+
+    return this._transport.signAndBuild(msg, _MSGTYPE.DevRevokeMsgType, privKeyHex, seq);
+  }
   /**
    * GrantPermission grants a certain (e.g. App) permission to
    * an authorized app with a certain period of time.
@@ -654,6 +935,25 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.GrantPermissionMsgType, privKeyHex, seq);
   }
 
+  makeGrantPermission(
+    username: string,
+    authorized_app: string,
+    validity_period_second: number,
+    grant_level: Types.PERMISSION_TYPE,
+    amount: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: GrantPermissionMsg = {
+      username,
+      authorized_app,
+      validity_period_second,
+      grant_level,
+      amount
+    };
+
+    return this._transport.signAndBuild(msg, _MSGTYPE.DevRevokeMsgType, privKeyHex, seq);
+  }
   /**
    * RevokePermission revokes the permission given previously to a app.
    * It composes RevokePermissionMsg and then broadcasts the transaction to blockchain.
@@ -677,6 +977,22 @@ export default class Broadcast {
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.RevokePermissionMsgType, privKeyHex, seq);
+  }
+
+  makeRevokePermission(
+    username: string,
+    appName: string,
+    permission: Types.PERMISSION_TYPE,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: RevokePermissionMsg = {
+      username: username,
+      revoke_from: appName,
+      permission: permission
+    };
+
+    return this._transport.signAndBuild(msg, _MSGTYPE.RevokePermissionMsgType, privKeyHex, seq);
   }
 
   /**
@@ -709,6 +1025,24 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.PreAuthorizationMsgType, privKeyHex, seq);
   }
 
+  makePreAuthorizationPermission(
+    username: string,
+    authorized_app: string,
+    validity_period_second: number,
+    amount: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: PreAuthorizationMsg = {
+      username,
+      authorized_app,
+      validity_period_second,
+      amount
+    };
+
+    return this._transport.signAndBuild(msg, _MSGTYPE.PreAuthorizationMsgType, privKeyHex, seq);
+  }
+
   // infra related
 
   /**
@@ -727,6 +1061,15 @@ export default class Broadcast {
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ProviderReportMsgType, privKeyHex, seq);
+  }
+
+  makeProviderReport(username: string, usage: number, privKeyHex: string, seq: number) {
+    const msg: ProviderReportMsg = {
+      usage,
+      username
+    };
+
+    return this._transport.signAndBuild(msg, _MSGTYPE.ProviderReportMsgType, privKeyHex, seq);
   }
 
   // proposal related
@@ -755,6 +1098,20 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.VoteProposalMsgType, privKeyHex, seq);
   }
 
+  makeVoteProposal(
+    voter: string,
+    proposal_id: string,
+    result: boolean,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: VoteProposalMsg = {
+      proposal_id,
+      result,
+      voter
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.VoteProposalMsgType, privKeyHex, seq);
+  }
   /**
    * ChangeGlobalAllocationParam changes GlobalAllocationParam with new value.
    * It composes ChangeGlobalAllocationParamMsg and then broadcasts the transaction to blockchain.
@@ -779,6 +1136,26 @@ export default class Broadcast {
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeGlobalAllocationMsgType, privKeyHex, seq);
+  }
+
+  makeChangeGlobalAllocationParam(
+    creator: string,
+    parameter: Types.GlobalAllocationParam,
+    reason: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: ChangeGlobalAllocationParamMsg = {
+      creator,
+      parameter: encodeObject(parameter),
+      reason
+    };
+    return this._transport.signAndBuild(
+      msg,
+      _MSGTYPE.ChangeGlobalAllocationMsgType,
+      privKeyHex,
+      seq
+    );
   }
 
   /**
@@ -1061,6 +1438,7 @@ export default class Broadcast {
 
     return this._broadcastTransaction(msg, _MSGTYPE.UpgradeProtocolMsgType, privKeyHex, seq);
   }
+
   _broadcastTransaction(
     msg: object,
     msgType: string,
@@ -1068,6 +1446,10 @@ export default class Broadcast {
     seq: number
   ): Promise<ResultBroadcastTxCommit> {
     return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, seq);
+  }
+
+  broadcastRawMsgBytesSync(tx: string, seq: number): Promise<ResultBroadcastTx> {
+    return this._transport.broadcastRawMsgBytesSync(tx, seq);
   }
 }
 
