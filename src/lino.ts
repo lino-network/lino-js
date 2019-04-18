@@ -2,7 +2,13 @@ import * as Types from './common';
 import Broadcast from './broadcast';
 import ByteBuffer from 'bytebuffer';
 import Query from './query';
-import { ITransport, ITransportOptions, Transport } from './transport';
+import {
+  BroadcastError,
+  BroadCastErrorEnum,
+  ITransport,
+  ITransportOptions,
+  Transport
+} from './transport';
 import { ResultBroadcastTx, ResultBroadcastTxCommit } from './transport/rpc';
 import shajs from 'sha.js';
 import utils from 'minimalistic-crypto-utils';
@@ -12,12 +18,16 @@ export class LINO {
   private _transport: ITransport;
   private _query: Query;
   private _broadcast: Broadcast;
+  private _timeout: number;
+  private _maxApptempts: number;
 
   constructor(opt: ITransportOptions) {
     this._options = opt;
     this._transport = new Transport(opt);
     this._query = new Query(this._transport);
     this._broadcast = new Broadcast(this._transport);
+    this._timeout = opt.timeout || 3000;
+    this._maxApptempts = opt.maxAttempts || 5;
   }
 
   get query(): Query {
@@ -465,9 +475,8 @@ export class LINO {
     signer: string,
     makeTxFunc: Function
   ): Promise<ResultBroadcastTxCommit> {
-    var attemptsLeft = 5;
     var lastHash = '';
-    for (let i = 0; i < attemptsLeft; i++) {
+    for (let i = 0; i < this._maxApptempts; i++) {
       var res = await this._safeBroadcastAndWatch(signer, lastHash, makeTxFunc);
       if (res[0] === null) {
         lastHash = res[1];
@@ -489,6 +498,9 @@ export class LINO {
     } else {
       var txSeq = await this._query.getTxAndSequence(username, lasthash);
       if (txSeq.tx != null) {
+        if (txSeq.tx.code !== 0) {
+          throw new BroadcastError(BroadCastErrorEnum.DeliverTx, txSeq.tx.log, txSeq.tx.code);
+        }
         var response: ResultBroadcastTxCommit = {
           check_tx: null,
           deliver_tx: null,
@@ -508,19 +520,27 @@ export class LINO {
     try {
       res = await this._broadcast.broadcastRawMsgBytesSync(tx, seq);
     } catch (err) {
-      if (err.message.indexOf('tx already exists in cache') > 0) {
+      if (err.code && err.code === 155 && err.message) {
+        var seqstr = err.message.substring(err.message.indexOf('seq:') + 4);
+        var correctSeq = Number(seqstr.substring(0, seqstr.indexOf('"')));
+        if (correctSeq === seq) {
+          throw new BroadcastError(BroadCastErrorEnum.CheckTx, err.message, err.code);
+        }
+        return [null, ''];
+      } else if (err.data && err.data.indexOf('Tx already exists in cache') >= 0) {
         // do nothing
-      } else if (err.message.indexOf('signature verification failed')) {
-        return [null, txHash];
       } else {
         return [null, ''];
       }
     }
 
-    await delay(3000);
+    await delay(this._timeout);
 
     var txSeq = await this._query.getTxAndSequence(username, txHash);
     if (txSeq.tx != null) {
+      if (txSeq.tx.code !== 0) {
+        throw new BroadcastError(BroadCastErrorEnum.DeliverTx, txSeq.tx.log, txSeq.tx.code);
+      }
       var response: ResultBroadcastTxCommit = {
         check_tx: null,
         deliver_tx: null,

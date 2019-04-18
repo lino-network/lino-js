@@ -302,5 +302,6 @@ export interface TxAndSequenceNumber {
 export interface TxResult {
   hash: string;
   height: number;
-  Code: number;
+  code: number;
+  log: string;
 }

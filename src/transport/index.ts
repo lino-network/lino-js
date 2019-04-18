@@ -34,6 +34,8 @@ export interface ITransport {
 export interface ITransportOptions {
   nodeUrl: string;
   chainId?: string;
+  timeout?: number;
+  maxAttempts?: number;
 }
 
 export interface ResultKV<K, V> {
@@ -48,7 +50,7 @@ export class Transport implements ITransport {
 
   constructor(opt: ITransportOptions) {
     this._rpc = new Rpc(opt.nodeUrl); // create with nodeUrl
-    this._chainId = opt.chainId || 'test-chain-z0QKeL';
+    this._chainId = opt.chainId || 'lino-testnet-upgrade1';
   }
 
   query<T>(keys: string[], storeName: string, subStoreName: string): Promise<T> {
