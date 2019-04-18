@@ -329,7 +329,7 @@ export default class Broadcast {
       title: title
     };
 
-    return this._transport.signAndBuild(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
+    return this._transport.signAndBuild(msg, _MSGTYPE.CreatePostMsgType, privKeyHex, seq);
   }
 
   /**
@@ -952,7 +952,7 @@ export default class Broadcast {
       amount
     };
 
-    return this._transport.signAndBuild(msg, _MSGTYPE.DevRevokeMsgType, privKeyHex, seq);
+    return this._transport.signAndBuild(msg, _MSGTYPE.GrantPermissionMsgType, privKeyHex, seq);
   }
   /**
    * RevokePermission revokes the permission given previously to a app.
