@@ -484,7 +484,7 @@ export class LINO {
         return res[0] as ResultBroadcastTxCommit;
       }
     }
-    throw new Error('Transaction Timeout');
+    throw new BroadcastError(BroadCastErrorEnum.CheckTx, 'transaction timeout', -1);
   }
 
   async _safeBroadcastAndWatch(
@@ -520,15 +520,19 @@ export class LINO {
     try {
       res = await this._broadcast.broadcastRawMsgBytesSync(tx, seq);
     } catch (err) {
-      if (err.code && err.code === 155 && err.message) {
-        var seqstr = err.message.substring(err.message.indexOf('seq:') + 4);
-        var correctSeq = Number(seqstr.substring(0, seqstr.indexOf('"')));
-        if (correctSeq === seq) {
-          throw new BroadcastError(BroadCastErrorEnum.CheckTx, err.message, err.code);
-        }
-        return [null, ''];
-      } else if (err.data && err.data.indexOf('Tx already exists in cache') >= 0) {
+      if (err.data && err.data.indexOf('Tx already exists in cache') >= 0) {
         // do nothing
+      } else if (err.code && err.message) {
+        if (err.code === 155) {
+          var seqstr = err.message.substring(err.message.indexOf('seq:') + 4);
+          var correctSeq = Number(seqstr.substring(0, seqstr.indexOf('"')));
+          if (correctSeq === seq) {
+            throw new BroadcastError(BroadCastErrorEnum.CheckTx, err.message, err.code);
+          } else {
+            return [null, txHash];
+          }
+        }
+        throw new BroadcastError(BroadCastErrorEnum.CheckTx, err.message, err.code);
       } else {
         return [null, ''];
       }
