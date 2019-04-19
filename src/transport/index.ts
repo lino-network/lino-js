@@ -36,6 +36,8 @@ export interface ITransportOptions {
   chainId?: string;
   timeout?: number;
   maxAttempts?: number;
+  txConfirmInterval?: number;
+  txConfirmMaxAttempts?: number;
 }
 
 export interface ResultKV<K, V> {

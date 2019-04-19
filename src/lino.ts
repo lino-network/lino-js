@@ -19,7 +19,9 @@ export class LINO {
   private _query: Query;
   private _broadcast: Broadcast;
   private _timeout: number;
-  private _maxApptempts: number;
+  private _maxAttempts: number;
+  private _txConfirmInterval: number;
+  private _txConfirmMaxAttempts: number;
 
   constructor(opt: ITransportOptions) {
     this._options = opt;
@@ -27,7 +29,9 @@ export class LINO {
     this._query = new Query(this._transport);
     this._broadcast = new Broadcast(this._transport);
     this._timeout = opt.timeout || 3000;
-    this._maxApptempts = opt.maxAttempts || 5;
+    this._maxAttempts = opt.maxAttempts || 5;
+    this._txConfirmInterval = opt.txConfirmInterval || 1000;
+    this._txConfirmMaxAttempts = opt.txConfirmMaxAttempts || 5;
   }
 
   get query(): Query {
@@ -476,7 +480,7 @@ export class LINO {
     makeTxFunc: Function
   ): Promise<ResultBroadcastTxCommit> {
     var lastHash = '';
-    for (let i = 0; i < this._maxApptempts; i++) {
+    for (let i = 0; i < this._maxAttempts; i++) {
       var res = await this._safeBroadcastAndWatch(signer, lastHash, makeTxFunc);
       if (res[0] === null) {
         lastHash = res[1];
@@ -538,20 +542,22 @@ export class LINO {
       }
     }
 
-    await delay(this._timeout);
+    for (let i = 0; i < this._txConfirmMaxAttempts; i++) {
+      await delay(this._txConfirmInterval);
 
-    var txSeq = await this._query.getTxAndSequence(username, txHash);
-    if (txSeq.tx != null) {
-      if (txSeq.tx.code !== 0) {
-        throw new BroadcastError(BroadCastErrorEnum.DeliverTx, txSeq.tx.log, txSeq.tx.code);
+      var txSeq = await this._query.getTxAndSequence(username, txHash);
+      if (txSeq.tx != null) {
+        if (txSeq.tx.code !== 0) {
+          throw new BroadcastError(BroadCastErrorEnum.DeliverTx, txSeq.tx.log, txSeq.tx.code);
+        }
+        var response: ResultBroadcastTxCommit = {
+          check_tx: null,
+          deliver_tx: null,
+          height: txSeq.tx.height,
+          hash: txSeq.tx.hash
+        };
+        return [response, txHash];
       }
-      var response: ResultBroadcastTxCommit = {
-        check_tx: null,
-        deliver_tx: null,
-        height: txSeq.tx.height,
-        hash: txSeq.tx.hash
-      };
-      return [response, txHash];
     }
     return [null, txHash];
   }
