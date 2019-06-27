@@ -26,7 +26,7 @@
 
 ## Install
 ```
-npm install lino-js --save
+npm install lino-js
 ```
 
 ## Browser
@@ -49,7 +49,7 @@ export const lino = new LINO({
 export const linoUtils = UTILS;
 ```
 
-chanId and nodeUrl can be found remotely from https://tracker.lino.network/ 
+chainId and nodeUrl can be found remotely from https://tracker.lino.network/ 
 or locally from ~/.lino/config/genesis.json
 
 For example,  
