@@ -239,6 +239,12 @@ export interface ConsumptionMeta {
   consumption_freezing_period: string;
 }
 
+export interface InflationPool {
+  infra_inflation_pool: Coin;
+  developer_inflation_pool: Coin;
+  validator_inflation_pool: Coin;
+}
+
 export interface GlobalTime {
   chain_start_time: string;
   last_block_time: string;
@@ -290,7 +296,8 @@ export enum PERMISSION_TYPE {
   ResetPermission = '3',
   GrantAppPermissio = '4',
   PreAuthorizationPermission = '5',
-  AppAndPreAuthorizationPermission = '6'
+  AppAndPreAuthorizationPermission = '6',
+  AppOrAffiliatedPermission = '7'
 }
 
 export interface TxAndSequenceNumber {

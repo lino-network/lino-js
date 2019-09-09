@@ -34,6 +34,7 @@ namespace Keys {
     TpsSubStore: 'tps',
     LinoStakeStatSubStore: 'linoStakeStat',
     GlobalTimeSubStore: 'globalTime',
+    InflationSubStore: 'inflation',
 
     InfraProviderSubStore: 'infra',
     InfraListSubStore: 'infraList',

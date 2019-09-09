@@ -56,8 +56,8 @@ export interface InternalPrivKey {
 }
 
 // return a new zero fee object
-export const getZeroFee: () => StdFee = () => ({
-  amount: [],
+export const getFee: (maxFeeInCoin: number) => StdFee = maxFeeInCoin => ({
+  amount: [{ denom: 'linocoin', amount: maxFeeInCoin }],
   gas: '0'
 });
 
@@ -71,7 +71,8 @@ export function encodeTx(
   msgs: StdMsg[],
   rawPubKey: string,
   rawSigDER: string,
-  seq: number
+  seq: number,
+  maxFeeInCoin: number
 ): string {
   const stdSig: StdSignature = {
     pub_key: convertToInternalPubKey(rawPubKey, _TYPE.PubKeySecp256k1),
@@ -83,7 +84,7 @@ export function encodeTx(
   const stdTx: StdTx = {
     msg: msgs,
     signatures: [stdSig],
-    fee: getZeroFee()
+    fee: getFee(maxFeeInCoin)
   };
 
   const authStdTx: StdMsg = {
@@ -197,12 +198,16 @@ export function encodeMsg(msg: any): any {
   return encodedMsg;
 }
 
-export function encodeSignMsg(stdMsg: StdMsg[], chainId: string, seq: number): any {
-  const fee = getZeroFee();
+export function encodeSignMsg(
+  stdMsg: StdMsg[],
+  chainId: string,
+  seq: number,
+  maxFeeInCoin: number
+): any {
   const stdSignMsg: StdSignMsg = {
     account_number: '0',
     chain_id: chainId,
-    fee: fee,
+    fee: getFee(maxFeeInCoin),
     memo: '',
     msgs: stdMsg,
     sequence: String(seq)

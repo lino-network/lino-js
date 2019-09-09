@@ -115,28 +115,6 @@ export default class Broadcast {
   }
 
   /**
-   * Claim claims rewards of a certain user.
-   * It composes ClaimMsg and then broadcasts the transaction to blockchain.
-   *
-   * @param username: the user who wants to claim reward
-   * @param privKeyHex: the private key of username
-   * @param seq: the sequence number of user for the next transaction
-   */
-  claim(username: string, privKeyHex: string, seq: number) {
-    const msg: ClaimMsg = {
-      username
-    };
-    return this._broadcastTransaction(msg, _MSGTYPE.ClaimMsgType, privKeyHex, seq);
-  }
-
-  makeClaim(username: string, privKeyHex: string, seq: number) {
-    const msg: ClaimMsg = {
-      username
-    };
-    return this._transport.signAndBuild(msg, _MSGTYPE.ClaimMsgType, privKeyHex, seq);
-  }
-
-  /**
    * ClaimInterest claims interest of a certain user.
    * It composes ClaimInterestMsg and then broadcasts the transaction to blockchain.
    *
@@ -239,12 +217,7 @@ export default class Broadcast {
    * @param postID: the post id of the new post
    * @param title: the title of the new post
    * @param content: the content of the new post
-   * @param parentAuthor: if this is a comment, parentAuthor is the author of post that this comment is added to
-   * @param parentPostID: if this is a comment, parentPostID is the id of post that this comment is added to
-   * @param sourceAuthor: if this is a re-post, sourceAuthor should be the original post author
-   * @param sourcePostID: if this is a re-post, sourcePostID should be the original post id
-   * @param redistributionSplitRate: how much percentage the source post wants to split for re-post
-   * @param links: the links of the new post
+   * @param createdBy: the content of the new post
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of user for the next transaction
    */
@@ -253,38 +226,17 @@ export default class Broadcast {
     postID: string,
     title: string,
     content: string,
-    parentAuthor: string,
-    parentPostID: string,
-    sourceAuthor: string,
-    sourcePostID: string,
-    redistributionSplitRate: string,
-    links: Map<string, string>,
+    createdBy: string,
     privKeyHex: string,
     seq: number
   ) {
-    let mLinks: Types.IDToURLMapping[] | null = null;
-    if (links != null) {
-      mLinks = [];
-      for (let entry of links.entries()) {
-        const mapping: Types.IDToURLMapping = {
-          identifier: entry[0],
-          url: entry[1]
-        };
-        mLinks.push(mapping);
-      }
-    }
-
     const msg: CreatePostMsg = {
       author: author,
       content: content,
-      links: mLinks,
-      parent_author: parentAuthor,
-      parent_postID: parentPostID,
       post_id: postID,
-      redistribution_split_rate: redistributionSplitRate,
-      source_author: sourceAuthor,
-      source_postID: sourcePostID,
-      title: title
+      title: title,
+      created_by: createdBy,
+      preauth: true
     };
 
     return this._broadcastTransaction(msg, _MSGTYPE.CreatePostMsgType, privKeyHex, seq);
@@ -295,38 +247,17 @@ export default class Broadcast {
     postID: string,
     title: string,
     content: string,
-    parentAuthor: string,
-    parentPostID: string,
-    sourceAuthor: string,
-    sourcePostID: string,
-    redistributionSplitRate: string,
-    links: Map<string, string>,
+    createdBy: string,
     privKeyHex: string,
     seq: number
   ) {
-    let mLinks: Types.IDToURLMapping[] | null = null;
-    if (links != null) {
-      mLinks = [];
-      for (let entry of links.entries()) {
-        const mapping: Types.IDToURLMapping = {
-          identifier: entry[0],
-          url: entry[1]
-        };
-        mLinks.push(mapping);
-      }
-    }
-
     const msg: CreatePostMsg = {
       author: author,
       content: content,
-      links: mLinks,
-      parent_author: parentAuthor,
-      parent_postID: parentPostID,
       post_id: postID,
-      redistribution_split_rate: redistributionSplitRate,
-      source_author: sourceAuthor,
-      source_postID: sourcePostID,
-      title: title
+      created_by: createdBy,
+      title: title,
+      preauth: true
     };
 
     return this._transport.signAndBuild(msg, _MSGTYPE.CreatePostMsgType, privKeyHex, seq);
@@ -388,51 +319,6 @@ export default class Broadcast {
   }
 
   /**
-   * ReportOrUpvote adds a report or upvote action to a post.
-   * It composes ReportOrUpvoteMsg and then broadcasts the transaction to blockchain.
-   *
-   * @param username: the user who report or upvote the post
-   * @param author: the author of the post
-   * @param post_id: the id of the post
-   * @param is_report: indicates this is a report if set to true
-   * @param privKeyHex: the private key of the user
-   * @param seq: the sequence number of the user for the next transaction
-   */
-  reportOrUpvote(
-    username: string,
-    author: string,
-    post_id: string,
-    is_report: boolean,
-    privKeyHex: string,
-    seq: number
-  ) {
-    const msg: ReportOrUpvoteMsg = {
-      author,
-      is_report,
-      post_id,
-      username
-    };
-    return this._broadcastTransaction(msg, _MSGTYPE.ReportOrUpvoteMsgType, privKeyHex, seq);
-  }
-
-  makeReportOrUpvote(
-    username: string,
-    author: string,
-    post_id: string,
-    is_report: boolean,
-    privKeyHex: string,
-    seq: number
-  ) {
-    const msg: ReportOrUpvoteMsg = {
-      author,
-      is_report,
-      post_id,
-      username
-    };
-    return this._transport.signAndBuild(msg, _MSGTYPE.ReportOrUpvoteMsgType, privKeyHex, seq);
-  }
-
-  /**
    * DeletePost deletes a post from the blockchain. It doesn't actually
    * remove the post from the blockchain, instead it sets IsDeleted to true
    * and clears all the other data.
@@ -460,34 +346,6 @@ export default class Broadcast {
   }
 
   /**
-   * View increases the view count of a post by one.
-   * It composes ViewMsg and then broadcasts the transaction to blockchain.
-   *
-   * @param username: the user who view the post
-   * @param author: The author of the post
-   * @param post_id: the id of the post
-   * @param privKeyHex: the private key of the user
-   * @param seq: the sequence number of the author for the next transaction
-   */
-  view(username: string, author: string, post_id: string, privKeyHex: string, seq: number) {
-    const msg: ViewMsg = {
-      author,
-      post_id,
-      username
-    };
-    return this._broadcastTransaction(msg, _MSGTYPE.ViewMsgType, privKeyHex, seq);
-  }
-
-  makeView(username: string, author: string, post_id: string, privKeyHex: string, seq: number) {
-    const msg: ViewMsg = {
-      author,
-      post_id,
-      username
-    };
-    return this._transport.signAndBuild(msg, _MSGTYPE.ViewMsgType, privKeyHex, seq);
-  }
-
-  /**
    * UpdatePost updates post info with new data.
    * It composes UpdatePostMsg and then broadcasts the transaction to blockchain.
    *
@@ -508,22 +366,9 @@ export default class Broadcast {
     privKeyHex: string,
     seq: number
   ) {
-    let mLinks: Types.IDToURLMapping[] | null = null;
-    if (links != null) {
-      mLinks = [];
-      for (let entry of links.entries()) {
-        const mapping: Types.IDToURLMapping = {
-          identifier: entry[0],
-          url: entry[1]
-        };
-        mLinks.push(mapping);
-      }
-    }
-
     const msg: UpdatePostMsg = {
       author: author,
       content: content,
-      links: mLinks,
       post_id: post_id,
       title: title
     };
@@ -539,22 +384,9 @@ export default class Broadcast {
     privKeyHex: string,
     seq: number
   ) {
-    let mLinks: Types.IDToURLMapping[] | null = null;
-    if (links != null) {
-      mLinks = [];
-      for (let entry of links.entries()) {
-        const mapping: Types.IDToURLMapping = {
-          identifier: entry[0],
-          url: entry[1]
-        };
-        mLinks.push(mapping);
-      }
-    }
-
     const msg: UpdatePostMsg = {
       author: author,
       content: content,
-      links: mLinks,
       post_id: post_id,
       title: title
     };
@@ -789,7 +621,6 @@ export default class Broadcast {
    * It composes DeveloperRegisterMsg and then broadcasts the transaction to blockchain.
    *
    * @param username: the user who wants to become a developer
-   * @param deposit: the amount of money the user wants to deposit
    * @param website: developer's website
    * @param description: developer's description
    * @param app_meta_data: developer's app meta data
@@ -798,7 +629,6 @@ export default class Broadcast {
    */
   developerRegister(
     username: string,
-    deposit: string,
     website: string,
     description: string,
     app_meta_data: string,
@@ -807,7 +637,6 @@ export default class Broadcast {
   ) {
     const msg: DeveloperRegisterMsg = {
       app_meta_data,
-      deposit,
       description,
       username,
       website
@@ -818,7 +647,6 @@ export default class Broadcast {
 
   makeDeveloperRegister(
     username: string,
-    deposit: string,
     website: string,
     description: string,
     app_meta_data: string,
@@ -827,7 +655,6 @@ export default class Broadcast {
   ) {
     const msg: DeveloperRegisterMsg = {
       app_meta_data,
-      deposit,
       description,
       username,
       website
@@ -993,54 +820,6 @@ export default class Broadcast {
     };
 
     return this._transport.signAndBuild(msg, _MSGTYPE.RevokePermissionMsgType, privKeyHex, seq);
-  }
-
-  /**
-   * preAuthorizationPermission grants pre authorization permission to
-   * an authorized app with a certain period of time and amount.
-   * It composes GrantPermissionMsg and then broadcasts the transaction to blockchain.
-   *
-   * @param username: the user who grants the permission
-   * @param authorized_app: the authenticated app of the developer
-   * @param validity_period_second: how long does this app is valid
-   * @param grant_level: the permission level granted
-   * @param privKeyHex: the private key of the user
-   * @param seq: the sequence number of the user for the next transaction
-   */
-  preAuthorizationPermission(
-    username: string,
-    authorized_app: string,
-    validity_period_second: number,
-    amount: string,
-    privKeyHex: string,
-    seq: number
-  ) {
-    const msg: PreAuthorizationMsg = {
-      username,
-      authorized_app,
-      validity_period_second,
-      amount
-    };
-
-    return this._broadcastTransaction(msg, _MSGTYPE.PreAuthorizationMsgType, privKeyHex, seq);
-  }
-
-  makePreAuthorizationPermission(
-    username: string,
-    authorized_app: string,
-    validity_period_second: number,
-    amount: string,
-    privKeyHex: string,
-    seq: number
-  ) {
-    const msg: PreAuthorizationMsg = {
-      username,
-      authorized_app,
-      validity_period_second,
-      amount
-    };
-
-    return this._transport.signAndBuild(msg, _MSGTYPE.PreAuthorizationMsgType, privKeyHex, seq);
   }
 
   // infra related
@@ -1470,20 +1249,6 @@ export interface TransferMsg {
   memo: string;
 }
 
-export interface FollowMsg {
-  follower: string;
-  followee: string;
-}
-
-export interface UnfollowMsg {
-  follower: string;
-  followee: string;
-}
-
-export interface ClaimMsg {
-  username: string;
-}
-
 export interface ClaimInterestMsg {
   username: string;
 }
@@ -1506,12 +1271,8 @@ export interface CreatePostMsg {
   post_id: string;
   title: string;
   content: string;
-  parent_author: string;
-  parent_postID: string;
-  source_author: string;
-  source_postID: string;
-  links: Types.IDToURLMapping[] | null;
-  redistribution_split_rate: string;
+  created_by: string;
+  preauth: boolean;
 }
 
 export interface DonateMsg {
@@ -1523,20 +1284,7 @@ export interface DonateMsg {
   memo: string;
 }
 
-export interface ReportOrUpvoteMsg {
-  username: string;
-  author: string;
-  post_id: string;
-  is_report: boolean;
-}
-
 export interface DeletePostMsg {
-  author: string;
-  post_id: string;
-}
-
-export interface ViewMsg {
-  username: string;
   author: string;
   post_id: string;
 }
@@ -1546,7 +1294,6 @@ export interface UpdatePostMsg {
   post_id: string;
   title: string;
   content: string;
-  links: Types.IDToURLMapping[] | null;
 }
 
 // validator related messages
@@ -1592,7 +1339,6 @@ export interface DelegatorWithdrawMsg {
 // developer related messages
 export interface DeveloperRegisterMsg {
   username: string;
-  deposit: string;
   website: string;
   description: string;
   app_meta_data: string;
@@ -1623,11 +1369,28 @@ export interface RevokePermissionMsg {
   permission: Types.PERMISSION_TYPE;
 }
 
-export interface PreAuthorizationMsg {
+export interface IDAIssueMsg {
   username: string;
-  authorized_app: string;
-  validity_period_second: number;
+  ida_price: number;
+}
+
+export interface IDAMintMsg {
+  username: string;
   amount: string;
+}
+
+export interface IDATransferMsg {
+  app: string;
+  from: string;
+  to: string;
+  signer: string;
+  amount: string;
+}
+
+export interface IDAAuthorizeMsg {
+  username: string;
+  app: string;
+  activate: boolean;
 }
 
 // infra related messages

@@ -15,17 +15,17 @@ export default class Query {
   }
 
   /**
-   * doesUsernameMatchResetPrivKey returns true if a user has the reset private key.
+   * doesUsernameMatchSigningPrivKey returns true if a user has the signing private key.
    *
    * @param username
-   * @param resetPrivKeyHex
+   * @param signingPrivKeyHex
    */
-  doesUsernameMatchResetPrivKey(username: string, resetPrivKeyHex: string): Promise<boolean> {
+  doesUsernameMatchSigningPrivKey(username: string, signingPrivKeyHex: string): Promise<boolean> {
     return this.getAccountInfo(username).then(info => {
       if (info == null) {
         return false;
       }
-      return Util.isKeyMatch(resetPrivKeyHex, info.reset_key);
+      return Util.isKeyMatch(signingPrivKeyHex, info.signing_key);
     });
   }
 
@@ -43,22 +43,6 @@ export default class Query {
       return Util.isKeyMatch(txPrivKeyHex, info.transaction_key);
     });
   }
-
-  /**
-   * doesUsernameMatchAppPrivKey returns true if a user has the app private key.
-   *
-   * @param username
-   * @param appPrivKeyHex
-   */
-  doesUsernameMatchAppPrivKey(username: string, appPrivKeyHex: string): Promise<boolean> {
-    return this.getAccountInfo(username).then(info => {
-      if (info == null) {
-        return false;
-      }
-      return Util.isKeyMatch(appPrivKeyHex, info.app_key);
-    });
-  }
-
   // validator related query
 
   /**
@@ -90,8 +74,8 @@ export default class Query {
    * @param username
    */
   getSeqNumber(username: string): Promise<number> {
-    return this.getAccountMeta(username).then(meta => {
-      return +meta.sequence;
+    return this.getAccountBank(username).then(bank => {
+      return +bank.sequence;
     });
   }
 
@@ -104,21 +88,6 @@ export default class Query {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     const AccountMetaSubStore = Keys.KVSTOREKEYS.AccountMetaSubStore;
     return this._transport.query<AccountMeta>([username], AccountKVStoreKey, AccountMetaSubStore);
-  }
-
-  /**
-   * getPendingCoinDayQueue returns account pending coin day for a specific user.
-   *
-   * @param username
-   */
-  getPendingCoinDayQueue(username: string): Promise<PendingCoinDayQueue> {
-    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    const AccountPendingCoinDaySubStore = Keys.KVSTOREKEYS.AccountPendingCoinDaySubStore;
-    return this._transport.query<PendingCoinDayQueue>(
-      [username],
-      AccountKVStoreKey,
-      AccountPendingCoinDaySubStore
-    );
   }
 
   /**
@@ -146,9 +115,9 @@ export default class Query {
         const res: AccountInfo = {
           username: info.username,
           created_at: info.created_at,
-          reset_key: encodePubKey(convertToRawPubKey(info.reset_key)),
+          signing_key: encodePubKey(convertToRawPubKey(info.signing_key)),
           transaction_key: encodePubKey(convertToRawPubKey(info.transaction_key)),
-          app_key: encodePubKey(convertToRawPubKey(info.app_key))
+          address: info.address
         };
         return res;
       });
@@ -714,6 +683,19 @@ export default class Query {
   }
 
   /**
+   * getInflationPool returns the inflation pool.
+   */
+  getInflationPool(): Promise<Types.InflationPool> {
+    const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
+    const ConsumptionMetaSubStore = Keys.KVSTOREKEYS.ConsumptionMetaSubStore;
+    return this._transport.query<Types.InflationPool>(
+      [],
+      GlobalKVStoreKey,
+      ConsumptionMetaSubStore
+    );
+  }
+
+  /**
    * getGlobalTime returns the time in global storage.
    */
   getGlobalTime(): Promise<Types.GlobalTime> {
@@ -1110,30 +1092,17 @@ export interface InfraProviderList {
 export interface AccountInfo {
   username: string;
   created_at: string;
-  reset_key: string;
+  signing_key: string;
   transaction_key: string;
-  app_key: string;
+  address: string;
 }
 
 export interface AccountBank {
   saving: Types.Coin;
-  coin_day: Types.Coin;
+  sequence: string;
+  username: string;
+  public_key: string;
   frozen_money_list: FrozenMoney[];
-  number_of_transaction: string;
-  number_of_reward: string;
-}
-
-export interface PendingCoinDayQueue {
-  last_updated_at: string;
-  total_coin_day: Types.Rat;
-  total_coin: Types.Coin;
-  pending_coin_days: PendingCoinDay[];
-}
-
-export interface PendingCoinDay {
-  end_time: string;
-  start_time: string;
-  coin: Types.Coin;
 }
 
 export interface FrozenMoney {
@@ -1291,7 +1260,7 @@ const _TIMECONST = {
 interface AccountInfoInternal {
   username: string;
   created_at: string;
-  reset_key: InternalPubKey;
+  signing_key: InternalPubKey;
   transaction_key: InternalPubKey;
-  app_key: InternalPubKey;
+  address: string;
 }

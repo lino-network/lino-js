@@ -103,13 +103,6 @@ export class LINO {
     });
   }
 
-  async claimContentBonus(username: string, privKeyHex: string): Promise<ResultBroadcastTxCommit> {
-    var that = this;
-    return this._guaranteeBroadcast(username, function(seq) {
-      return that._broadcast.makeClaim(username, privKeyHex, seq);
-    });
-  }
-
   async claimInterest(username: string, privKeyHex: string): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(username, function(seq) {
@@ -153,50 +146,12 @@ export class LINO {
     postID: string,
     title: string,
     content: string,
-    parentAuthor: string,
-    parentPostID: string,
-    sourceAuthor: string,
-    sourcePostID: string,
-    redistributionSplitRate: string,
-    links: Map<string, string>,
+    createdBy: string,
     privKeyHex: string
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(author, function(seq) {
-      return that._broadcast.makePost(
-        author,
-        postID,
-        title,
-        content,
-        parentAuthor,
-        parentPostID,
-        sourceAuthor,
-        sourcePostID,
-        redistributionSplitRate,
-        links,
-        privKeyHex,
-        seq
-      );
-    });
-  }
-
-  async reportOrUpvote(
-    username: string,
-    author: string,
-    post_id: string,
-    is_report: boolean,
-    privKeyHex: string
-  ): Promise<ResultBroadcastTxCommit> {
-    var that = this;
-    return this._guaranteeBroadcast(username, function(seq) {
-      return that._broadcast.makeReportOrUpvote(
-        username,
-        author,
-        post_id,
-        is_report,
-        privKeyHex,
-        seq
-      );
+      return that._broadcast.makePost(author, postID, title, content, createdBy, privKeyHex, seq);
     });
   }
 
@@ -208,18 +163,6 @@ export class LINO {
     var that = this;
     return this._guaranteeBroadcast(author, function(seq) {
       return that._broadcast.makeDeletePost(author, post_id, privKeyHex, seq);
-    });
-  }
-
-  async view(
-    username: string,
-    author: string,
-    post_id: string,
-    privKeyHex: string
-  ): Promise<ResultBroadcastTxCommit> {
-    var that = this;
-    return this._guaranteeBroadcast(username, function(seq) {
-      return that._broadcast.makeView(username, author, post_id, privKeyHex, seq);
     });
   }
 
@@ -331,7 +274,6 @@ export class LINO {
 
   async developerRegister(
     username: string,
-    deposit: string,
     website: string,
     description: string,
     app_meta_data: string,
@@ -341,7 +283,6 @@ export class LINO {
     return this._guaranteeBroadcast(username, function(seq) {
       return that._broadcast.makeDeveloperRegister(
         username,
-        deposit,
         website,
         description,
         app_meta_data,
@@ -409,26 +350,6 @@ export class LINO {
     var that = this;
     return this._guaranteeBroadcast(username, function(seq) {
       return that._broadcast.makeRevokePermission(username, appName, permission, privKeyHex, seq);
-    });
-  }
-
-  async preAuthorizationPermission(
-    username: string,
-    authorized_app: string,
-    validity_period_second: number,
-    amount: string,
-    privKeyHex: string
-  ): Promise<ResultBroadcastTxCommit> {
-    var that = this;
-    return this._guaranteeBroadcast(username, function(seq) {
-      return that._broadcast.makePreAuthorizationPermission(
-        username,
-        authorized_app,
-        validity_period_second,
-        amount,
-        privKeyHex,
-        seq
-      );
     });
   }
 

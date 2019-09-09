@@ -147,12 +147,12 @@ export class Transport implements ITransport {
 
     // signmsg
     var msgs = new Array<StdMsg>(stdMsg);
-    const signMsgHash = encodeSignMsg(msgs, this._chainId, seq);
+    const signMsgHash = encodeSignMsg(msgs, this._chainId, seq, 100000);
     // sign to get signature
     const sig = key.sign(signMsgHash, { canonical: true });
     const sigDERHex = utils.encode(sig.r.toArray('be', 32).concat(sig.s.toArray('be', 32)), 'hex');
     // build tx
-    const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq);
+    const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq, 100000);
     // return broadcast
     return this._rpc.broadcastTxCommit(tx).then(result => {
       if (result.check_tx.code !== undefined) {
@@ -197,12 +197,12 @@ export class Transport implements ITransport {
 
     // signmsg
     var msgs = new Array<StdMsg>(stdMsg);
-    const signMsgHash = encodeSignMsg(msgs, this._chainId, seq);
+    const signMsgHash = encodeSignMsg(msgs, this._chainId, seq, 100000);
     // sign to get signature
     const sig = key.sign(signMsgHash, { canonical: true });
     const sigDERHex = utils.encode(sig.r.toArray('be', 32).concat(sig.s.toArray('be', 32)), 'hex');
     // build tx
-    const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq);
+    const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq, 100000);
     return tx;
   }
 }
