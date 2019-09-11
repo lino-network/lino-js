@@ -38,6 +38,7 @@ export interface ITransportOptions {
   maxAttempts?: number;
   txConfirmInterval?: number;
   txConfirmMaxAttempts?: number;
+  maxFeeInCoin?: number;
 }
 
 export interface ResultKV<K, V> {
@@ -49,10 +50,12 @@ export class Transport implements ITransport {
   // This will be hard coded later
   private _chainId: string;
   private _rpc: Rpc;
+  private _maxFeeInCoin: number;
 
   constructor(opt: ITransportOptions) {
     this._rpc = new Rpc(opt.nodeUrl); // create with nodeUrl
     this._chainId = opt.chainId || 'lino-testnet-upgrade1';
+    this._maxFeeInCoin = opt.maxFeeInCoin || 10000;
   }
 
   query<T>(keys: string[], storeName: string, subStoreName: string): Promise<T> {
@@ -197,12 +200,12 @@ export class Transport implements ITransport {
 
     // signmsg
     var msgs = new Array<StdMsg>(stdMsg);
-    const signMsgHash = encodeSignMsg(msgs, this._chainId, seq, 100000);
+    const signMsgHash = encodeSignMsg(msgs, this._chainId, seq, this._maxFeeInCoin);
     // sign to get signature
     const sig = key.sign(signMsgHash, { canonical: true });
     const sigDERHex = utils.encode(sig.r.toArray('be', 32).concat(sig.s.toArray('be', 32)), 'hex');
     // build tx
-    const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq, 100000);
+    const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq, this._maxFeeInCoin);
     return tx;
   }
 }

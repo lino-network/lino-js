@@ -173,39 +173,39 @@ export default class Broadcast {
    * @param privKeyHex: the old private key of user
    * @param seq: the sequence number of user for the next transaction
    */
-  recover(
-    username: string,
-    new_reset_public_key: string,
-    new_transaction_public_key: string,
-    new_app_public_key: string,
-    privKeyHex: string,
-    seq: number
-  ) {
-    const msg: RecoverMsg = {
-      username: username,
-      new_reset_public_key: decodePubKey(new_reset_public_key),
-      new_transaction_public_key: decodePubKey(new_transaction_public_key),
-      new_app_public_key: decodePubKey(new_app_public_key)
-    };
-    return this._broadcastTransaction(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
-  }
+  // recover(
+  //   username: string,
+  //   new_reset_public_key: string,
+  //   new_transaction_public_key: string,
+  //   new_app_public_key: string,
+  //   privKeyHex: string,
+  //   seq: number
+  // ) {
+  //   const msg: RecoverMsg = {
+  //     username: username,
+  //     new_reset_public_key: decodePubKey(new_reset_public_key),
+  //     new_transaction_public_key: decodePubKey(new_transaction_public_key),
+  //     new_app_public_key: decodePubKey(new_app_public_key)
+  //   };
+  //   return this._broadcastTransaction(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
+  // }
 
-  makeRecover(
-    username: string,
-    new_reset_public_key: string,
-    new_transaction_public_key: string,
-    new_app_public_key: string,
-    privKeyHex: string,
-    seq: number
-  ) {
-    const msg: RecoverMsg = {
-      username: username,
-      new_reset_public_key: decodePubKey(new_reset_public_key),
-      new_transaction_public_key: decodePubKey(new_transaction_public_key),
-      new_app_public_key: decodePubKey(new_app_public_key)
-    };
-    return this._transport.signAndBuild(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
-  }
+  // makeRecover(
+  //   username: string,
+  //   new_reset_public_key: string,
+  //   new_transaction_public_key: string,
+  //   new_app_public_key: string,
+  //   privKeyHex: string,
+  //   seq: number
+  // ) {
+  //   const msg: RecoverMsg = {
+  //     username: username,
+  //     new_reset_public_key: decodePubKey(new_reset_public_key),
+  //     new_transaction_public_key: decodePubKey(new_transaction_public_key),
+  //     new_app_public_key: decodePubKey(new_app_public_key)
+  //   };
+  //   return this._transport.signAndBuild(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
+  // }
 
   // post related
 
