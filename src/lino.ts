@@ -121,26 +121,6 @@ export class LINO {
     });
   }
 
-  async recover(
-    username: string,
-    new_reset_public_key: string,
-    new_transaction_public_key: string,
-    new_app_public_key: string,
-    privKeyHex: string
-  ): Promise<ResultBroadcastTxCommit> {
-    var that = this;
-    return this._guaranteeBroadcast(username, function(seq) {
-      return that._broadcast.makeRecover(
-        username,
-        new_reset_public_key,
-        new_transaction_public_key,
-        new_app_public_key,
-        privKeyHex,
-        seq
-      );
-    });
-  }
-
   async createPost(
     author: string,
     postID: string,
