@@ -23,6 +23,10 @@
         * [Developer](#broadcast-developer)  
         * [Infra](#broadcast-infra)  
         * [Proposal](#broadcast-proposal)  
+    * [Utils](#utils)  
+        * [Sign](#utils-sign)  
+        * [Verify](#utils-verify)  
+        * [Generate](#utils-generate)  
 
 ## Install
 ```
@@ -53,7 +57,7 @@ chainId and nodeUrl can be found remotely from https://tracker.lino.network/
 or locally from ~/.lino/config/genesis.json
 
 For example,  
-Remotely: chainID = "lino-testnet" and nodeURL = "https://fullnode.linovalidator.io"  
+Remotely: chainID = "lino-stg-upgrade7" and nodeURL = "https://fullnode.lino.network/"  
 Locally: chainID = "test-chain-q8lMWR" and nodeURL = "http://localhost:26657"  
 
 ### JSON-RPC
@@ -1429,4 +1433,9 @@ lino.query
                 console.log('upgradeProtocol: ', v);
             });
     });
+```
+### Utils
+#### Sign
+```
+lino.UTILS.signWithSha256(msg, privHex);
 ```
