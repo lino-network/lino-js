@@ -24,9 +24,9 @@
         * [Infra](#broadcast-infra)  
         * [Proposal](#broadcast-proposal)  
     * [Utils](#utils)  
-        * [Sign](#utils-sign)  
-        * [Verify](#utils-verify)  
-        * [Generate](#utils-generate)  
+        * [Sign](#sign)  
+        * [Verify](#verify)  
+        * [Generate](#generate)  
 
 ## Install
 ```
@@ -1438,4 +1438,8 @@ lino.query
 #### Sign
 ```
 lino.UTILS.signWithSha256(msg, privHex);
+```
+#### Verify
+```
+lino.UTILS.verifyWithSha256(msg, pubKey, signature);
 ```
