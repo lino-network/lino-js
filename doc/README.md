@@ -1443,3 +1443,8 @@ lino.UTILS.signWithSha256(msg, privHex);
 ```
 lino.UTILS.verifyWithSha256(msg, pubKey, signature);
 ```
+#### Generate
+```
+const testPrivKey = lino.UTILS.genPrivKeyHex();
+const testPubKey = lino.UTILS.pubKeyFromPrivate(testPrivKey);
+```
