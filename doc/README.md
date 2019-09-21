@@ -550,15 +550,17 @@ linoClient
 ##### Register A New User
 ```
 lino.broadcast
-    .transfer(
-        sender,
-        receiver,
-        amount,
-        memo,
+    .register(
+        referrer,
+        register_fee,
+        username,
+        reset_pub_key,
+        tx_pub_key,
+        app_pub_key,
         privKeyHex
     )
     .then(v => {
-        console.log('transfer: ', v);
+        console.log('register: ', v);
     });
 ```
 ##### Transfer LINO Between two users

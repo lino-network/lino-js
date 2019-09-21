@@ -29,7 +29,7 @@ export default class Broadcast {
    */
   register(
     referrer: string,
-    register_fee: string,
+    registerFee: string,
     username: string,
     resetPubKey: string,
     transactionPubKeyHex: string,
@@ -39,7 +39,7 @@ export default class Broadcast {
   ) {
     const msg: RegisterMsg = {
       referrer: referrer,
-      register_fee: register_fee,
+      register_fee: registerFee,
       new_username: username,
       new_reset_public_key: decodePubKey(resetPubKey),
       new_transaction_public_key: decodePubKey(transactionPubKeyHex),

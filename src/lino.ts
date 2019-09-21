@@ -81,7 +81,7 @@ export class LINO {
 
   async register(
     referrer: string,
-    register_fee: string,
+    registerFee: string,
     username: string,
     resetPubKey: string,
     transactionPubKeyHex: string,
@@ -92,7 +92,7 @@ export class LINO {
     return this._guaranteeBroadcast(referrer, function(seq) {
       return that._broadcast.makeRegister(
         referrer,
-        register_fee,
+        registerFee,
         username,
         resetPubKey,
         transactionPubKeyHex,
