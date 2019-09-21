@@ -431,6 +431,14 @@ lino.query
         console.log('getTxsInBlock: ', v);
     }); 
 ```
+##### Get Tx By Hash
+```
+lino.query
+    .getTx(hash)
+    .then(v => {
+        console.log('getTx: ', v);
+    }); 
+```
 ##### Get Blockchain Status (last block height, last block time, etc)
 ```
 lino.query
