@@ -227,7 +227,6 @@ export class Rpc {
       .then(response => response.json())
       .then((data: JsonRpcResponse<ResultTx>) => {
         if (isJsonRpcSuccess(data)) {
-          console.log(data);
           let res: ResultTx = {
             hash: data.result.hash,
             tx_result: data.result.tx_result,
