@@ -1041,3 +1041,20 @@ lino.UTILS.verifyWithSha256(msg, pubKey, signature);
 const testPrivKey = lino.UTILS.genPrivKeyHex();
 const testPubKey = lino.UTILS.pubKeyFromPrivate(testPrivKey);
 ```
+
+### Build Offchain Msg
+```
+var tp = new Transport({
+    nodeUrl: 'https://fullnode.lino.network:443/',
+    chainId: 'lino-testnet-upgrade2'
+});
+var broadcast = new Broadcast(tp);
+var msg = broadcast.makeTransferMsg(
+    sender,
+    receiver,
+    amount,
+    memo,
+    priv,
+    seq
+)
+```

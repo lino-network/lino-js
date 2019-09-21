@@ -66,7 +66,7 @@ export default class Broadcast {
       new_transaction_public_key: decodePubKey(transactionPubKeyHex),
       new_app_public_key: decodePubKey(appPubKeyHex)
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.RegisterMsgType, referrerPrivKeyHex, seq);
+    return this._transport.signAndBuild(msg, _MSGTYPE.RegisterMsgType, referrerPrivKeyHex, seq);
   }
 
   /**
