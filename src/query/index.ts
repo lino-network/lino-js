@@ -3,7 +3,7 @@ import * as Types from '../common';
 import { ITransport, GetKeyBy, ResultKV } from '../transport';
 import { decodePubKey } from '../transport/encoder';
 import { InternalPubKey, StdTx, convertToRawPubKey, encodePubKey } from '../transport/encoder';
-import { ResultBlock } from '../transport/rpc';
+import { ResultBlock, ResultStatus, ResultTx } from '../transport/rpc';
 import * as Util from '../util/index';
 import Keys from './keys';
 
@@ -99,6 +99,21 @@ export default class Query {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     const AccountBankSubStore = Keys.KVSTOREKEYS.AccountBankSubStore;
     return this._transport.query<AccountBank>([username], AccountKVStoreKey, AccountBankSubStore);
+  }
+
+  /**
+   * getAccountBankByAddress returns account bank info for a specific user.
+   *
+   * @param address
+   */
+  getAccountBankByAddress(address: string): Promise<AccountBank> {
+    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
+    const AccountBankByAddressSubStore = Keys.KVSTOREKEYS.AccountBankByAddressSubStore;
+    return this._transport.query<AccountBank>(
+      [address],
+      AccountKVStoreKey,
+      AccountBankByAddressSubStore
+    );
   }
 
   /**
@@ -862,6 +877,24 @@ export default class Query {
    */
   getBlock(height: number): Promise<ResultBlock> {
     return this._transport.block(height);
+  }
+
+  /**
+   * getStatus returns a status from blockchain.
+   *
+   * @param height
+   */
+  getStatus(): Promise<ResultStatus> {
+    return this._transport.status();
+  }
+
+  /**
+   * getTx returns a Tx from blockchain by transaction hash.
+   *
+   * @param hash
+   */
+  getTx(hash: string): Promise<ResultTx> {
+    return this._transport.tx(hash);
   }
 
   /**

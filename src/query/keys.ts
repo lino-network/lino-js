@@ -17,6 +17,7 @@ namespace Keys {
 
     AccountInfoSubStore: 'info',
     AccountBankSubStore: 'bank',
+    AccountBankByAddressSubStore: 'bankByAddr',
     AccountMetaSubStore: 'meta',
     AccountRewardSubStore: 'reward',
     AccountPendingCoinDaySubStore: 'pendingCoinDay',

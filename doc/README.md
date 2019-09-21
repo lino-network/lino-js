@@ -2,7 +2,7 @@
 * [Install](#install)  
 * [Browser](#browser)  
     * [Config](#config)
-    * [JSON RPC](#json-rpc)
+    * [RPC](#rpc)
 * [API](#api)  
     * [Query](#query)  
         * [Account](#account)  
@@ -15,7 +15,8 @@
         * [Block](#block)  
         * [Validator](#validator)  
         * [Vote](#vote)  
-    * [Broadcast](#broadcast)  
+    * [Broadcast](#broadcast)
+        * [Synchronizing and Analyzing the Successful Transfers](#synchronizing-and-analyzing-the-successful-transfers)
         * [Account](#broadcast-account)  
         * [Post](#broadcast-post)  
         * [Validator](#broadcast-validator)  
@@ -46,22 +47,21 @@ xxxxx
 import { LINO, UTILS } from 'lino-js';
 
 export const lino = new LINO({
-  nodeUrl: 'https://fullnode.linovalidator.io/',
-  chainId: 'lino-testnet',
+  nodeUrl: 'https://fullnode.lino.network:443/',
+  chainId: 'lino-testnet-upgrade2',
 });
 
 export const linoUtils = UTILS;
 ```
 
-chainId and nodeUrl can be found remotely from https://tracker.lino.network/ 
-or locally from ~/.lino/config/genesis.json
+chainId can be found remotely from https://tracker.lino.network/ or locally from ~/.lino/config/genesis.json
 
 For example,  
-Remotely: chainID = "lino-stg-upgrade7" and nodeURL = "https://fullnode.lino.network/"  
+Remotely: chainID = "lino-testnet-upgrade2" and nodeURL = "https://fullnode.lino.network/"
 Locally: chainID = "test-chain-q8lMWR" and nodeURL = "http://localhost:26657"  
 
-### JSON-RPC
-xxxxx
+### RPC
+To query node information directly from a fullnode one can access fullnode's 26657 (http) or 443 (https) port. For example to query testnet blockchain status one can access https://fullnode.lino.network/ and check all available queries.
 
 ## API
 
@@ -75,14 +75,6 @@ lino.query
         console.log('getAccountInfo: ', v);
     }); 
 ```
-##### Check Does Username Match Reset Private Key
-```
-lino.query
-    .doesUsernameMatchResetPrivKey(username, resetPrivKeyHex)
-    .then(v => {
-        console.log('doesUsernameMatchResetPrivKey: ', v);
-    }); 
-```
 ##### Check Does Username Match Transaction Private Key
 ```
 lino.query
@@ -91,12 +83,12 @@ lino.query
         console.log('doesUsernameMatchTxPrivKey: ', v);
     }); 
 ```
-##### Check Does Username Match App Private Key
+##### Check Does Username Match Signing Private Key
 ```
 lino.query
-    .doesUsernameMatchAppPrivKey(username, appPrivKeyHex)
+    .doesUsernameMatchSigningPrivKey(username, signingPrivKeyHex)
     .then(v => {
-        console.log('doesUsernameMatchAppPrivKey: ', v);
+        console.log('doesUsernameMatchSigningPrivKey: ', v);
     }); 
 ```
 ##### Get AccountBank
@@ -105,6 +97,14 @@ lino.query
     .getAccountBank(username)
     .then(v => {
         console.log('getAccountBank: ', v);
+    }); 
+```
+##### Get AccountBank By Address
+```
+lino.query
+    .getAccountBankByAddress(address)
+    .then(v => {
+        console.log('getAccountBankByAddress: ', v);
     }); 
 ```
 ##### Get AccountMeta
@@ -117,114 +117,15 @@ lino.query
 ```
 ##### Get Next Sequence Number
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(v => {
-        console.log('getSeqNumber: ', v);
-    }); 
-```
-##### Get All Balance History From All Buckets
-```
-lino.query
-    .getAllBalanceHistory(username)
-    .then(v => {
-        console.log('getAllBalanceHistory: ', v);
-    }); 
-```
-##### Get A Certain Number Of Recent Balance History
-```
-lino.query
-    .getRecentBalanceHistory(username, numHistory)
-    .then(v => {
-        console.log('getRecentBalanceHistory: ', v);
-    }); 
-```
-##### Get Balance History In The Range Of Index [from, to] Inclusively
-```
-lino.query
-    .getBalanceHistoryFromTo(username, from, to)
-    .then(v => {
-        console.log('getBalanceHistoryFromTo: ', v);
-    }); 
-```
-##### Get Balance History From A Certain Bucket
-```
-lino.query
-    .getBalanceHistoryBundle(username, index)
-    .then(v => {
-        console.log('getBalanceHistoryBundle: ', v);
+clog('getSeqNumber: ', v);
     }); 
 ```
 ##### Get Granted Public Key
 ```
 lino.query
-    .getGrantPubKey(username, pubKeyHex)
+    .getGrantPubKey(username, grantTo, permission)
     .then(v => {
         console.log('getGrantPubKey: ', v);
-    }); 
-```
-##### Get Reward
-```
-lino.query
-    .getReward(username)
-    .then(v => {
-        console.log('getReward: ', v);
-    }); 
-```
-##### Get All Reward History From All Buckets
-```
-lino.query
-    .getAllRewardHistory(username)
-    .then(v => {
-        console.log('getAllRewardHistory: ', v);
-    }); 
-```
-##### Get A Certain Number Of Recent Reward History
-```
-lino.query
-    .getRecentRewardHistory(username, numReward)
-    .then(v => {
-        console.log('getRecentRewardHistory: ', v);
-    });
-```
-##### Get Reward History In The Range Of Index [from, to] Inclusively
-```
-lino.query
-    .getRewardHistoryFromTo(username, from, to)
-    .then(v => {
-        console.log('getRewardHistoryFromTo: ', v);
-    });
-```
-##### Get Reward History From A Certain Bucket
-```
-lino.query
-    .getRewardHistoryBundle(username, index)
-    .then(v => {
-        console.log('getRewardHistoryBundle: ', v);
-    }); 
-```
-##### Get Donation Relationship
-```
-lino.query
-    .getRelationship(me, other)
-    .then(v => {
-        console.log('getRelationship: ', v);
-    }); 
-```
-##### Get Follower Meta
-```
-lino.query
-    .getFollowerMeta(me, myFollower)
-    .then(v => {
-        console.log('getFollowerMeta: ', v);
-    });
-```
-##### Get Following Meta
-```
-lino.query
-    .getFollowingMeta(me, myFollowing)
-    .then(v => {
-        console.log('getFollowingMeta: ', v);
     }); 
 ```
 ##### Get All Granted Public Keys
@@ -235,31 +136,6 @@ lino.query
         console.log('getAllGrantPubKeys: ', v);
     });
 ```
-##### Get All Donation Relationships 
-```
-lino.query
-    .getAllRelationships(me)
-    .then(v => {
-        console.log('getRelationship: ', v);
-    }); 
-```
-##### Get All Follower Meta
-```
-lino.query
-    .getAllFollowerMeta(username)
-    .then(v => {
-        console.log('getAllFollowerMeta: ', v);
-    });
-```
-##### Get All Following Meta
-```
-lino.query
-    .getAllFollowingMeta(username)
-    .then(v => {
-        console.log('getAllFollowingMeta: ', v);
-    }); 
-```
-
 #### Developer
 ##### Get Developer 
 ```
@@ -267,14 +143,6 @@ lino.query
     .getDeveloper(username)
     .then(v => {
         console.log('getDeveloper: ', v);
-    }); 
-```
-##### Get All Developers
-```
-lino.query
-    .getDevelopers()
-    .then(v => {
-        console.log('getDevelopers: ', v);
     }); 
 ```
 ##### Get Developer List
@@ -293,14 +161,6 @@ lino.query
     .getInfraProvider(username)
     .then(v => {
         console.log('getInfraProvider: ', v);
-    }); 
-```
-##### Get All Infra Providers
-```
-lino.query
-    .getInfraProviders()
-    .then(v => {
-        console.log('getInfraProviders: ', v);
     }); 
 ```
 
@@ -571,6 +431,14 @@ lino.query
         console.log('getTxsInBlock: ', v);
     }); 
 ```
+##### Get Blockchain Status (last block height, last block time, etc)
+```
+lino.query
+    .getStatus()
+    .then(v => {
+        console.log('getTxsInBlock: ', v);
+    }); 
+```
 
 #### Validator
 ##### Get Validator
@@ -641,797 +509,512 @@ lino.query
 ```
 
 ### Broadcast
+#### Synchronizing and Analyzing the Successful Transfers
+```
+linoClient
+    .transfer(
+        sender,
+        receiver,
+        amount,
+        memo,
+        priv
+    )
+    .then(res => {
+        debug('commit hash', res.hash);
+        debug('height', res.height);
+        debug('res', res);
+        return query.getTx(res.hash).then((res) => {
+            if (res.tx_result.code) {
+                console.log('transaction failed, reason is:', res.tx_result.log)
+            } else {
+                console.log('transaction success')
+            }
+        }).catch((err) => {
+            console.log(err); // tx failed, can't query from the blockchain
+        })
+    })
+    .catch(err => {
+        console.log('err:', err); // transcation failed due to err
+    });
+```
+
 #### Broadcast Account
 ##### Register A New User
 ```
-lino.query
-    .getSeqNumber(referrer)
-    .then(seq => {
-        return lino.broadcast
-            .register(
-                referrer,
-                register_fee,
-                username,
-                resetPubKey,
-                transactionPubKeyHex,
-                appPubKeyHex,
-                referrerPrivKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('register: ', v);
-                });
-            });
+lino.broadcast
+    .transfer(
+        sender,
+        receiver,
+        amount,
+        memo,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('transfer: ', v);
+    });
 ```
 ##### Transfer LINO Between two users
 ```
-lino.query
-    .getSeqNumber(sender)
-    .then(seq => {
-        return lino.broadcast
-            .transfer(
-                sender,
-                receiver,
-                amount,
-                memo,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('transfer: ', v);
-                });
-            });
-```
-##### Follow 
-```
-lino.query
-    .getSeqNumber(follower)
-    .then(seq => {
-        return lino.broadcast
-            .follow(
-                follower,
-                followee,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('follow: ', v);
-                });
-            });
-```
-##### Unfollow 
-```
-lino.query
-    .getSeqNumber(follower)
-    .then(seq => {
-        return lino.broadcast
-            .unfollow(
-                follower,
-                followee,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('unfollow: ', v);
-                });
-            });
-```
-##### Claim Reward
-```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .claim(
-                username,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('claim: ', v);
-                });
-            });
+lino.broadcast
+    .transfer(
+        sender,
+        receiver,
+        amount,
+        memo,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('transfer: ', v);
+    });
 ```
 ##### Update Account
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .updateAccount(
-                username,
-                json_meta,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('claim: ', v);
-                });
-            });
-```
-##### Recover 
-```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .recover(
-                username,
-                new_reset_public_key,
-                new_transaction_public_key,
-                new_app_public_key,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('recover: ', v);
-                });
-            });
+lino.broadcast
+    .updateAccount(
+        username,
+        json_meta,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('claim: ', v);
+    });
 ```
 
 #### Broadcast Post
 ##### Create Post
 ```
-lino.query
-    .getSeqNumber(author)
-    .then(seq => {
-        return lino.broadcast
-            .createPost(
-                author,
-                postID,
-                title,
-                content,
-                parentAuthor,
-                parentPostID,
-                sourceAuthor,
-                sourcePostID,
-                redistributionSplitRate,
-                links,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('createPost: ', v);
-                });
-            });
+lino.broadcast
+    .createPost(
+        author,
+        postID,
+        title,
+        content,
+        createdBy,
+        preauth,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('createPost: ', v);
+    });
 ```
 ##### Donate To A Post
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .donate(
-                username,
-                author,
-                amount,
-                post_id,
-                from_app,
-                memo,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('donate: ', v);
-                });
-            });
-```
-##### ReportOrUpvote To A Post
-```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .reportOrUpvote(
-                username,
-                author,
-                post_id,
-                is_report,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('reportOrUpvote: ', v);
-                });
-            });
+lino.broadcast
+    .donate(
+        username,
+        author,
+        amount,
+        post_id,
+        from_app,
+        memo,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('donate: ', v);
+    });
 ```
 ##### Delete Post
 ```
-lino.query
-    .getSeqNumber(author)
-    .then(seq => {
-        return lino.broadcast
-            .deletePost(
-                author,
-                post_id,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('deletePost: ', v);
-                });
-            });
-```
-##### View A Post
-```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .view(
-                username,
-                author,
-                post_id,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('view: ', v);
-                });
-            });
+lino.broadcast
+    .deletePost(
+        author,
+        post_id,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('deletePost: ', v);
+    });
 ```
 ##### Update Post
 ```
-lino.query
-    .getSeqNumber(author)
-    .then(seq => {
-        return lino.broadcast
-            .updatePost(
-                author,
-                title,
-                post_id,
-                content,
-                redistribution_split_rate,
-                links,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('updatePost: ', v);
-                });
-            });
+lino.broadcast
+    .updatePost(
+        author,
+        title,
+        post_id,
+        content,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('updatePost: ', v);
+    });
 ```
 
 #### Broadcast Validator
 ##### Validator Deposit
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .validatorDeposit(
-                username,
-                deposit,
-                validator_public_key,
-                link,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('validatorDeposit: ', v);
-                });
-            });
+lino.broadcast
+    .validatorDeposit(
+        username,
+        deposit,
+        validator_public_key,
+        link,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('validatorDeposit: ', v);
+    });
 ```
 ##### Validator Withdraw
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .validatorWithdraw(
-                username,
-                amount,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('validatorWithdraw: ', v);
-                });
-            });
+lino.broadcast
+    .validatorWithdraw(
+        username,
+        amount,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('validatorWithdraw: ', v);
+    });
 ```
 ##### Validator Revoke
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .ValidatorRevoke(
-                username,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('ValidatorRevoke: ', v);
-                });
-            });
+lino.broadcast
+    .ValidatorRevoke(
+        username,
+        privKeyHex,
+        seq
+    )
+    .then(v => {
+            console.log('ValidatorRevoke: ', v);
+        });
+    });
 ```
 
 #### Broadcast Vote
 ##### Voter Deposit
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .voterDeposit(
-                username,
-                deposit,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('voterDeposit: ', v);
-                });
-            });
+lino.broadcast
+    .voterDeposit(
+        username,
+        deposit,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('voterDeposit: ', v);
+    });
 ```
 ##### Voter Withdraw
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .voterWithdraw(
-                username,
-                amount,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('voterWithdraw: ', v);
-                });
-            });
+lino.broadcast
+    .voterWithdraw(
+        username,
+        amount,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('voterWithdraw: ', v);
+    });
 ```
 ##### Voter Revoke
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .voterRevoke(
-                username,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('voterRevoke: ', v);
-                });
-            });
+lino.broadcast
+    .voterRevoke(
+        username,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('voterRevoke: ', v);
+    });
 ```
 ##### Delegate To Voter
 ```
-lino.query
-    .getSeqNumber(delegator)
-    .then(seq => {
-        return lino.broadcast
-            .delegate(
-                delegator,
-                voter,
-                amount,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('delegate: ', v);
-                });
-            });
-```
-##### Delegator Withdraw
-```
-lino.query
-    .getSeqNumber(delegator)
-    .then(seq => {
-        return lino.broadcast
-            .delegatorWithdraw(
-                delegator,
-                voter,
-                amount,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('delegatorWithdraw: ', v);
-                });
-            });
-```
-##### RevokeDelegation
-```
-lino.query
-    .getSeqNumber(delegator)
-    .then(seq => {
-        return lino.broadcast
-            .revokeDelegation(
-                delegator,
-                voter,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('revokeDelegation: ', v);
-                });
-            });
+lino.broadcast
+    .delegate(
+        delegator,
+        voter,
+        amount,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('delegate: ', v);
+    });
 ```
 
 #### Broadcast Developer
 ##### Developer Register
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .developerRegister(
-                username,
-                deposit,
-                website,
-                description,
-                app_meta_data,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('developerRegister: ', v);
-                });
-            });
+lino.broadcast
+    .developerRegister(
+        username,
+        deposit,
+        website,
+        description,
+        app_meta_data,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('developerRegister: ', v);
+    });
 ```
 ##### DeveloperUpdate
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .developerUpdate(
-                username,
-                website,
-                description,
-                app_meta_data,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('developerUpdate: ', v);
-                });
-            });
+lino.broadcast
+    .developerUpdate(
+        username,
+        website,
+        description,
+        app_meta_data,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('developerUpdate: ', v);
+    });
 ```
 ##### DeveloperRevoke
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .developerRevoke(
-                username,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('developerRevoke: ', v);
-                });
-            });
+lino.broadcast
+    .developerRevoke(
+        username,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('developerRevoke: ', v);
+    });
 ```
 ##### Grant Permission
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .grantPermission(
-                username,
-                authorized_app,
-                validity_period_second,
-                grant_level,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('grantPermission: ', v);
-                });
-            });
+lino.broadcast
+    .grantPermission(
+        username,
+        authorized_app,
+        validity_period_second,
+        grant_level,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('grantPermission: ', v);
+    });
 ```
 ##### Revoke Permission
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .revokePermission(
-                username,
-                public_key,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                console.log('revokePermission: ', v);
-            });
+lino.broadcast
+    .revokePermission(
+        username,
+        public_key,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('revokePermission: ', v);
     });
 ```
 ##### Pre Authorization Permission
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .preAuthorizationPermission(
-                username,
-                authorized_app,
-                validity_period_second,
-                amount,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                  console.log('preAuthorizationPermission: ', v);
-                });
-            });
+lino.broadcast
+    .preAuthorizationPermission(
+        username,
+        authorized_app,
+        validity_period_second,
+        amount,
+        privKeyHex
+    )
+    .then(v => {
+            console.log('preAuthorizationPermission: ', v);
+        });
+    });
 ```
 
 #### Broadcast Infra
 ##### Infra Provider Report
 ```
-lino.query
-    .getSeqNumber(username)
-    .then(seq => {
-        return lino.broadcast
-            .providerReport(
-                username,
-                usage,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                console.log('providerReport: ', v);
-            });
+lino.broadcast
+    .providerReport(
+        username,
+        usage,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('providerReport: ', v);
+    });
     });
 ```
 
 #### Broadcast Proposal
 ##### Vote Proposal
 ```
-lino.query
-    .getSeqNumber(voter)
-    .then(seq => {
-        return lino.broadcast
-            .voteProposal(
-                voter,
-                proposal_id,
-                result,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                console.log('voteProposal: ', v);
-            });
+lino.broadcast
+    .voteProposal(
+        voter,
+        proposal_id,
+        result,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('voteProposal: ', v);
     });
 ```
 ##### Change Evaluate Of Content Value Param
 ```
-lino.query
-    .getSeqNumber(creator)
-    .then(seq => {
-        return lino.broadcast
-            .changeEvaluateOfContentValueParam(
-                creator,
-                parameter,
-                reason,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                console.log('changeEvaluateOfContentValueParam: ', v);
-            });
+lino.broadcast
+    .changeEvaluateOfContentValueParam(
+        creator,
+        parameter,
+        reason,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('changeEvaluateOfContentValueParam: ', v);
     });
 ```
 ##### Change Global Allocation Param
 ```
 lino.query
-    .getSeqNumber(creator)
-    .then(seq => {
-        return lino.query
-            .getGlobalAllocationParam()
-            .then(parameter => {
-                console.log('changeGlobalAllocationParam: ', parameter);
-                parameter.content_creator_allocation = '2/10';
-                return lino.broadcast
-                    .changeGlobalAllocationParam(
-                        creator,
-                        parameter,
-                        reason,
-                        privKeyHex,
-                        seq
-                    )
-                    .then(v => {
-                        console.log('changeGlobalAllocationParam: ', v);
-                    });
+    .getGlobalAllocationParam()
+    .then(parameter => {
+        console.log('changeGlobalAllocationParam: ', parameter);
+        parameter.content_creator_allocation = '2/10';
+        return lino.broadcast
+            .changeGlobalAllocationParam(
+                creator,
+                parameter,
+                reason,
+                privKeyHex
+            )
+            .then(v => {
+                console.log('changeGlobalAllocationParam: ', v);
             });
     });
 ```
 ##### Change Infra Internal Allocation Param
 ```
-lino.query
-    .getSeqNumber(creator)
-    .then(seq => {
-        return lino.broadcast
-            .changeInfraInternalAllocationParam(
-                creator,
-                parameter,
-                reason,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                console.log('changeInfraInternalAllocationParam: ', v);
-            });
+lino.broadcast
+    .changeInfraInternalAllocationParam(
+        creator,
+        parameter,
+        reason,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('changeInfraInternalAllocationParam: ', v);
     });
 ```
 ##### Change Vote Param
 ```
-lino.query
-    .getSeqNumber(creator)
-    .then(seq => {
-        return lino.broadcast
-            .changeVoteParam(
-                creator,
-                parameter,
-                reason,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                console.log('changeVoteParam: ', v);
-            });
+lino.broadcast
+    .changeVoteParam(
+        creator,
+        parameter,
+        reason,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('changeVoteParam: ', v);
     });
 ```
 ##### Change Proposal Param
 ```
-lino.query
-    .getSeqNumber(creator)
-    .then(seq => {
-        return lino.broadcast
-            .changeProposalParam(
-                creator,
-                parameter,
-                reason,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                console.log('changeProposalParam: ', v);
-            });
+lino.broadcast
+    .changeProposalParam(
+        creator,
+        parameter,
+        reason,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('changeProposalParam: ', v);
     });
 ```
 ##### Change Developer Param
 ```
-lino.query
-    .getSeqNumber(creator)
-    .then(seq => {
-        return lino.broadcast
-            .changeDeveloperParam(
-                creator,
-                parameter,
-                reason,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                console.log('changeDeveloperParam: ', v);
-            });
+lino.broadcast
+    .changeDeveloperParam(
+        creator,
+        parameter,
+        reason,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('changeDeveloperParam: ', v);
     });
 ```
 ##### Change Validator Param
 ```
-lino.query
-    .getSeqNumber(creator)
-    .then(seq => {
-        return lino.broadcast
-            .changeValidatorParam(
-                creator,
-                parameter,
-                reason,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                console.log('changeValidatorParam: ', v);
-            });
+lino.broadcast
+    .changeValidatorParam(
+        creator,
+        parameter,
+        reason,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('changeValidatorParam: ', v);
     });
 ```
 ##### Change Bandwidth Param
 ```
-lino.query
-    .getSeqNumber(creator)
-    .then(seq => {
-        return lino.broadcast
-            .changeBandwidthParam(
-                creator,
-                parameter,
-                reason,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                console.log('changeBandwidthParam: ', v);
-            });
+lino.broadcast
+    .changeBandwidthParam(
+        creator,
+        parameter,
+        reason,
+        privKeyHex
+    )
+    .then(v => {
+        console.log('changeBandwidthParam: ', v);
     });
 ```
 ##### Change Account Param
 ```
 lino.query
-    .getSeqNumber(creator)
-    .then(seq => {
-        return lino.query
-            .getAccountParam()
-            .then(parameter => {
-                console.log('changeAccountParam: ', parameter);
-                parameter.balance_history_bundle_size = '10000';
-                return lino.broadcast
-                    .changeAccountParam(
-                        creator,
-                        parameter,
-                        reason,
-                        privKeyHex,
-                        seq
-                    )
-                    .then(v => {
-                        console.log('changeAccountParam: ', v);
-                    });
+    .getAccountParam()
+    .then(parameter => {
+        console.log('changeAccountParam: ', parameter);
+        parameter.balance_history_bundle_size = '10000';
+        return lino.broadcast
+            .changeAccountParam(
+                creator,
+                parameter,
+                reason,
+                privKeyHex
+            )
+            .then(v => {
+                console.log('changeAccountParam: ', v);
             });
     });
 ```
 ##### Change Post Param
 ```
-lino.query
-    .getSeqNumber(creator)
-    .then(seq => {
-        return lino.broadcast
-            .changePostParam(
-                creator,
-                parameter,
-                privKeyHex,
-                reason,
-                seq
-            )
-            .then(v => {
-                console.log('changePostParam: ', v);
-            });
+lino.broadcast
+    .changePostParam(
+        creator,
+        parameter,
+        privKeyHex,
+        reason
+    )
+    .then(v => {
+        console.log('changePostParam: ', v);
     });
-
 ```
 ##### Delete Post Content
 ```
 seq, err := api.GetSeqNumber(creator)
 err = api.DeletePostContent(creator, postAuthor, postID, reason, privKeyHex, seq)
 
-lino.query
-    .getSeqNumber(creator)
-    .then(seq => {
-        return lino.broadcast
-            .deletePostContent(
-                creator,
-                postAuthor,
-                postID,
-                reason,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                console.log('deletePostContent: ', v);
-            });
+lino.broadcast
+    .deletePostContent(
+        creator,
+        postAuthor,
+        postID,
+        reason,
+        privKeyHex,
+        seq
+    )
+    .then(v => {
+        console.log('deletePostContent: ', v);
     });
 ```
 ##### Upgrade Protocol
 ```
-lino.query
-    .getSeqNumber(creator)
-    .then(seq => {
-        return lino.broadcast
-            .upgradeProtocol(
-                creator,
-                link,
-                reason,
-                privKeyHex,
-                seq
-            )
-            .then(v => {
-                console.log('upgradeProtocol: ', v);
-            });
+lino.broadcast
+    .upgradeProtocol(
+        creator,
+        link,
+        reason,
+        privKeyHex,
+        seq
+    )
+    .then(v => {
+        console.log('upgradeProtocol: ', v);
     });
 ```
 ### Utils

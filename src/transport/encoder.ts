@@ -246,7 +246,7 @@ export function convertMsg(msg: any): any {
   return encodedMsg;
 }
 
-function getByteArray(buffer: ByteBuffer): number[] {
+export function getByteArray(buffer: ByteBuffer): number[] {
   let res: number[] = [];
   for (var i = 0; i < buffer.limit; ++i) {
     res.push(buffer.readUint8());

@@ -7,9 +7,17 @@ import {
   convertMsg,
   StdMsg,
   encodeMsg,
-  decodeObject
+  decodeObject,
+  getByteArray
 } from './encoder';
-import { ResultBlock, ResultBroadcastTx, ResultBroadcastTxCommit, Rpc } from './rpc';
+import {
+  ResultBlock,
+  ResultBroadcastTx,
+  ResultBroadcastTxCommit,
+  ResultStatus,
+  Rpc,
+  ResultTx
+} from './rpc';
 import Keys from '../query/keys';
 import utils from 'minimalistic-crypto-utils';
 
@@ -21,6 +29,8 @@ export interface ITransport {
     getKeyBy: GetKeyBy
   ): Promise<ResultKV<string, T>[]>;
   block(height: number): Promise<ResultBlock>;
+  status(): Promise<ResultStatus>;
+  tx(hash: string): Promise<ResultTx>;
   signBuildBroadcast(
     msg: any,
     msgType: string,
@@ -126,6 +136,18 @@ export class Transport implements ITransport {
   block(height: number): Promise<ResultBlock> {
     return this._rpc.block(height).then(result => {
       return result as ResultBlock;
+    });
+  }
+
+  status(): Promise<ResultStatus> {
+    return this._rpc.status().then(result => {
+      return result as ResultStatus;
+    });
+  }
+
+  tx(hash: string): Promise<ResultTx> {
+    return this._rpc.tx(String(ByteBuffer.fromHex(hash).toString('base64'))).then(result => {
+      return result as ResultTx;
     });
   }
 
