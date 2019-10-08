@@ -65,6 +65,21 @@ export default class Query {
     return this._transport.query<Validator>([username], ValidatorKVStoreKey, ValidatorSubStore);
   }
 
+  /**
+   * getValidator returns validator info given a validator name from blockchain.
+   *
+   * @param username: the validator username
+   */
+  getElectionVoteList(username: string): Promise<ElectionVoteList> {
+    const ValidatorKVStoreKey = Keys.KVSTOREKEYS.ValidatorKVStoreKey;
+    const ElectionVoteSubStore = Keys.KVSTOREKEYS.ElectionVoteListSubStore;
+    return this._transport.query<ElectionVoteList>(
+      [username],
+      ValidatorKVStoreKey,
+      ElectionVoteSubStore
+    );
+  }
+
   // account related query
 
   /**
@@ -1009,7 +1024,8 @@ export interface ABCIValidator {
 export interface Validator {
   abci: ABCIValidator;
   username: string;
-  deposit: Types.Coin;
+  received_votes: Types.Coin;
+  has_revoked: boolean;
   absent_commit: string;
   byzantine_commit: string;
   produced_blocks: string;
@@ -1017,11 +1033,24 @@ export interface Validator {
 }
 
 export interface AllValidators {
-  oncall_validators: string[];
-  all_validators: string[];
+  oncall: string[];
+  standby: string[];
+  candidates: string[];
+  jail: string[];
   pre_block_validators: string[];
-  lowest_power: Types.Coin;
-  lowest_validator: string;
+  lowest_oncall_votes: Types.Coin;
+  lowest_oncall: string;
+  lowest_standby_votes: Types.Coin;
+  lowest_standby: string;
+}
+
+export interface ElectionVote {
+  validator_name: string;
+  votes: Types.Coin;
+}
+
+export interface ElectionVoteList {
+  election_votes: ElectionVote[];
 }
 
 // vote related struct

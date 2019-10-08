@@ -168,18 +168,16 @@ export class LINO {
     });
   }
 
-  async validatorDeposit(
+  async validatorRegister(
     username: string,
-    deposit: string,
     validator_public_key: string,
     link: string,
     privKeyHex: string
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(username, function(seq) {
-      return that._broadcast.makeValidatorDeposit(
+      return that._broadcast.makeValidatorRegister(
         username,
-        deposit,
         validator_public_key,
         link,
         privKeyHex,
@@ -188,14 +186,14 @@ export class LINO {
     });
   }
 
-  async validatorWithdraw(
+  async voteValidator(
     username: string,
-    amount: string,
+    validators: string[],
     privKeyHex: string
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(username, function(seq) {
-      return that._broadcast.makeValidatorWithdraw(username, amount, privKeyHex, seq);
+      return that._broadcast.makeVoteValidator(username, validators, privKeyHex, seq);
     });
   }
 

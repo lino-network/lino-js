@@ -395,10 +395,10 @@ export default class Broadcast {
   // validator related
 
   /**
-   * ValidatorDeposit deposits a certain amount of LINO token for a user
+   * ValidatorRegister deposits a certain amount of LINO token for a user
    * in order to become a validator. Before becoming a validator, the user
    * has to be a voter.
-   * It composes ValidatorDepositMsg and then broadcasts the transaction to blockchain.
+   * It composes ValidatorRegisterMsg and then broadcasts the transaction to blockchain.
    *
    * @param username: the user who wants to deposit money for being a validator
    * @param deposit: the amount of LINO token the user wants to deposit
@@ -407,16 +407,14 @@ export default class Broadcast {
    * @param privKeyHex: the private key of the user
    * @param seq: the sequence number of the user for the next transaction
    */
-  validatorDeposit(
+  validatorRegister(
     username: string,
-    deposit: string,
     validator_public_key: string,
     link: string,
     privKeyHex: string,
     seq: number
   ) {
-    const msg: ValidatorDepositMsg = {
-      deposit: deposit,
+    const msg: ValidatorRegisterMsg = {
       link: link,
       username: username,
       validator_public_key: decodePubKey(validator_public_key)
@@ -424,16 +422,14 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ValDepositMsgType, privKeyHex, seq);
   }
 
-  makeValidatorDeposit(
+  makeValidatorRegister(
     username: string,
-    deposit: string,
     validator_public_key: string,
     link: string,
     privKeyHex: string,
     seq: number
   ) {
-    const msg: ValidatorDepositMsg = {
-      deposit: deposit,
+    const msg: ValidatorRegisterMsg = {
       link: link,
       username: username,
       validator_public_key: decodePubKey(validator_public_key)
@@ -442,26 +438,25 @@ export default class Broadcast {
   }
 
   /**
-   * ValidatorWithdraw withdraws part of LINO token from a validator's deposit,
-   * while still keep being a validator.
+   * VoteValidator vote for validators
    * It composes ValidatorDepositMsg and then broadcasts the transaction to blockchain.
    *
    * @param username: the validator username
-   * @param amount: the amount of LINO token the validator wants to withdraw
+   * @param validators: the voted validators
    * @param privKeyHex: the private key of the validator
    * @param seq: the sequence number of the validator for the next transaction
    */
-  validatorWithdraw(username: string, amount: string, privKeyHex: string, seq: number) {
-    const msg: ValidatorWithdrawMsg = {
-      amount: amount,
+  Votevalidator(username: string, validators: string[], privKeyHex: string, seq: number) {
+    const msg: VoteValidatorMsg = {
+      validators: validators,
       username: username
     };
     return this._broadcastTransaction(msg, _MSGTYPE.ValWithdrawMsgType, privKeyHex, seq);
   }
 
-  makeValidatorWithdraw(username: string, amount: string, privKeyHex: string, seq: number) {
-    const msg: ValidatorWithdrawMsg = {
-      amount: amount,
+  makeVoteValidator(username: string, validators: string[], privKeyHex: string, seq: number) {
+    const msg: VoteValidatorMsg = {
+      validators: validators,
       username: username
     };
     return this._transport.signAndBuild(msg, _MSGTYPE.ValWithdrawMsgType, privKeyHex, seq);
@@ -1297,16 +1292,15 @@ export interface UpdatePostMsg {
 }
 
 // validator related messages
-export interface ValidatorDepositMsg {
+export interface ValidatorRegisterMsg {
   username: string;
-  deposit: string;
   validator_public_key: string;
   link: string;
 }
 
-export interface ValidatorWithdrawMsg {
+export interface VoteValidatorMsg {
   username: string;
-  amount: string;
+  validators: string[];
 }
 
 export interface ValidatorRevokeMsg {

@@ -52,6 +52,7 @@ namespace Keys {
 
     ValidatorSubStore: 'validator',
     ValidatorListSubStore: 'valList',
+    ElectionVoteListSubStore: 'electionVoteList',
 
     DelegationSubStore: 'delegation',
     VoterSubStore: 'voter',
@@ -76,6 +77,7 @@ namespace Keys {
   const _KEYS = {
     validatorSubstore: '00',
     validatorListSubstore: '01',
+    electionVoteListSubstore: '02',
 
     delegationSubstore: '00',
     voterSubstore: '01',
@@ -160,6 +162,11 @@ namespace Keys {
 
   export function getValidatorListKey(): string {
     return _KEYS.validatorListSubstore;
+  }
+
+  export function getElectionVoteListKey(accKey: string): string {
+    const accKeyHex = ByteBuffer.fromUTF8(accKey).toHex();
+    return _KEYS.electionVoteListSubstore.concat(accKeyHex);
   }
 
   // vote related
