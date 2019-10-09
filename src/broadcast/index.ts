@@ -418,7 +418,7 @@ export default class Broadcast {
       username: username,
       validator_public_key: decodePubKey(validator_public_key)
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.ValDepositMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.ValRegisterMsgType, privKeyHex, seq);
   }
 
   makeValidatorRegister(
@@ -433,7 +433,7 @@ export default class Broadcast {
       username: username,
       validator_public_key: decodePubKey(validator_public_key)
     };
-    return this._transport.signAndBuild(msg, _MSGTYPE.ValDepositMsgType, privKeyHex, seq);
+    return this._transport.signAndBuild(msg, _MSGTYPE.ValRegisterMsgType, privKeyHex, seq);
   }
 
   /**
@@ -447,18 +447,18 @@ export default class Broadcast {
    */
   Votevalidator(username: string, validators: string[], privKeyHex: string, seq: number) {
     const msg: VoteValidatorMsg = {
-      validators: validators,
+      voted_validators: validators,
       username: username
     };
-    return this._broadcastTransaction(msg, _MSGTYPE.ValWithdrawMsgType, privKeyHex, seq);
+    return this._broadcastTransaction(msg, _MSGTYPE.VoteValMsgType, privKeyHex, seq);
   }
 
   makeVoteValidator(username: string, validators: string[], privKeyHex: string, seq: number) {
     const msg: VoteValidatorMsg = {
-      validators: validators,
+      voted_validators: validators,
       username: username
     };
-    return this._transport.signAndBuild(msg, _MSGTYPE.ValWithdrawMsgType, privKeyHex, seq);
+    return this._transport.signAndBuild(msg, _MSGTYPE.VoteValMsgType, privKeyHex, seq);
   }
   /**
    * ValidatorRevoke revokes all deposited LINO token of a validator
@@ -1298,7 +1298,7 @@ export interface ValidatorRegisterMsg {
 
 export interface VoteValidatorMsg {
   username: string;
-  validators: string[];
+  voted_validators: string[];
 }
 
 export interface ValidatorRevokeMsg {
@@ -1496,8 +1496,8 @@ const _MSGTYPE = {
   VoteWithdrawMsgType: 'lino/voteWithdraw',
   DelegateMsgType: 'lino/delegate',
   DelegateWithdrawMsgType: 'lino/delegateWithdraw',
-  ValDepositMsgType: 'lino/valDeposit',
-  ValWithdrawMsgType: 'lino/valWithdraw',
+  ValRegisterMsgType: 'lino/valRegister',
+  VoteValMsgType: 'lino/voteValidator',
   ValRevokeMsgType: 'lino/valRevoke',
   VoteProposalMsgType: 'lino/voteProposal',
   DeletePostContentMsgType: 'lino/deletePostContent',
