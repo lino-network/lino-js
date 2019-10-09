@@ -709,12 +709,8 @@ export default class Query {
    */
   getInflationPool(): Promise<Types.InflationPool> {
     const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
-    const ConsumptionMetaSubStore = Keys.KVSTOREKEYS.ConsumptionMetaSubStore;
-    return this._transport.query<Types.InflationPool>(
-      [],
-      GlobalKVStoreKey,
-      ConsumptionMetaSubStore
-    );
+    const InflationPool = Keys.KVSTOREKEYS.InflationPoolSubStore;
+    return this._transport.query<Types.InflationPool>([], GlobalKVStoreKey, InflationPool);
   }
 
   /**
