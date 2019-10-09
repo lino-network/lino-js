@@ -126,7 +126,8 @@ export function decodeObject(result: any): any {
       ) {
         decodedResult[key] = decodeObject(result[key]);
       }
-      if (key === 'address') {
+      if (key === 'address' && result[key].startsWith('lino')) {
+        console.log('decode address:', result[key].startsWith('lino'), result);
         var decodeRes = bech32.decode(result[key]);
         if (decodeRes.prefix !== 'lino') {
           throw new Error(`invalid prefix: ${decodeRes.prefix}\n`);
