@@ -38,7 +38,8 @@ export interface ITransport {
     seq: number
   ): Promise<ResultBroadcastTxCommit>;
   signAndBuild(msg: any, msgType: string, privKeyHex: string, seq: number): string;
-  broadcastRawMsgBytesSync(tx: string, seq: number): Promise<ResultBroadcastTx>;
+  broadcastRawMsgBytesSync(tx: string): Promise<ResultBroadcastTx>;
+  signAndBuildWithMultiSig(msg: any, msgType: string, privKeyHex: string[], seq: number[]): string;
 }
 
 export interface ITransportOptions {
@@ -177,7 +178,12 @@ export class Transport implements ITransport {
     const sig = key.sign(signMsgHash, { canonical: true });
     const sigDERHex = utils.encode(sig.r.toArray('be', 32).concat(sig.s.toArray('be', 32)), 'hex');
     // build tx
-    const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq, 100000);
+    const tx = encodeTx(
+      msgs,
+      new Array<string>(key.getPublic(true, 'hex')),
+      new Array<string>(sigDERHex),
+      100000
+    );
     // return broadcast
     return this._rpc.broadcastTxCommit(tx).then(result => {
       if (result.check_tx.code !== undefined) {
@@ -197,7 +203,7 @@ export class Transport implements ITransport {
     });
   }
 
-  broadcastRawMsgBytesSync(tx: string, seq: number): Promise<ResultBroadcastTx> {
+  broadcastRawMsgBytesSync(tx: string): Promise<ResultBroadcastTx> {
     return this._rpc.broadcastTxSync(tx).then(result => {
       if (result.code !== 0) {
         throw new BroadcastError(BroadCastErrorEnum.CheckTx, result.log, result.code);
@@ -227,7 +233,48 @@ export class Transport implements ITransport {
     const sig = key.sign(signMsgHash, { canonical: true });
     const sigDERHex = utils.encode(sig.r.toArray('be', 32).concat(sig.s.toArray('be', 32)), 'hex');
     // build tx
-    const tx = encodeTx(msgs, key.getPublic(true, 'hex'), sigDERHex, seq, this._maxFeeInCoin);
+    const tx = encodeTx(
+      msgs,
+      new Array<string>(key.getPublic(true, 'hex')),
+      new Array<string>(sigDERHex),
+      this._maxFeeInCoin
+    );
+    return tx;
+  }
+
+  // Does the private key decoding from hex, sign message,
+  // build transaction to broadcast
+  signAndBuildWithMultiSig(msg: any, msgType: string, privKeyHex: string[], seq: number[]): string {
+    // signmsg
+    var msgs = new Array<StdMsg>();
+    var pubkeys = new Array<string>();
+    var sigs = new Array<string>();
+    for (var _i = 0; _i < privKeyHex.length; _i++) {
+      // private key from hex
+      var privKey = privKeyHex[_i];
+      var ec = new EC('secp256k1');
+      var key = ec.keyFromPrivate(decodePrivKey(privKey), 'hex');
+      pubkeys.push(key.getPublic(true, 'hex'));
+
+      // XXX: side effect on msg
+      convertMsg(msg);
+      const stdMsg: StdMsg = {
+        type: msgType,
+        value: encodeMsg(msg)
+      };
+      msgs.push(stdMsg);
+
+      const signMsgHash = encodeSignMsg(msgs, this._chainId, seq[_i], this._maxFeeInCoin);
+      // sign to get signature
+      const sig = key.sign(signMsgHash, { canonical: true });
+      const sigDERHex = utils.encode(
+        sig.r.toArray('be', 32).concat(sig.s.toArray('be', 32)),
+        'hex'
+      );
+      sigs.push(sigDERHex);
+    }
+    // build tx
+    const tx = encodeTx(msgs, pubkeys, sigs, this._maxFeeInCoin);
     return tx;
   }
 }

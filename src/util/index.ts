@@ -1,5 +1,6 @@
-import ByteBuffer from 'bytebuffer';
 import { ec as EC } from 'elliptic';
+import ByteBuffer from 'bytebuffer';
+import RIPEMD160 from 'ripemd160';
 import shajs from 'sha.js';
 import { decodePrivKey, decodePubKey, encodePrivKey, encodePubKey } from '../transport/encoder';
 import utils from 'minimalistic-crypto-utils';
@@ -15,6 +16,16 @@ export function pubKeyFromPrivate(privKeyHex: string): string {
   var key = ec.keyFromPrivate(decodePrivKey(privKeyHex), 'hex');
   const rawKey = key.getPublic(true, 'hex');
   return encodePubKey(rawKey);
+}
+
+export function addressFromPubKey(pubKeyHex: string): string {
+  var ec = new EC('secp256k1');
+  var key = ByteBuffer.fromHex(pubKeyHex);
+  const hashResult = shajs('sha256')
+    .update(key.view)
+    .digest() as string;
+  var addr = new RIPEMD160().update(hashResult).digest('hex');
+  return addr;
 }
 
 export function isValidUsername(username: string): boolean {

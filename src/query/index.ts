@@ -95,6 +95,18 @@ export default class Query {
   }
 
   /**
+   * getSeqNumberByAddress returns the next sequence number of an address which should
+   * be used for broadcast.
+   *
+   * @param username
+   */
+  getSeqNumberByAddress(addr: string): Promise<number> {
+    return this.getAccountBankByAddress(addr).then(bank => {
+      return +bank.sequence;
+    });
+  }
+
+  /**
    * getAccountMeta returns account meta info for a specific user.
    *
    * @param username
@@ -188,17 +200,6 @@ export default class Query {
       AccountKVStoreKey,
       AccountAllGrantPubKeys
     );
-  }
-
-  /**
-   * getReward returns rewards of a user.
-   *
-   * @param username
-   */
-  getReward(username: string): Promise<Reward> {
-    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
-    const AccountRewardSubStore = Keys.KVSTOREKEYS.AccountRewardSubStore;
-    return this._transport.query<Reward>([username], AccountKVStoreKey, AccountRewardSubStore);
   }
 
   // post related query
@@ -664,15 +665,6 @@ export default class Query {
   }
 
   /**
-   * getCoinDayParam returns the CoinDayParam.
-   */
-  getCoinDayParam(): Promise<Types.CoinDayParam> {
-    const ParamKVStoreKey = Keys.KVSTOREKEYS.ParamKVStoreKey;
-    const CoinDayParamSubStore = Keys.KVSTOREKEYS.CoinDayParamSubStore;
-    return this._transport.query<Types.CoinDayParam>([], ParamKVStoreKey, CoinDayParamSubStore);
-  }
-
-  /**
    * getBandwidthParam returns the BandwidthParam.
    */
   getBandwidthParam(): Promise<Types.BandwidthParam> {
@@ -877,7 +869,17 @@ export default class Query {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     const AccountTxAndSequence = Keys.KVSTOREKEYS.AccountTxAndSequence;
     return this._transport.query<Types.TxAndSequenceNumber>(
-      [username, hash],
+      [username, hash, 'false'],
+      AccountKVStoreKey,
+      AccountTxAndSequence
+    );
+  }
+
+  getTxAndSequenceByAddress(addr: string, hash: string): Promise<Types.TxAndSequenceNumber> {
+    const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
+    const AccountTxAndSequence = Keys.KVSTOREKEYS.AccountTxAndSequence;
+    return this._transport.query<Types.TxAndSequenceNumber>(
+      [addr, hash, 'true'],
       AccountKVStoreKey,
       AccountTxAndSequence
     );

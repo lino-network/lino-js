@@ -3,6 +3,18 @@ export interface Coin {
   amount: string;
 }
 
+export class AccOrAddr {
+  readonly username: string;
+  readonly isAddr: boolean;
+  readonly addr: string;
+
+  constructor(username: string, isAddr: boolean, addr: string) {
+    this.username = username;
+    this.isAddr = isAddr;
+    this.addr = addr;
+  }
+}
+
 export interface SDKCoin {
   denom: string;
   amount: number;
@@ -32,31 +44,12 @@ export interface Parameter {
   value: object;
 }
 
-export interface EvaluateOfContentValueParam {
-  amount_of_consumption_exponent: Rat;
-  consumption_time_adjust_base: string;
-  consumption_time_adjust_offset: string;
-  num_of_consumption_on_author_offset: string;
-  total_amount_of_consumption_base: string;
-  total_amount_of_consumption_offset: string;
-}
-export function isEvaluateOfContentValueParam(param: object): param is EvaluateOfContentValueParam {
-  return (
-    'consumption_time_adjust_base' in param &&
-    'consumption_time_adjust_offset' in param &&
-    'num_of_consumption_on_author_offset' in param &&
-    'total_amount_of_consumption_base' in param &&
-    'total_amount_of_consumption_offset' in param &&
-    'amount_of_consumption_exponent' in param
-  );
-}
-
 export interface GlobalAllocationParam {
-  global_growth_rate: Rat;
-  infra_allocation: Rat;
-  content_creator_allocation: Rat;
-  developer_allocation: Rat;
-  validator_allocation: Rat;
+  global_growth_rate: string;
+  infra_allocation: string;
+  content_creator_allocation: string;
+  developer_allocation: string;
+  validator_allocation: string;
 }
 export function isGlobalAllocationParam(param: object): param is GlobalAllocationParam {
   return (
@@ -69,8 +62,8 @@ export function isGlobalAllocationParam(param: object): param is GlobalAllocatio
 }
 
 export interface InfraInternalAllocationParam {
-  CDN_allocation: Rat;
-  storage_allocation: Rat;
+  CDN_allocation: string;
+  storage_allocation: string;
 }
 export function isInfraInternalAllocationParam(
   param: object
@@ -82,7 +75,7 @@ export interface VoteParam {
   min_stake_in: Coin;
   voter_coin_return_interval_second: string;
   voter_coin_return_times: string;
-  DelegatorCoinReturnIntervalSec: string;
+  delegator_coin_return_interval_second: string;
   delegator_coin_return_times: string;
 }
 export function isVoteParam(param: object): param is VoteParam {
@@ -90,24 +83,24 @@ export function isVoteParam(param: object): param is VoteParam {
     'min_stake_in' in param &&
     'voter_coin_return_interval_second' in param &&
     'voter_coin_return_times' in param &&
-    'DelegatorCoinReturnIntervalSec' in param &&
+    'delegator_coin_return_interval_second' in param &&
     'delegator_coin_return_times' in param
   );
 }
 
 export interface ProposalParam {
-  content_censorship_decide_second: number;
+  content_censorship_decide_second: string;
   content_censorship_min_deposit: Coin;
-  content_censorship_pass_ratio: Rat;
+  content_censorship_pass_ratio: string;
   content_censorship_pass_votes: Coin;
-  ChangeParamDecideSec: number;
-  ChangeParamExecutionSec: number;
+  change_param_decide_second: string;
+  change_param_execution_second: string;
   change_param_min_deposit: Coin;
-  change_param_pass_ratio: Rat;
+  change_param_pass_ratio: string;
   change_param_pass_votes: Coin;
-  protocol_upgrade_decide_second: number;
+  protocol_upgrade_decide_second: string;
   protocol_upgrade_min_deposit: Coin;
-  protocol_upgrade_pass_ratio: Rat;
+  protocol_upgrade_pass_ratio: string;
   protocol_upgrade_pass_votes: Coin;
 }
 export function isProposalParam(param: object): param is ProposalParam {
@@ -116,8 +109,8 @@ export function isProposalParam(param: object): param is ProposalParam {
     'content_censorship_min_deposit' in param &&
     'content_censorship_pass_ratio' in param &&
     'content_censorship_pass_votes' in param &&
-    'ChangeParamDecideSec' in param &&
-    'ChangeParamExecutionSec' in param &&
+    'change_param_decide_second' in param &&
+    'change_param_execution_second' in param &&
     'change_param_min_deposit' in param &&
     'change_param_pass_ratio' in param &&
     'change_param_pass_votes' in param &&
@@ -142,63 +135,81 @@ export function isDeveloperParam(param: object): param is DeveloperParam {
 }
 
 export interface ValidatorParam {
-  validator_min_withdraw: Coin;
-  validator_min_voting_deposit: Coin;
-  validator_min_commiting_deposit: Coin;
-  validator_coin_return_second: number;
+  validator_min_deposit: Coin;
+  validator_coin_return_second: string;
   validator_coin_return_times: string;
-  penalty_miss_vote: Coin;
   penalty_miss_commit: Coin;
   penalty_byzantine: Coin;
-  validator_list_size: string;
   absent_commit_limitation: string;
+  oncall_size: string;
+  standby_size: string;
+  validator_revoke_pending_sec: string;
+  oncall_inflation_weight: string;
+  standby_inflation_weight: string;
+  max_voted_validators: string;
 }
 export function isValidatorParam(param: object): param is ValidatorParam {
   return (
-    'validator_min_withdraw' in param &&
-    'validator_min_voting_deposit' in param &&
-    'validator_min_commiting_deposit' in param &&
+    'validator_min_deposit' in param &&
     'validator_coin_return_second' in param &&
     'validator_coin_return_times' in param &&
-    'penalty_miss_vote' in param &&
     'penalty_miss_commit' in param &&
     'penalty_byzantine' in param &&
-    'validator_list_size' in param &&
-    'absent_commit_limitation' in param
+    'absent_commit_limitation' in param &&
+    'oncall_size' in param &&
+    'standby_size' in param &&
+    'validator_revoke_pending_sec' in param &&
+    'oncall_inflation_weight' in param &&
+    'standby_inflation_weight' in param &&
+    'max_voted_validators' in param
   );
 }
 
-export interface CoinDayParam {
-  seconds_to_recover_coin_day: number;
-}
-export function isCoinDayParam(param: object): param is CoinDayParam {
-  return 'seconds_to_recover_coin_day' in param;
-}
-
 export interface BandwidthParam {
-  seconds_to_recover_bandwidth: number;
+  seconds_to_recover_bandwidth: string;
   capacity_usage_per_transaction: Coin;
   virtual_coin: Coin;
+  general_msg_quota_ratio: string;
+  general_msg_ema_factor: string;
+  app_msg_quota_ratio: string;
+  app_msg_ema_factor: string;
+  expected_max_mps: string;
+  msg_fee_factor_a: string;
+  msg_fee_factor_b: string;
+  max_mps_decay_rate: string;
+  app_bandwidth_pool_size: string;
+  app_vacancy_factor: string;
+  app_punishment_factor: string;
 }
 export function isBandwidthParam(param: object): param is BandwidthParam {
   return (
     'seconds_to_recover_bandwidth' in param &&
     'capacity_usage_per_transaction' in param &&
-    'virtual_coin' in param
+    'general_msg_quota_ratio' in param &&
+    'general_msg_ema_factor' in param &&
+    'app_msg_quota_ratio' in param &&
+    'app_msg_ema_factor' in param &&
+    'expected_max_mps' in param &&
+    'msg_fee_factor_a' in param &&
+    'msg_fee_factor_b' in param &&
+    'max_mps_decay_rate' in param &&
+    'app_bandwidth_pool_size' in param &&
+    'app_vacancy_factor' in param &&
+    'app_punishment_factor' in param
   );
 }
 
 export interface AccountParam {
   minimum_balance: Coin;
   register_fee: Coin;
-  first_deposit_full_stake_limit: Coin;
+  first_deposit_full_coin_day_limit: Coin;
   max_num_frozen_money: number;
 }
 export function isAccountParam(param: object): param is AccountParam {
   return (
     'minimum_balance' in param &&
     'register_fee' in param &&
-    'first_deposit_full_stake_limit' in param &&
+    'first_deposit_full_coin_day_limit' in param &&
     'max_num_frozen_money' in param
   );
 }
@@ -218,22 +229,36 @@ export function isPostParam(param: object): param is PostParam {
 
 export interface ReputationParam {
   best_content_index_n: string;
+  user_max_n: string;
 }
 export function isReputationParam(param: object): param is ReputationParam {
-  return 'best_content_index_n' in param;
+  return 'best_content_index_n' in param && 'user_max_n' in param;
+}
+
+export interface PriceParam {
+  testnet_mode: boolean;
+  update_every: string;
+  feed_every: string;
+  history_max_len: string;
+  penalty_miss_feed: string;
+}
+export function isPriceParam(param: object): param is ReputationParam {
+  return (
+    'testnet_mode' in param &&
+    'update_every' in param &&
+    'feed_every' in param &&
+    'history_max_len' in param &&
+    'penalty_miss_feed' in param
+  );
 }
 
 export interface GlobalMeta {
   total_lino_coin: Coin;
   last_year_cumulative_consumption: Coin;
-  cumulative_consumption: Coin;
-  growth_rate: Rat;
-  ceiling: Rat;
-  Floor: Rat;
 }
 
 export interface ConsumptionMeta {
-  consumption_friction_rate: Rat;
+  consumption_friction_rate: string;
   consumption_window: Coin;
   consumption_reward_pool: Coin;
   consumption_freezing_period: string;

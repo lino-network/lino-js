@@ -1,6 +1,6 @@
 {
   "name": "lino-js",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "",
   "typings": "lib/index.d.ts",
   "main": "lib/lino-js.cjs.js",
@@ -10,6 +10,7 @@
     "lib"
   ],
   "dependencies": {
+    "bech32": "^1.1.3",
     "buffer": "^5.1.0",
     "bytebuffer": "^5.0.1",
     "cross-fetch": "^2.2.0",

@@ -1,6 +1,7 @@
 import ByteBuffer from 'bytebuffer';
 import shajs from 'sha.js';
 import { Coin, SDKCoin } from '../common';
+import bech32 from 'bech32';
 
 // TODO: for int64, maybe we should do extra check in proper place, or use string
 export interface StdFee {
@@ -16,8 +17,6 @@ export interface StdFeeInSig {
 export interface StdSignature {
   pub_key: InternalPubKey;
   signature: InternalPrivKey;
-  account_number: string;
-  sequence: string;
 }
 
 export interface StdMsg {
@@ -69,21 +68,22 @@ export const getZeroFeeInSig: () => StdFeeInSig = () => ({
 
 export function encodeTx(
   msgs: StdMsg[],
-  rawPubKey: string,
-  rawSigDER: string,
-  seq: number,
+  rawPubKey: string[],
+  rawSigDER: string[],
   maxFeeInCoin: number
 ): string {
-  const stdSig: StdSignature = {
-    pub_key: convertToInternalPubKey(rawPubKey, _TYPE.PubKeySecp256k1),
-    signature: ByteBuffer.fromHex(rawSigDER).toString('base64'),
-    account_number: '0',
-    sequence: String(seq)
-  };
+  var sigs: StdSignature[] = [];
+  for (var _i = 0; _i < rawPubKey.length; _i++) {
+    const stdSig: StdSignature = {
+      pub_key: convertToInternalPubKey(rawPubKey[_i], _TYPE.PubKeySecp256k1),
+      signature: ByteBuffer.fromHex(rawSigDER[_i]).toString('base64')
+    };
+    sigs.push(stdSig);
+  }
 
   const stdTx: StdTx = {
     msg: msgs,
-    signatures: [stdSig],
+    signatures: sigs,
     fee: getFee(maxFeeInCoin)
   };
 
@@ -125,6 +125,13 @@ export function decodeObject(result: any): any {
         typeof decodedResult[key] !== 'number'
       ) {
         decodedResult[key] = decodeObject(result[key]);
+      }
+      if (key === 'address') {
+        var decodeRes = bech32.decode(result[key]);
+        if (decodeRes.prefix !== 'lino') {
+          throw new Error(`invalid prefix: ${decodeRes.prefix}\n`);
+        }
+        decodedResult[key] = encodeToHex(bech32.fromWords(decodeRes.words));
       }
     }
   }
@@ -373,6 +380,12 @@ function number2StringInObject(object): any {
     }
   }
   return resultObj;
+}
+
+function encodeToHex(arr: Array<number>): String {
+  var res = '';
+  for (var i = 0; i < arr.length; i++) res += arr[i].toString(16);
+  return res.toUpperCase();
 }
 
 const _TYPE = {

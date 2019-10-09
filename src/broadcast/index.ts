@@ -362,7 +362,6 @@ export default class Broadcast {
     title: string,
     post_id: string,
     content: string,
-    links: Map<string, string>,
     privKeyHex: string,
     seq: number
   ) {
@@ -942,21 +941,21 @@ export default class Broadcast {
    * @param privKeyHex: the private key of the creator
    * @param seq: the sequence number of the creator for the next transaction
    */
-  changeEvaluateOfContentValueParam(
-    creator: string,
-    parameter: Types.EvaluateOfContentValueParam,
-    reason: string,
-    privKeyHex: string,
-    seq: number
-  ) {
-    const msg: ChangeEvaluateOfContentValueParamMsg = {
-      creator,
-      parameter: encodeObject(parameter),
-      reason
-    };
+  // changeEvaluateOfContentValueParam(
+  //   creator: string,
+  //   parameter: Types.EvaluateOfContentValueParam,
+  //   reason: string,
+  //   privKeyHex: string,
+  //   seq: number
+  // ) {
+  //   const msg: ChangeEvaluateOfContentValueParamMsg = {
+  //     creator,
+  //     parameter: encodeObject(parameter),
+  //     reason
+  //   };
 
-    return this._broadcastTransaction(msg, _MSGTYPE.ChangeEvaluationMsgType, privKeyHex, seq);
-  }
+  //   return this._broadcastTransaction(msg, _MSGTYPE.ChangeEvaluationMsgType, privKeyHex, seq);
+  // }
 
   /**
    * changeInfraInternalAllocationParam changes InfraInternalAllocationParam with new value.
@@ -980,7 +979,6 @@ export default class Broadcast {
       parameter: encodeObject(parameter),
       reason
     };
-
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeInfraAllocationMsgType, privKeyHex, seq);
   }
 
@@ -1222,8 +1220,8 @@ export default class Broadcast {
     return this._transport.signBuildBroadcast(msg, msgType, privKeyHex, seq);
   }
 
-  broadcastRawMsgBytesSync(tx: string, seq: number): Promise<ResultBroadcastTx> {
-    return this._transport.broadcastRawMsgBytesSync(tx, seq);
+  broadcastRawMsgBytesSync(tx: string): Promise<ResultBroadcastTx> {
+    return this._transport.broadcastRawMsgBytesSync(tx);
   }
 }
 
@@ -1418,11 +1416,11 @@ export interface ChangeGlobalAllocationParamMsg {
   reason: string;
 }
 
-export interface ChangeEvaluateOfContentValueParamMsg {
-  creator: string;
-  parameter: Types.EvaluateOfContentValueParam;
-  reason: string;
-}
+// export interface ChangeEvaluateOfContentValueParamMsg {
+//   creator: string;
+//   parameter: Types.EvaluateOfContentValueParam;
+//   reason: string;
+// }
 
 export interface ChangeInfraInternalAllocationParamMsg {
   creator: string;
