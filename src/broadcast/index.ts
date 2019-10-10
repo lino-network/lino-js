@@ -437,7 +437,7 @@ export default class Broadcast {
   }
 
   /**
-   * VoteValidator vote for validators
+   * voteValidator vote for validators
    * It composes ValidatorDepositMsg and then broadcasts the transaction to blockchain.
    *
    * @param username: the validator username
@@ -445,7 +445,7 @@ export default class Broadcast {
    * @param privKeyHex: the private key of the validator
    * @param seq: the sequence number of the validator for the next transaction
    */
-  Votevalidator(username: string, validators: string[], privKeyHex: string, seq: number) {
+  voteValidator(username: string, validators: string[], privKeyHex: string, seq: number) {
     const msg: VoteValidatorMsg = {
       voted_validators: validators,
       username: username
@@ -911,7 +911,7 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeGlobalAllocationMsgType, privKeyHex, seq);
   }
 
-  makeChangeGlobalAllocationParam(
+  makeChangeGlobalAllocationParamMsg(
     creator: string,
     parameter: Types.GlobalAllocationParam,
     reason: string,
@@ -982,6 +982,26 @@ export default class Broadcast {
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeInfraAllocationMsgType, privKeyHex, seq);
   }
 
+  makeChangeInfraInternalAllocationParamMsg(
+    creator: string,
+    parameter: Types.InfraInternalAllocationParam,
+    reason: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: ChangeInfraInternalAllocationParamMsg = {
+      creator,
+      parameter: encodeObject(parameter),
+      reason
+    };
+    return this._transport.signAndBuild(
+      msg,
+      _MSGTYPE.ChangeInfraAllocationMsgType,
+      privKeyHex,
+      seq
+    );
+  }
+
   /**
    * changeVoteParam changes VoteParam with new value.
    * It composes ChangeVoteParamMsg and then broadcasts the transaction to blockchain.
@@ -1005,6 +1025,21 @@ export default class Broadcast {
       reason
     };
     return this._broadcastTransaction(msg, _MSGTYPE.ChangeVoteParamMsgType, privKeyHex, seq);
+  }
+
+  makeChangeVoteParamMsg(
+    creator: string,
+    parameter: Types.VoteParam,
+    reason: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: ChangeVoteParamMsg = {
+      creator,
+      parameter: encodeObject(parameter),
+      reason
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.ChangeVoteParamMsgType, privKeyHex, seq);
   }
 
   /**

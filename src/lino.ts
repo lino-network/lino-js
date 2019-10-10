@@ -217,7 +217,8 @@ export class LINO {
           privKeyHex,
           seqs[0]
         );
-    });
+      }
+    );
   }
 
   async voteValidator(
@@ -228,9 +229,10 @@ export class LINO {
     var that = this;
     return this._guaranteeBroadcast(
       new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
-      function(seq) {
-        return that._broadcast.makeVoteValidator(username, validators, privKeyHex, seq);
-      });
+      function(seqs) {
+        return that._broadcast.makeVoteValidator(username, validators, privKeyHex, seqs[0]);
+      }
+    );
   }
 
   async validatorRevoke(username: string, privKeyHex: string): Promise<ResultBroadcastTxCommit> {

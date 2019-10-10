@@ -16,7 +16,7 @@ export interface StdFeeInSig {
 
 export interface StdSignature {
   pub_key: InternalPubKey;
-  signature: InternalPrivKey;
+  signature: InternalSignature;
 }
 
 export interface StdMsg {
@@ -127,7 +127,6 @@ export function decodeObject(result: any): any {
         decodedResult[key] = decodeObject(result[key]);
       }
       if (key === 'address' && result[key].startsWith('lino')) {
-        console.log('decode address:', result[key].startsWith('lino'), result);
         var decodeRes = bech32.decode(result[key]);
         if (decodeRes.prefix !== 'lino') {
           throw new Error(`invalid prefix: ${decodeRes.prefix}\n`);
@@ -333,6 +332,9 @@ export function convertToRawSig(internalSignature: InternalSignature): string {
 }
 
 function sortObject(object) {
+  if (typeof object == 'string') {
+    return object;
+  }
   var sortedObj = {},
     keys = Object.keys(object);
 
@@ -363,6 +365,9 @@ function number2StringInObject(object): any {
   var resultObj = {},
     keys = Object.keys(object);
 
+  if (typeof object == 'string') {
+    return object;
+  }
   for (var index in keys) {
     var key = keys[index];
     if (typeof object[key] == 'object' && !(object[key] instanceof Array)) {
