@@ -1,6 +1,6 @@
 import * as Types from '../common';
 import { ITransport } from '../transport';
-import { encodeObject, decodePubKey } from '../transport/encoder';
+import { encodeObject, decodePubKey, encodeAddr } from '../transport/encoder';
 import { ResultBroadcastTx, ResultBroadcastTxCommit } from '../transport/rpc';
 
 const InvalidSeqErrCode = 3;
@@ -112,6 +112,79 @@ export default class Broadcast {
       sender: sender
     };
     return this._transport.signAndBuild(msg, _MSGTYPE.TransferMsgType, privKeyHex, seq);
+  }
+
+  /**
+   * TransferV2 sends a certain amount of LINO token from the sender to the receiver.
+   * It composes TransferMsg and then broadcasts the transaction to blockchain.
+   *
+   * @param sender: the user who wants to send money
+   * @param receiver: the receiver whom the sender sends money to
+   * @param amount: the amount LINO token in the transfer
+   * @param memo: memos inthe transfer
+   * @param privKeyHex: the private key of sender
+   * @param seq: the sequence number of sender for the next transaction
+   */
+  transferV2(
+    sender: Types.AccOrAddr,
+    receiver: Types.AccOrAddr,
+    amount: string,
+    memo: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    var s;
+    var r;
+    if (sender.is_addr) {
+      s = new Types.Addr(encodeAddr(sender.addr));
+    } else if (sender.is_addr == false) {
+      s = new Types.Acc(sender.account_key);
+    }
+
+    if (receiver.is_addr) {
+      r = new Types.Addr(encodeAddr(receiver.addr));
+    } else if (receiver.is_addr == false) {
+      r = new Types.Acc(receiver.account_key);
+    }
+
+    const msg: TransferV2Msg = {
+      amount: amount,
+      memo: memo,
+      receiver: r,
+      sender: s
+    };
+    return this._broadcastTransaction(msg, _MSGTYPE.TransferV2MsgType, privKeyHex, seq);
+  }
+
+  makeTransferV2Msg(
+    sender: Types.AccOrAddr,
+    receiver: Types.AccOrAddr,
+    amount: string,
+    memo: string,
+    privKeyHex: string,
+    seq: number
+  ): string {
+    var s;
+    var r;
+    if (sender.is_addr) {
+      s = new Types.Addr(encodeAddr(sender.addr));
+    } else if (sender.is_addr == false) {
+      s = new Types.Acc(sender.account_key);
+    }
+
+    if (receiver.is_addr) {
+      r = new Types.Addr(encodeAddr(receiver.addr));
+    } else if (receiver.is_addr == false) {
+      r = new Types.Acc(receiver.account_key);
+    }
+
+    const msg: TransferV2Msg = {
+      amount: amount,
+      memo: memo,
+      receiver: r,
+      sender: s
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.TransferV2MsgType, privKeyHex, seq);
   }
 
   /**
@@ -1277,6 +1350,13 @@ export interface TransferMsg {
   memo: string;
 }
 
+export interface TransferV2Msg {
+  sender: any;
+  receiver: any;
+  amount: string;
+  memo: string;
+}
+
 export interface ClaimInterestMsg {
   username: string;
 }
@@ -1510,6 +1590,7 @@ const _MSGTYPE = {
   FollowMsgType: 'lino/follow',
   UnfollowMsgType: 'lino/unfollow',
   TransferMsgType: 'lino/transfer',
+  TransferV2MsgType: 'lino/transferv2',
   ClaimMsgType: 'lino/claim',
   ClaimInterestMsgType: 'lino/claimInterest',
   RecoverMsgType: 'lino/recover',

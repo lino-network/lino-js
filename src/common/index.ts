@@ -4,14 +4,32 @@ export interface Coin {
 }
 
 export class AccOrAddr {
-  readonly username: string;
-  readonly isAddr: boolean;
-  readonly addr: string;
+  is_addr: boolean;
+  addr: string;
+  account_key: string;
 
-  constructor(username: string, isAddr: boolean, addr: string) {
-    this.username = username;
-    this.isAddr = isAddr;
+  constructor(addr: string, username: string, is_addr: boolean) {
+    this.is_addr = true;
     this.addr = addr;
+    this.account_key = username;
+  }
+}
+
+export class Addr {
+  is_addr: boolean;
+  addr: string;
+
+  constructor(addr: string) {
+    this.is_addr = true;
+    this.addr = addr;
+  }
+}
+
+export class Acc {
+  account_key: string;
+
+  constructor(username: string) {
+    this.account_key = username;
   }
 }
 

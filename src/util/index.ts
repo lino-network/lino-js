@@ -20,7 +20,7 @@ export function pubKeyFromPrivate(privKeyHex: string): string {
 
 export function addressFromPubKey(pubKeyHex: string): string {
   var ec = new EC('secp256k1');
-  var key = ByteBuffer.fromHex(pubKeyHex);
+  var key = ByteBuffer.fromHex(decodePubKey(pubKeyHex));
   const hashResult = shajs('sha256')
     .update(key.view)
     .digest() as string;

@@ -95,6 +95,13 @@ export function encodeTx(
   return ByteBuffer.btoa(jsonStr);
 }
 
+export function encodeAddr(addr: string): string {
+  var addrBytes = ByteBuffer.fromHex(addr);
+  var addrWord = bech32.toWords(addrBytes.view);
+  var encodeRes = bech32.encode(_PREFIX.PrefixAddress, addrWord);
+  return encodeRes;
+}
+
 export function decodeObject(result: any): any {
   var decodedResult = Object.assign({}, result);
   var keys = Object.keys(result);
@@ -128,9 +135,10 @@ export function decodeObject(result: any): any {
       }
       if (key === 'address' && result[key].startsWith('lino')) {
         var decodeRes = bech32.decode(result[key]);
-        if (decodeRes.prefix !== 'lino') {
+        if (decodeRes.prefix !== _PREFIX.PrefixAddress) {
           throw new Error(`invalid prefix: ${decodeRes.prefix}\n`);
         }
+        const tmpp = bech32.fromWords(decodeRes.words);
         decodedResult[key] = encodeToHex(bech32.fromWords(decodeRes.words));
       }
     }
@@ -390,7 +398,13 @@ function number2StringInObject(object): any {
 
 function encodeToHex(arr: Array<number>): String {
   var res = '';
-  for (var i = 0; i < arr.length; i++) res += arr[i].toString(16);
+  for (var i = 0; i < arr.length; i++) {
+    var subRes = arr[i].toString(16);
+    if (subRes.length <= 1) {
+      subRes = '0' + subRes;
+    }
+    res += subRes;
+  }
   return res.toUpperCase();
 }
 
@@ -410,5 +424,7 @@ const _PREFIX = {
   PrefixPubKeySecp256k1: 'EB5AE98721',
 
   PrefixPrivKeyEd25519: 'A328891040',
-  PrefixPrivKeySecp256k1: 'E1B0F79B20'
+  PrefixPrivKeySecp256k1: 'E1B0F79B20',
+
+  PrefixAddress: 'lino'
 };

@@ -1,7 +1,7 @@
 import ByteBuffer from 'bytebuffer';
 import * as Types from '../common';
 import { ITransport, GetKeyBy, ResultKV } from '../transport';
-import { decodePubKey } from '../transport/encoder';
+import { decodePubKey, encodeAddr } from '../transport/encoder';
 import { InternalPubKey, StdTx, convertToRawPubKey, encodePubKey } from '../transport/encoder';
 import { ResultBlock, ResultStatus, ResultTx } from '../transport/rpc';
 import * as Util from '../util/index';
@@ -101,7 +101,7 @@ export default class Query {
    * @param username
    */
   getSeqNumberByAddress(addr: string): Promise<number> {
-    return this.getAccountBankByAddress(addr).then(bank => {
+    return this.getAccountBankByAddress(encodeAddr(addr)).then(bank => {
       return +bank.sequence;
     });
   }
