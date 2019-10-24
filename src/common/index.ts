@@ -3,12 +3,16 @@ export interface Coin {
   amount: string;
 }
 
+export interface MiniDollar {
+  amount: string;
+}
+
 export class AccOrAddr {
   is_addr: boolean;
   addr: string;
   account_key: string;
 
-  constructor(addr: string, username: string, is_addr: boolean) {
+  constructor(addr: string, is_addr: boolean, username: string) {
     this.is_addr = true;
     this.addr = addr;
     this.account_key = username;

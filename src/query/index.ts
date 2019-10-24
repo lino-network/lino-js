@@ -498,6 +498,72 @@ export default class Query {
     return this._transport.query<DeveloperList>([], DeveloperKVStoreKey, DeveloperListSubStore);
   }
 
+  /**
+   * getIDABalance
+   *
+   * @param developerName
+   * @param userName
+   */
+  getIDABalance(developerName: string, username: string): Promise<IDABalance> {
+    const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
+    const IDABalanceSubStore = Keys.KVSTOREKEYS.IDABalanceSubStore;
+    return this._transport.query<IDABalance>(
+      [developerName, username],
+      DeveloperKVStoreKey,
+      IDABalanceSubStore
+    );
+  }
+
+  /**
+   * getIDA
+   *
+   * @param developerName
+   */
+  getIDA(developerName: string): Promise<AppIDA> {
+    const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
+    const IDASubStore = Keys.KVSTOREKEYS.IDASubStore;
+    return this._transport.query<AppIDA>([developerName], DeveloperKVStoreKey, IDASubStore);
+  }
+
+  /**
+   * getAffiliated
+   *
+   * @param developerName
+   */
+  getAffiliated(developerName: string): Promise<String[]> {
+    const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
+    const AffiliatedSubStore = Keys.KVSTOREKEYS.AffiliatedSubStore;
+    return this._transport.query<String[]>(
+      [developerName],
+      DeveloperKVStoreKey,
+      AffiliatedSubStore
+    );
+  }
+
+  /**
+   * getReservePool
+   *
+   */
+  getReservePool(): Promise<ReservePool> {
+    const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
+    const ReservePoolSubStore = Keys.KVSTOREKEYS.ReservePoolSubStore;
+    return this._transport.query<ReservePool>([], DeveloperKVStoreKey, ReservePoolSubStore);
+  }
+
+  /**
+   * getIDAStats
+   *
+   */
+  getIDAStats(developerName: string): Promise<AppIDAStats> {
+    const DeveloperKVStoreKey = Keys.KVSTOREKEYS.DeveloperKVStoreKey;
+    const IDAStatsSubStore = Keys.KVSTOREKEYS.IDAStatsSubStore;
+    return this._transport.query<AppIDAStats>(
+      [developerName],
+      DeveloperKVStoreKey,
+      IDAStatsSubStore
+    );
+  }
+
   // infra related query
 
   /**
@@ -1128,14 +1194,47 @@ export interface PostMeta {
 export interface Developer {
   username: string;
   deposit: Types.Coin;
-  app_consumption: Types.Coin;
+  app_consumption: Types.MiniDollar;
   website: string;
   description: string;
   app_meta_data: string;
+  is_deleted: boolean;
+  n_affiliated: boolean;
 }
 
 export interface DeveloperList {
   all_developers: string[];
+}
+
+export interface IDABalance {
+  appida_amount: string;
+  unauthed: boolean;
+}
+
+export interface AppIDA {
+  app: string;
+  name: boolean;
+  price: Types.MiniDollar;
+  is_revoked: boolean;
+  revoke_coin_price: Types.MiniDollar;
+}
+
+export interface AppIDAStats {
+  aa: string;
+}
+
+export interface Role {
+  total: Types.MiniDollar;
+}
+
+export interface IDABank {
+  b: Types.MiniDollar;
+  unauthed: boolean;
+}
+
+export interface ReservePool {
+  total: Types.Coin;
+  total_minidollar: Types.MiniDollar;
 }
 
 // infra provider related

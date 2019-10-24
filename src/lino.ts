@@ -415,15 +415,15 @@ export class LINO {
     var seqs: number[] = [];
     if (lasthash === '') {
       for (let i = 0; i < signers.length; i++) {
-        if (!signers[i].isAddr) {
-          var seq = await this._query.getSeqNumber(signers[i].username);
+        if (!signers[i].is_addr) {
+          var seq = await this._query.getSeqNumber(signers[i].account_key);
           seqs.push(seq);
         }
       }
     } else {
       for (let i = 0; i < signers.length; i++) {
-        if (!signers[i].isAddr) {
-          var txSeq = await this._query.getTxAndSequence(signers[i].username, lasthash);
+        if (!signers[i].is_addr) {
+          var txSeq = await this._query.getTxAndSequence(signers[i].account_key, lasthash);
           if (txSeq.tx != null) {
             if (txSeq.tx.code !== 0) {
               throw new BroadcastError(BroadCastErrorEnum.DeliverTx, txSeq.tx.log, txSeq.tx.code);
@@ -470,7 +470,7 @@ export class LINO {
     for (let i = 0; i < this._txConfirmMaxAttempts; i++) {
       await delay(this._txConfirmInterval);
 
-      var txSeq = await this._query.getTxAndSequence(signers[0].username, txHash);
+      var txSeq = await this._query.getTxAndSequence(signers[0].account_key, txHash);
       if (txSeq.tx != null) {
         if (txSeq.tx.code !== 0) {
           throw new BroadcastError(BroadCastErrorEnum.DeliverTx, txSeq.tx.log, txSeq.tx.code);

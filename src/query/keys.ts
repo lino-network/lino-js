@@ -27,6 +27,11 @@ namespace Keys {
 
     DeveloperSubStore: 'dev',
     DeveloperListSubStore: 'devList',
+    IDASubStore: 'devIDA',
+    IDABalanceSubStore: 'devIDABalance',
+    AffiliatedSubStore: 'devAffiliated',
+    ReservePoolSubStore: 'devReservePool',
+    IDAStatsSubStore: 'devIDAStats',
 
     TimeEventListSubStore: 'timeEventList',
     GlobalMetaSubStore: 'globalMeta',
