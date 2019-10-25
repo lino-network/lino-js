@@ -38,7 +38,7 @@ namespace Keys {
     InflationPoolSubStore: 'inflationPool',
     ConsumptionMetaSubStore: 'consumptionMeta',
     TpsSubStore: 'tps',
-    LinoStakeStatSubStore: 'linoStakeStat',
+    LinoStakeStatSubStore: 'stake-stats',
     GlobalTimeSubStore: 'globalTime',
     InflationSubStore: 'inflation',
 

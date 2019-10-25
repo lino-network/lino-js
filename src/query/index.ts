@@ -865,7 +865,7 @@ export default class Query {
    * getEventAtTime returns the events at certain second.
    */
   getLinoStakeStat(day: string): Promise<Types.LinoStakeStat> {
-    const GlobalKVStoreKey = Keys.KVSTOREKEYS.GlobalKVStoreKey;
+    const GlobalKVStoreKey = Keys.KVSTOREKEYS.VoterSubStore;
     const LinoStakeStatSubStore = Keys.KVSTOREKEYS.LinoStakeStatSubStore;
     return this._transport.query<Types.LinoStakeStat>(
       [day],
