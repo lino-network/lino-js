@@ -13,7 +13,7 @@ export class AccOrAddr {
   account_key: string;
 
   constructor(addr: string, is_addr: boolean, username: string) {
-    this.is_addr = true;
+    this.is_addr = is_addr;
     this.addr = addr;
     this.account_key = username;
   }

@@ -51,7 +51,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(sender, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, sender)),
       function(seqs) {
         return that._broadcast.makeTransferMsg(sender, receiver, amount, memo, privKeyHex, seqs[0]);
       }
@@ -69,7 +69,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeDonate(
           username,
@@ -85,37 +85,10 @@ export class LINO {
     );
   }
 
-  async register(
-    referrer: string,
-    registerFee: string,
-    username: string,
-    resetPubKey: string,
-    transactionPubKeyHex: string,
-    appPubKeyHex: string,
-    referrerPrivKeyHex: string
-  ): Promise<ResultBroadcastTxCommit> {
-    var that = this;
-    return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(referrer, false, '')),
-      function(seqs) {
-        return that._broadcast.makeRegister(
-          referrer,
-          registerFee,
-          username,
-          resetPubKey,
-          transactionPubKeyHex,
-          appPubKeyHex,
-          referrerPrivKeyHex,
-          seqs[0]
-        );
-      }
-    );
-  }
-
   async claimInterest(username: string, privKeyHex: string): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeClaimInterest(username, privKeyHex, seqs[0]);
       }
@@ -129,7 +102,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeUpdateAccount(username, json_meta, privKeyHex, seqs[0]);
       }
@@ -146,7 +119,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(author, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, author)),
       function(seqs) {
         return that._broadcast.makePost(
           author,
@@ -168,7 +141,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(author, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, author)),
       function(seqs) {
         return that._broadcast.makeDeletePost(author, post_id, privKeyHex, seqs[0]);
       }
@@ -185,7 +158,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(author, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, author)),
       function(seqs) {
         return that._broadcast.makeUpdatePost(
           author,
@@ -208,7 +181,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeValidatorRegister(
           username,
@@ -228,7 +201,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeVoteValidator(username, validators, privKeyHex, seqs[0]);
       }
@@ -238,7 +211,7 @@ export class LINO {
   async validatorRevoke(username: string, privKeyHex: string): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeValidatorRevoke(username, privKeyHex, seqs[0]);
       }
@@ -252,7 +225,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeStakeIn(username, deposit, privKeyHex, seqs[0]);
       }
@@ -266,7 +239,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeStakeOut(username, amount, privKeyHex, seqs[0]);
       }
@@ -282,7 +255,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeDeveloperRegister(
           username,
@@ -305,7 +278,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeDeveloperUpdate(
           username,
@@ -322,7 +295,7 @@ export class LINO {
   async developerRevoke(username: string, privKeyHex: string): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeDeveloperRevoke(username, privKeyHex, seqs[0]);
       }
@@ -339,7 +312,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeGrantPermission(
           username,
@@ -362,7 +335,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeRevokePermission(
           username,
@@ -382,7 +355,7 @@ export class LINO {
   ): Promise<ResultBroadcastTxCommit> {
     var that = this;
     return this._guaranteeBroadcast(
-      new Array<Types.AccOrAddr>(new Types.AccOrAddr(username, false, '')),
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
       function(seqs) {
         return that._broadcast.makeProviderReport(username, usage, privKeyHex, seqs[0]);
       }

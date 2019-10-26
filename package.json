@@ -1,6 +1,6 @@
 {
   "name": "lino-js",
-  "version": "1.0.27",
+  "version": "1.0.31",
   "description": "",
   "typings": "lib/index.d.ts",
   "main": "lib/lino-js.cjs.js",
