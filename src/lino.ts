@@ -42,6 +42,35 @@ export class LINO {
     return this._broadcast;
   }
 
+  async register(
+    referrer: Types.AccOrAddr,
+    register_fee: string,
+    txAddress: string,
+    username: string,
+    transactionPubKeyHex: string,
+    signingPubKeyHex: string,
+    referrerPrivKeyHex: string,
+    txPrivKeyHex: string
+  ): Promise<ResultBroadcastTxCommit> {
+    var that = this;
+    return this._guaranteeBroadcast(
+      new Array<Types.AccOrAddr>(referrer, new Types.AccOrAddr(txAddress, true, '')),
+      function(seqs) {
+        return that._broadcast.makeRegister(
+          referrer,
+          register_fee,
+          username,
+          transactionPubKeyHex,
+          signingPubKeyHex,
+          referrerPrivKeyHex,
+          txPrivKeyHex,
+          seqs[0],
+          seqs[1]
+        );
+      }
+    );
+  }
+
   async transfer(
     sender: string,
     receiver: string,
@@ -80,6 +109,34 @@ export class LINO {
           memo,
           privKeyHex,
           seqs[0]
+        );
+      }
+    );
+  }
+
+  async recover(
+    username: string,
+    new_transaction_address: string,
+    new_tx_public_key: string,
+    new_signing_public_key: string,
+    priv_key_hex: string,
+    new_transaction_private_key_hex: string
+  ): Promise<ResultBroadcastTxCommit> {
+    var that = this;
+    return this._guaranteeBroadcast(
+      new Array<Types.AccOrAddr>(
+        new Types.AccOrAddr('', false, username),
+        new Types.AccOrAddr(new_transaction_address, true, '')
+      ),
+      function(seqs) {
+        return that._broadcast.makeRecover(
+          username,
+          new_tx_public_key,
+          new_signing_public_key,
+          priv_key_hex,
+          new_transaction_private_key_hex,
+          seqs[0],
+          seqs[1]
         );
       }
     );
@@ -391,26 +448,32 @@ export class LINO {
         if (!signers[i].is_addr) {
           var seq = await this._query.getSeqNumber(signers[i].account_key);
           seqs.push(seq);
+        } else {
+          var seq = await this._query.getSeqNumberByAddress(signers[i].addr);
+          seqs.push(seq);
         }
       }
     } else {
       for (let i = 0; i < signers.length; i++) {
+        let txSeq;
         if (!signers[i].is_addr) {
-          var txSeq = await this._query.getTxAndSequence(signers[i].account_key, lasthash);
-          if (txSeq.tx != null) {
-            if (txSeq.tx.code !== 0) {
-              throw new BroadcastError(BroadCastErrorEnum.DeliverTx, txSeq.tx.log, txSeq.tx.code);
-            }
-            var response: ResultBroadcastTxCommit = {
-              check_tx: null,
-              deliver_tx: null,
-              height: txSeq.tx.height,
-              hash: txSeq.tx.hash
-            };
-            return [response, txSeq.tx.hash];
-          }
-          seqs.push(txSeq.sequence);
+          txSeq = await this._query.getTxAndSequence(signers[i].account_key, lasthash);
+        } else {
+          txSeq = await this._query.getTxAndSequenceByAddress(signers[i].addr, lasthash);
         }
+        if (txSeq && txSeq.tx != null) {
+          if (txSeq.tx.code !== 0) {
+            throw new BroadcastError(BroadCastErrorEnum.DeliverTx, txSeq.tx.log, txSeq.tx.code);
+          }
+          var response: ResultBroadcastTxCommit = {
+            check_tx: null,
+            deliver_tx: null,
+            height: txSeq.tx.height,
+            hash: txSeq.tx.hash
+          };
+          return [response, txSeq.tx.hash];
+        }
+        seqs.push(txSeq.sequence);
       }
     }
     var tx = f(seqs);
@@ -440,10 +503,18 @@ export class LINO {
       }
     }
 
+    console.log('before confirm attempts');
     for (let i = 0; i < this._txConfirmMaxAttempts; i++) {
       await delay(this._txConfirmInterval);
 
-      var txSeq = await this._query.getTxAndSequence(signers[0].account_key, txHash);
+      console.log('before query tx seq', signers);
+      var txSeq;
+      if (!signers[0].is_addr) {
+        txSeq = await this._query.getTxAndSequence(signers[0].account_key, txHash);
+      } else {
+        txSeq = await this._query.getTxAndSequenceByAddress(signers[0].addr, txHash);
+      }
+      console.log('after query tx seq');
       if (txSeq.tx != null) {
         if (txSeq.tx.code !== 0) {
           throw new BroadcastError(BroadCastErrorEnum.DeliverTx, txSeq.tx.log, txSeq.tx.code);

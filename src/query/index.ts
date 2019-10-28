@@ -101,9 +101,16 @@ export default class Query {
    * @param username
    */
   getSeqNumberByAddress(addr: string): Promise<number> {
-    return this.getAccountBankByAddress(encodeAddr(addr)).then(bank => {
-      return +bank.sequence;
-    });
+    return this.getAccountBankByAddress(encodeAddr(addr))
+      .then(bank => {
+        return +bank.sequence;
+      })
+      .catch(err => {
+        if (err.code === 303) {
+          return 0;
+        }
+        throw err.indexOf('Query failed: Empty result');
+      });
   }
 
   /**
@@ -937,7 +944,7 @@ export default class Query {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     const AccountTxAndSequence = Keys.KVSTOREKEYS.AccountTxAndSequence;
     return this._transport.query<Types.TxAndSequenceNumber>(
-      [addr, hash, 'true'],
+      [encodeAddr(addr), hash, 'true'],
       AccountKVStoreKey,
       AccountTxAndSequence
     );

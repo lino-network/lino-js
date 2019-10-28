@@ -39,7 +39,7 @@ export interface ITransport {
   ): Promise<ResultBroadcastTxCommit>;
   signAndBuild(msg: any, msgType: string, privKeyHex: string, seq: number): string;
   broadcastRawMsgBytesSync(tx: string): Promise<ResultBroadcastTx>;
-  signAndBuildWithMultiSig(msg: any, msgType: string, privKeyHex: string[], seq: number[]): string;
+  signAndBuildWithMultiSig(msg: any, msgType: string, privKeyHex: string[], seqs: number[]): string;
 }
 
 export interface ITransportOptions {
@@ -80,7 +80,7 @@ export class Transport implements ITransport {
     });
     return this._rpc.abciQuery(path, '').then(result => {
       if (!result.response || !result.response.value) {
-        throw new Error('Query failed: Empty result');
+        throw new QueryError(result.response.log, result.response.code);
       }
       const jsonStr = ByteBuffer.atob(result.response.value);
       return decodeObject(JSON.parse(jsonStr) as T);
@@ -249,20 +249,19 @@ export class Transport implements ITransport {
     var msgs = new Array<StdMsg>();
     var pubkeys = new Array<string>();
     var sigs = new Array<string>();
+    // XXX: side effect on msg
+    convertMsg(msg);
+    const stdMsg: StdMsg = {
+      type: msgType,
+      value: encodeMsg(msg)
+    };
+    msgs.push(stdMsg);
     for (var _i = 0; _i < privKeyHex.length; _i++) {
       // private key from hex
       var privKey = privKeyHex[_i];
       var ec = new EC('secp256k1');
       var key = ec.keyFromPrivate(decodePrivKey(privKey), 'hex');
       pubkeys.push(key.getPublic(true, 'hex'));
-
-      // XXX: side effect on msg
-      convertMsg(msg);
-      const stdMsg: StdMsg = {
-        type: msgType,
-        value: encodeMsg(msg)
-      };
-      msgs.push(stdMsg);
 
       const signMsgHash = encodeSignMsg(msgs, this._chainId, seq[_i], this._maxFeeInCoin);
       // sign to get signature
@@ -300,6 +299,16 @@ export class BroadcastError extends Error {
     super(log);
     Object.setPrototypeOf(this, BroadcastError.prototype);
     this.type = type;
+    this.code = code;
+  }
+}
+
+export class QueryError extends Error {
+  readonly code: number;
+
+  constructor(log: string, code: number) {
+    super(log);
+    Object.setPrototypeOf(this, QueryError.prototype);
     this.code = code;
   }
 }

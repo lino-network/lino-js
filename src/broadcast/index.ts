@@ -27,46 +27,38 @@ export default class Broadcast {
    * @param referrerPrivKeyHex: referrer's private key
    * @param seq: the sequence number of referrer for the next transaction
    */
-  register(
-    referrer: string,
-    registerFee: string,
-    username: string,
-    resetPubKey: string,
-    transactionPubKeyHex: string,
-    appPubKeyHex: string,
-    referrerPrivKeyHex: string,
-    seq: number
-  ) {
-    const msg: RegisterMsg = {
-      referrer: referrer,
-      register_fee: registerFee,
-      new_username: username,
-      new_reset_public_key: decodePubKey(resetPubKey),
-      new_transaction_public_key: decodePubKey(transactionPubKeyHex),
-      new_app_public_key: decodePubKey(appPubKeyHex)
-    };
-    return this._broadcastTransaction(msg, _MSGTYPE.RegisterMsgType, referrerPrivKeyHex, seq);
-  }
 
   makeRegister(
-    referrer: string,
+    referrer: Types.AccOrAddr,
     register_fee: string,
     username: string,
-    resetPubKey: string,
     transactionPubKeyHex: string,
-    appPubKeyHex: string,
+    signingPubKeyHex: string,
     referrerPrivKeyHex: string,
-    seq: number
+    txPrivKeyHex: string,
+    seq1: number,
+    seq2: number
   ) {
-    const msg: RegisterMsg = {
-      referrer: referrer,
+    var r;
+    if (referrer.is_addr) {
+      r = new Types.Addr(encodeAddr(referrer.addr));
+    } else if (referrer.is_addr == false) {
+      r = new Types.Acc(referrer.account_key);
+    }
+
+    const msg: RegisterV2Msg = {
+      referrer: r,
       register_fee: register_fee,
       new_username: username,
-      new_reset_public_key: decodePubKey(resetPubKey),
-      new_transaction_public_key: decodePubKey(transactionPubKeyHex),
-      new_app_public_key: decodePubKey(appPubKeyHex)
+      new_signing_public_key: decodePubKey(signingPubKeyHex),
+      new_transaction_public_key: decodePubKey(transactionPubKeyHex)
     };
-    return this._transport.signAndBuild(msg, _MSGTYPE.RegisterMsgType, referrerPrivKeyHex, seq);
+    return this._transport.signAndBuildWithMultiSig(
+      msg,
+      _MSGTYPE.RegisterMsgType,
+      [referrerPrivKeyHex, txPrivKeyHex],
+      [seq1, seq2]
+    );
   }
 
   /**
@@ -263,22 +255,28 @@ export default class Broadcast {
   //   return this._broadcastTransaction(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
   // }
 
-  // makeRecover(
-  //   username: string,
-  //   new_reset_public_key: string,
-  //   new_transaction_public_key: string,
-  //   new_app_public_key: string,
-  //   privKeyHex: string,
-  //   seq: number
-  // ) {
-  //   const msg: RecoverMsg = {
-  //     username: username,
-  //     new_reset_public_key: decodePubKey(new_reset_public_key),
-  //     new_transaction_public_key: decodePubKey(new_transaction_public_key),
-  //     new_app_public_key: decodePubKey(new_app_public_key)
-  //   };
-  //   return this._transport.signAndBuild(msg, _MSGTYPE.RecoverMsgType, privKeyHex, seq);
-  // }
+  makeRecover(
+    username: string,
+    new_tx_public_key: string,
+    new_signing_public_key: string,
+    priv_key_hex: string,
+    new_transaction_private_key_hex: string,
+    seq1: number,
+    seq2: number
+  ) {
+    const msg: RecoverMsg = {
+      username: username,
+      new_tx_public_key: decodePubKey(new_tx_public_key),
+      new_signing_public_key: decodePubKey(new_signing_public_key)
+    };
+    var res = this._transport.signAndBuildWithMultiSig(
+      msg,
+      _MSGTYPE.RecoverMsgType,
+      [priv_key_hex, new_transaction_private_key_hex],
+      [seq1, seq2]
+    );
+    return res;
+  }
 
   // post related
 
@@ -583,6 +581,39 @@ export default class Broadcast {
     };
     return this._transport.signAndBuild(msg, _MSGTYPE.StakeInMsgType, privKeyHex, seq);
   }
+  /**
+   * StakeIn deposits a certain amount of LINO token from user to receiver
+   * in order to become a voter.
+   * It composes model.StakeInMsg and then broadcasts the transaction to blockchain.
+   *
+   * @param username: the user whot wants to deposit money for being a voter
+   * @param deposit: the amount of LINO token the user wants to deposit
+   * @param privKeyHex: the private key of the user
+   * @param seq: the sequence number of the user for the next transaction
+   */
+  stakeInFor(username: string, receiver: string, deposit: string, privKeyHex: string, seq: number) {
+    const msg: StakeInForMsg = {
+      deposit: deposit,
+      username: username,
+      receiver: receiver
+    };
+    return this._broadcastTransaction(msg, _MSGTYPE.StakeInForMsgType, privKeyHex, seq);
+  }
+
+  makeStakeInFor(
+    username: string,
+    receiver: string,
+    deposit: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: StakeInForMsg = {
+      deposit: deposit,
+      username: username,
+      receiver: receiver
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.StakeInMsgType, privKeyHex, seq);
+  }
 
   /**
    * StakeOut withdraws part of LINO token from a voter's deposit,
@@ -610,79 +641,7 @@ export default class Broadcast {
     return this._transport.signAndBuild(msg, _MSGTYPE.StakeOutMsgType, privKeyHex, seq);
   }
 
-  /**
-   * Delegate delegates a certain amount of LINO token of delegator to a voter, so
-   * the voter will have more voting power.
-   * It composes DelegateMsg and then broadcasts the transaction to blockchain.
-   *
-   * @param delegator: the user who wants to delegate money
-   * @param voter: the voter that the delegator wants to delegate moeny to
-   * @param amount: the amount of LINO token that the delegator wants to delegate
-   * @param privKeyHex: the private key of the delegator
-   * @param seq: the sequence number of the delegator for the next transaction
-   */
-  delegate(delegator: string, voter: string, amount: string, privKeyHex: string, seq: number) {
-    const msg: DelegateMsg = {
-      amount,
-      delegator,
-      voter
-    };
-
-    return this._broadcastTransaction(msg, _MSGTYPE.DelegateMsgType, privKeyHex, seq);
-  }
-
-  makeDelegate(delegator: string, voter: string, amount: string, privKeyHex: string, seq: number) {
-    const msg: DelegateMsg = {
-      delegator,
-      voter,
-      amount
-    };
-    return this._transport.signAndBuild(msg, _MSGTYPE.DelegateMsgType, privKeyHex, seq);
-  }
-
-  /**
-   * DelegatorWithdraw withdraws part of delegated LINO token of a delegator
-   * to a voter, while the delegation still exists.
-   * It composes DelegatorWithdrawMsg and then broadcasts the transaction to blockchain.
-   *
-   * @param delegator: the delegator username
-   * @param voter: the voter username
-   * @param amount: the amount of money that the delegator wants to withdraw
-   * @param privKeyHex: the private key of the delegator
-   * @param seq: the sequence number of the delegator for the next transaction
-   */
-  delegatorWithdraw(
-    delegator: string,
-    voter: string,
-    amount: string,
-    privKeyHex: string,
-    seq: number
-  ) {
-    const msg: DelegatorWithdrawMsg = {
-      delegator,
-      voter,
-      amount
-    };
-
-    return this._broadcastTransaction(msg, _MSGTYPE.DelegateWithdrawMsgType, privKeyHex, seq);
-  }
-
-  makeDelegatorWithdraw(
-    delegator: string,
-    voter: string,
-    amount: string,
-    privKeyHex: string,
-    seq: number
-  ) {
-    const msg: DelegatorWithdrawMsg = {
-      delegator,
-      voter,
-      amount
-    };
-    return this._transport.signAndBuild(msg, _MSGTYPE.DelegateWithdrawMsgType, privKeyHex, seq);
-  }
   // developer related
-
   /**
    * DeveloperRegsiter registers a developer with a certain amount of LINO token on blockchain.
    * It composes DeveloperRegisterMsg and then broadcasts the transaction to blockchain.
@@ -1334,13 +1293,12 @@ export default class Broadcast {
 }
 
 // Account related messages
-export interface RegisterMsg {
-  referrer: string;
+export interface RegisterV2Msg {
+  referrer: any;
   register_fee: string;
   new_username: string;
-  new_reset_public_key: string;
   new_transaction_public_key: string;
-  new_app_public_key: string;
+  new_signing_public_key: string;
 }
 
 export interface TransferMsg {
@@ -1363,9 +1321,8 @@ export interface ClaimInterestMsg {
 
 export interface RecoverMsg {
   username: string;
-  new_reset_public_key: string;
-  new_transaction_public_key: string;
-  new_app_public_key: string;
+  new_tx_public_key: string;
+  new_signing_public_key: string;
 }
 
 export interface UpdateAccountMsg {
@@ -1390,6 +1347,17 @@ export interface DonateMsg {
   post_id: string;
   from_app: string;
   memo: string;
+}
+
+export interface IDADonateMsg {
+  username: string;
+  app: string;
+  amount: string;
+  author: string;
+  post_id: string;
+  from_app: string;
+  memo: string;
+  signer: string;
 }
 
 export interface DeletePostMsg {
@@ -1426,20 +1394,14 @@ export interface StakeInMsg {
   deposit: string;
 }
 
+export interface StakeInForMsg {
+  username: string;
+  receiver: string;
+  deposit: string;
+}
+
 export interface StakeOutMsg {
   username: string;
-  amount: string;
-}
-
-export interface DelegateMsg {
-  delegator: string;
-  voter: string;
-  amount: string;
-}
-
-export interface DelegatorWithdrawMsg {
-  delegator: string;
-  voter: string;
   amount: string;
 }
 
@@ -1608,6 +1570,7 @@ const _MSGTYPE = {
   ViewMsgType: 'lino/view',
   ReportOrUpvoteMsgType: 'lino/reportOrUpvote',
   StakeInMsgType: 'lino/stakeIn',
+  StakeInForMsgType: 'lino/stakeInFor',
   StakeOutMsgType: 'lino/stakeOut',
   VoteWithdrawMsgType: 'lino/voteWithdraw',
   DelegateMsgType: 'lino/delegate',

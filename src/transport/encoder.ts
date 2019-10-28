@@ -178,9 +178,10 @@ export function encodeObject(result: any): any {
 
 export function encodeMsg(msg: any): any {
   var encodedMsg = Object.assign({}, msg);
-  if ('new_reset_public_key' in msg) {
-    encodedMsg.new_reset_public_key = convertToInternalPubKey(
-      msg.new_reset_public_key,
+
+  if ('new_tx_public_key' in msg) {
+    encodedMsg.new_tx_public_key = convertToInternalPubKey(
+      msg.new_tx_public_key,
       _TYPE.PubKeySecp256k1
     );
   }
@@ -192,9 +193,9 @@ export function encodeMsg(msg: any): any {
     );
   }
 
-  if ('new_app_public_key' in msg) {
-    encodedMsg.new_app_public_key = convertToInternalPubKey(
-      msg.new_app_public_key,
+  if ('new_signing_public_key' in msg) {
+    encodedMsg.new_signing_public_key = convertToInternalPubKey(
+      msg.new_signing_public_key,
       _TYPE.PubKeySecp256k1
     );
   }
@@ -238,9 +239,14 @@ export function encodeSignMsg(
 
 export function convertMsg(msg: any): any {
   var encodedMsg = Object.assign({}, msg);
-  if ('new_reset_public_key' in msg) {
-    var buffer = ByteBuffer.fromHex(msg.new_reset_public_key);
-    encodedMsg.new_reset_public_key = getByteArray(buffer);
+  if ('new_signing_public_key' in msg) {
+    var buffer = ByteBuffer.fromHex(msg.new_signing_public_key);
+    encodedMsg.new_signing_public_key = getByteArray(buffer);
+  }
+
+  if ('new_tx_public_key' in msg) {
+    var buffer = ByteBuffer.fromHex(msg.new_tx_public_key);
+    encodedMsg.new_tx_public_key = getByteArray(buffer);
   }
 
   if ('new_transaction_public_key' in msg) {
