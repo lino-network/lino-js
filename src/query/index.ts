@@ -943,11 +943,19 @@ export default class Query {
   getTxAndSequenceByAddress(addr: string, hash: string): Promise<Types.TxAndSequenceNumber> {
     const AccountKVStoreKey = Keys.KVSTOREKEYS.AccountKVStoreKey;
     const AccountTxAndSequence = Keys.KVSTOREKEYS.AccountTxAndSequence;
-    return this._transport.query<Types.TxAndSequenceNumber>(
-      [encodeAddr(addr), hash, 'true'],
-      AccountKVStoreKey,
-      AccountTxAndSequence
-    );
+    return this._transport
+      .query<Types.TxAndSequenceNumber>(
+        [encodeAddr(addr), hash, 'true'],
+        AccountKVStoreKey,
+        AccountTxAndSequence
+      )
+      .catch(err => {
+        // if bank doesn't exist it is possbile that tx is not accepted so bank is not generated
+        if (err.code === 303) {
+          return { username: addr, sequence: 0 } as Types.TxAndSequenceNumber;
+        }
+        throw err;
+      });
   }
 
   // block related

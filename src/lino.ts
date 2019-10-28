@@ -503,18 +503,14 @@ export class LINO {
       }
     }
 
-    console.log('before confirm attempts');
     for (let i = 0; i < this._txConfirmMaxAttempts; i++) {
       await delay(this._txConfirmInterval);
-
-      console.log('before query tx seq', signers);
       var txSeq;
       if (!signers[0].is_addr) {
         txSeq = await this._query.getTxAndSequence(signers[0].account_key, txHash);
       } else {
         txSeq = await this._query.getTxAndSequenceByAddress(signers[0].addr, txHash);
       }
-      console.log('after query tx seq');
       if (txSeq.tx != null) {
         if (txSeq.tx.code !== 0) {
           throw new BroadcastError(BroadCastErrorEnum.DeliverTx, txSeq.tx.log, txSeq.tx.code);
