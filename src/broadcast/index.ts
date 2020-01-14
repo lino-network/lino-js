@@ -641,6 +641,21 @@ export default class Broadcast {
     return this._transport.signAndBuild(msg, _MSGTYPE.StakeOutMsgType, privKeyHex, seq);
   }
 
+  makeIDAConvertFromLino(
+    username: string,
+    app: string,
+    amount: string,
+    privKeyHex: string,
+    seq: number
+  ) {
+    const msg: IDAConvertFromLinoMsg = {
+      amount: amount,
+      username: username,
+      app: app
+    };
+    return this._transport.signAndBuild(msg, _MSGTYPE.IDAConvertFromLinoMsgType, privKeyHex, seq);
+  }
+
   // developer related
   /**
    * DeveloperRegsiter registers a developer with a certain amount of LINO token on blockchain.
@@ -1448,6 +1463,12 @@ export interface IDAMintMsg {
   amount: string;
 }
 
+export interface IDAConvertFromLinoMsg {
+  username: string;
+  app: string;
+  amount: string;
+}
+
 export interface IDATransferMsg {
   app: string;
   from: string;
@@ -1553,6 +1574,7 @@ const _MSGTYPE = {
   UnfollowMsgType: 'lino/unfollow',
   TransferMsgType: 'lino/transfer',
   TransferV2MsgType: 'lino/transferv2',
+  IDAConvertFromLinoMsgType: 'lino/IDAConvertFromLino',
   ClaimMsgType: 'lino/claim',
   ClaimInterestMsgType: 'lino/claimInterest',
   RecoverMsgType: 'lino/recover',

@@ -405,6 +405,21 @@ export class LINO {
     );
   }
 
+  async IDAConvertFromLino(
+    username: string,
+    app: string,
+    amount: string,
+    privKeyHex: string
+  ): Promise<ResultBroadcastTxCommit> {
+    var that = this;
+    return this._guaranteeBroadcast(
+      new Array<Types.AccOrAddr>(new Types.AccOrAddr('', false, username)),
+      function(seqs) {
+        return that._broadcast.makeIDAConvertFromLino(username, app, amount, privKeyHex, seqs[0]);
+      }
+    );
+  }
+
   async providerReport(
     username: string,
     usage: number,
